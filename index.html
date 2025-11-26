@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Studio 3.6 - Better Export UI</title>
+  <title>Social Studio 3.7 - Responsive Export</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -183,7 +183,7 @@
   <div class="app-container">
     <aside class="editor-panel">
       <div class="editor-header">
-        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.6</div>
+        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.7</div>
       </div>
 
       <div class="editor-scroll">
@@ -514,6 +514,11 @@
           this.setPlatform(p);
           const cardEl = document.getElementById(`card-${p}`);
           const clone = cardEl.cloneNode(true);
+          
+          // Make sure image renders correctly if hidden
+          const img = clone.querySelector('.news-image');
+          if(img.getAttribute('src') === '') img.style.display = 'none';
+
           // Force layout properties for export
           clone.style.display = 'block';
           clone.style.width = '100%';
@@ -542,10 +547,13 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8"><title>Anteprima Social</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anteprima Social</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   ${css}
+  /* EXPORT SPECIFIC STYLES */
   body { background: #f0f2f5; font-family: 'Inter', sans-serif; display:block; overflow-y:scroll; padding:0; margin:0;}
   .main-export-container { max-width: 1100px; margin: 40px auto; padding: 20px; }
   h1 { text-align:center; color:#333; margin-bottom:40px; }
@@ -553,7 +561,7 @@
   /* GRID LAYOUT FOR EXPORT */
   .mockup-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 40px;
     justify-items: center;
   }
@@ -580,6 +588,18 @@
     opacity: 1 !important; 
     transform: none !important; 
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    /* Essential for mobile responsive */
+    width: 100% !important;
+    max-width: 500px !important;
+  }
+
+  /* MOBILE SPECIFIC OVERRIDE */
+  @media (max-width: 768px) {
+    .mockup-grid {
+        grid-template-columns: 1fr; /* Stack vertically */
+        gap: 30px;
+    }
+    .main-export-container { padding: 15px; margin: 0; }
   }
 </style>
 </head>
