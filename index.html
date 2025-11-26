@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Studio 3.1 - LinkedIn Updated</title>
+  <title>Social Studio 3.4 - Fix Immagini & Typography</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -31,7 +31,8 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: 'Inter', sans-serif;
+      /* SYSTEM FONT STACK: Priorità ai font nativi di alta qualità del sistema operativo */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       height: 100vh;
@@ -108,16 +109,7 @@
       box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
     }
 
-    /* Platform Badge in Editor */
-    .current-platform-badge {
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: #eee;
-      color: #666;
-    }
-
-    /* Helper Links (Copy to all) */
+    /* Helper Links */
     .helper-link {
       font-size: 0.8rem;
       color: var(--primary);
@@ -242,16 +234,20 @@
     
     .social-card {
       background: white;
-      border-radius: 12px; /* Standard radius, overrides specific per social */
+      border-radius: 12px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.1);
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       display: none;
       border: 1px solid rgba(0,0,0,0.05);
+      /* Render optimizations */
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .social-card.active { display: block; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-    @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    
+    /* FIX CRITICO IMMAGINI SBIADITE: Rimosso popIn animation */
+    .social-card.active { display: block; }
 
     /* --- SOCIAL SPECIFIC STYLES --- */
     
@@ -259,13 +255,22 @@
     .sc-header { padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; position: relative; }
     .sc-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
     .sc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-    .sc-name { font-weight: 700; font-size: 0.95rem; line-height: 1.2; color: #050505; display: flex; align-items: center; gap: 4px; }
+    .sc-name { font-weight: 700; font-size: 0.95rem; line-height: 1.2; color: #000000; display: flex; align-items: center; gap: 4px; }
     .sc-meta { font-size: 0.8rem; color: #65676B; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
-    .sc-icon-verified { width: 15px; height: 15px; } /* Updated size */
+    .sc-icon-verified { width: 15px; height: 15px; } 
     .sc-more { margin-left: auto; color: #606770; cursor: pointer; }
 
-    /* Content */
-    .sc-text { padding: 0 16px 12px 16px; font-size: 0.93rem; line-height: 1.5; color: #050505; white-space: pre-wrap; }
+    /* Content & FIX TYPOGRAPHY */
+    .sc-text { 
+      padding: 0 16px 12px 16px; 
+      font-size: 0.93rem; 
+      color: #050505; 
+      white-space: pre-wrap; 
+      /* FIX: Interlinea ridotta e spaziatura normale */
+      line-height: 1.35; 
+      letter-spacing: normal;
+      font-variant-ligatures: none;
+    }
     .sc-text span.link { color: #1877F2; cursor: pointer; }
     .sc-image-container { width: 100%; background: #f0f2f5; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .sc-image { width: 100%; height: auto; display: block; }
@@ -276,16 +281,22 @@
     .action-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; }
     
     /* FACEBOOK */
-    .card-facebook { font-family: Helvetica, Arial, sans-serif; }
+    .card-facebook { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
     .card-facebook .sc-name { color: #050505; }
     .card-facebook .sc-text { padding-top: 4px; }
     .fb-stats { padding: 10px 16px; display: flex; justify-content: space-between; font-size: 0.85rem; color: #65676B; border-bottom: 1px solid #dadde1; }
     
     /* LINKEDIN */
-    .card-linkedin { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; border-radius: 8px; }
+    .card-linkedin { 
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; 
+      border-radius: 8px; 
+    }
     .card-linkedin .sc-name { font-size: 0.9rem; font-weight: 600; }
     .card-linkedin .sc-meta { font-size: 0.75rem; }
-    .card-linkedin .sc-text { font-size: 0.9rem; padding-bottom: 8px; }
+    .card-linkedin .sc-text { 
+      font-size: 0.9rem; 
+      padding-bottom: 8px;
+    }
     
     /* INSTAGRAM */
     .card-instagram { border-radius: 3px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -297,7 +308,7 @@
     .ig-icons-left { display: flex; gap: 16px; }
     
     /* X (TWITTER) */
-    .card-x { font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; border-radius: 16px; }
+    .card-x { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; border-radius: 16px; }
     .card-x .sc-name { font-weight: 700; font-size: 0.95rem; }
     .card-x .sc-handle { font-weight: 400; color: #536471; margin-left: 4px; }
     .card-x .sc-text { font-size: 1rem; padding-bottom: 12px; margin-top: -5px; }
@@ -311,7 +322,7 @@
   <div class="app-container">
     <aside class="editor-panel">
       <div class="editor-header">
-        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.1</div>
+        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.4</div>
       </div>
 
       <div class="editor-scroll">
@@ -368,7 +379,7 @@
 
       <div class="editor-footer">
         <button class="btn btn-danger" onclick="app.resetCurrent()">Reset News</button>
-        <button class="btn btn-primary" onclick="app.downloadZip()">Scarica ZIP</button>
+        <button class="btn btn-primary" onclick="app.downloadZip()">Scarica ZIP (+Assets)</button>
       </div>
     </aside>
 
@@ -749,25 +760,44 @@
         }
       },
 
+      // Helper for Asset export
+      dataURItoBlob: function(dataURI) {
+        var byteString = atob(dataURI.split(',')[1]);
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: mimeString});
+      },
+
       downloadZip: function() {
         const zip = new JSZip();
-        const promises = [];
         const currentNewsId = this.state.activeNews;
-        const currentPlatform = this.state.activePlatform; // Save current view
+        const currentPlatform = this.state.activePlatform;
+        
+        // 1. CREATE ASSETS FOLDER
+        const assetsFolder = zip.folder(`assets_News${currentNewsId}`);
+        const newsData = this.state.news[currentNewsId] || {};
 
         CONFIG.platforms.forEach(p => {
-            // Need to set platform active temporarily to render the correct content if it wasn't rendered yet
-            // However, our DOM only holds ONE active card at a time with ID conflict if we tried to render all.
-            // Approach: Switch view, render, next.
-            
-            // NOTE: This relies on the DOM updating fast enough. With html2canvas it might need a small delay or Promise wrapper.
-            // Better approach for Single Page App: Render hidden containers? 
-            // For now, we iterate sequentially.
+          const pData = newsData[p];
+          if (pData) {
+            // Save Text Copy
+            if (pData.text) {
+              assetsFolder.file(`${p}_copy.txt`, pData.text);
+            }
+            // Save Source Image
+            if (pData.img) {
+              // Convert base64 -> blob
+              const blob = this.dataURItoBlob(pData.img);
+              assetsFolder.file(`${p}_image.png`, blob);
+            }
+          }
         });
 
-        // SIMPLIFIED ZIP LOGIC (captures current visible only, or loop)
-        // Since content changes dynamically in DOM, we must loop and wait.
-        
+        // 2. GENERATE MOCKUPS SEQUENTIALLY
         const processPlatform = async (index) => {
             if(index >= CONFIG.platforms.length) {
                 this.setPlatform(currentPlatform); // Restore view
@@ -779,14 +809,21 @@
             const p = CONFIG.platforms[index];
             this.setPlatform(p);
             
+            // Wait for fonts to be ready before capturing!
+            await document.fonts.ready;
             // Small delay to allow img render
             await new Promise(r => setTimeout(r, 100)); 
             
             const card = document.getElementById(`card-${p}`);
-            const canvas = await html2canvas(card, { scale: 2, useCORS: true });
+            const canvas = await html2canvas(card, { 
+              scale: 2, 
+              useCORS: true,
+              // Legacy option to help with font rendering
+              letterRendering: 1 
+            });
             
             canvas.toBlob(blob => {
-                zip.file(`News${currentNewsId}_${p}.png`, blob);
+                zip.file(`Mockup_News${currentNewsId}_${p}.png`, blob);
                 processPlatform(index + 1);
             });
         };
