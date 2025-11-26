@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Studio 3.4 - Fix Immagini & Typography</title>
+  <title>Social Studio 3.6 - Better Export UI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -31,7 +31,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      /* SYSTEM FONT STACK: Priorità ai font nativi di alta qualità del sistema operativo */
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
@@ -41,11 +40,7 @@
     }
 
     /* --- LAYOUT --- */
-    .app-container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-    }
+    .app-container { display: flex; width: 100%; height: 100%; }
 
     /* --- SIDEBAR (EDITOR) --- */
     .editor-panel {
@@ -59,199 +54,87 @@
       box-shadow: 4px 0 24px rgba(0,0,0,0.05);
     }
 
-    .editor-header {
-      padding: 20px;
-      border-bottom: 1px solid var(--border);
-      background: white;
-    }
-    .brand-title {
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .editor-header { padding: 20px; border-bottom: 1px solid var(--border); background: white; }
+    .brand-title { color: var(--primary); font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
     .brand-dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; display: inline-block; }
 
-    .editor-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
+    .editor-scroll { flex: 1; overflow-y: auto; padding: 20px; }
 
-    .section-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-sec);
-      font-weight: 600;
-      margin: 20px 0 10px 0;
-    }
-    .section-label:first-child { margin-top: 0; }
+    .section-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-sec); font-weight: 600; margin: 25px 0 10px 0; border-top: 1px solid #eee; padding-top: 20px; }
+    .section-label:first-child { margin-top: 0; border-top: none; padding-top: 0; }
 
     /* Inputs Moderni */
     .input-group { margin-bottom: 20px; }
     .input-group label { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 500; margin-bottom: 6px; }
     
     .form-input, .form-textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 0.95rem;
-      transition: all 0.2s;
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+      font-family: inherit; font-size: 0.95rem; transition: all 0.2s;
     }
-    .form-input:focus, .form-textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
-    }
+    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1); }
 
-    /* Helper Links */
-    .helper-link {
-      font-size: 0.8rem;
-      color: var(--primary);
-      text-decoration: underline;
-      cursor: pointer;
-      margin-top: 5px;
-      display: inline-block;
-    }
+    .helper-link { font-size: 0.8rem; color: var(--primary); text-decoration: underline; cursor: pointer; margin-top: 5px; display: inline-block; }
     .helper-link:hover { color: var(--accent); }
 
     /* File Upload Moderno */
     .file-drop {
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: #FAFAFA;
-      position: relative;
+      border: 2px dashed var(--border); border-radius: 8px; padding: 20px; text-align: center;
+      cursor: pointer; transition: all 0.2s; background: #FAFAFA; position: relative;
     }
     .file-drop:hover { border-color: var(--primary); background: #F0F7FF; }
     .file-drop input { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-    .file-preview-mini {
-      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
-      margin: 0 auto 5px auto; display: block; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+    .file-preview-mini { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px auto; display: block; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
     /* Tabs News */
-    .news-selector {
-      display: flex;
-      gap: 5px;
-      background: #f1f1f1;
-      padding: 4px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-    .news-tab {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-sec);
-      border-radius: 6px;
-      cursor: pointer;
-    }
+    .news-selector { display: flex; gap: 5px; background: #f1f1f1; padding: 4px; border-radius: 8px; margin-bottom: 20px; }
+    .news-tab { flex: 1; border: none; background: transparent; padding: 8px; font-size: 0.9rem; font-weight: 600; color: var(--text-sec); border-radius: 6px; cursor: pointer; }
     .news-tab.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
+    /* Checkbox Group for Export */
+    .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; }
+    .checkbox-item input { accent-color: var(--primary); width: 16px; height: 16px; }
+
     /* Action Buttons */
-    .editor-footer {
-      padding: 20px;
-      border-top: 1px solid var(--border);
-      background: white;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .btn {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.95rem;
-      transition: transform 0.1s;
-    }
+    .editor-footer { padding: 20px; border-top: 1px solid var(--border); background: white; display: flex; gap: 10px; flex-wrap: wrap;}
+    .btn { padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: transform 0.1s; flex: 1; text-align: center;}
     .btn:active { transform: scale(0.98); }
     .btn-primary { background: var(--primary); color: white; }
     .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text-main); }
-    .btn-danger { color: #DC2626; background: #FEF2F2; border: 1px solid #FECACA; }
+    .btn-dark { background: #333; color: white; }
+    .btn-success { background: #10B981; color: white; }
+    .btn-full { width: 100%; margin-top: 10px; }
 
     /* --- PREVIEW AREA (RIGHT) --- */
     .preview-panel {
-      flex: 1;
-      background-color: var(--bg-color);
-      background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
-      background-size: 20px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px;
-      overflow-y: auto;
+      flex: 1; background-color: var(--bg-color);
+      background-image: radial-gradient(#E5E7EB 1px, transparent 1px); background-size: 20px 20px;
+      display: flex; flex-direction: column; align-items: center; padding: 40px; overflow-y: auto;
     }
 
-    .platform-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
+    .platform-tabs { display: flex; gap: 10px; margin-bottom: 30px; }
     .platform-btn {
-      background: white;
-      border: 1px solid var(--border);
-      padding: 10px 20px;
-      border-radius: 50px;
-      font-weight: 600;
-      color: var(--text-sec);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
+      background: white; border: 1px solid var(--border); padding: 10px 20px; border-radius: 50px;
+      font-weight: 600; color: var(--text-sec); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
     }
-    .platform-btn.active {
-      color: white;
-      border-color: transparent;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
+    .platform-btn.active { color: white; border-color: transparent; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .platform-btn.fb.active { background: var(--fb-color); }
     .platform-btn.li.active { background: var(--li-color); }
     .platform-btn.ig.active { background: var(--ig-gradient); }
     .platform-btn.x.active { background: var(--x-color); }
 
     /* --- MOCKUP CARDS --- */
-    .mockup-wrapper {
-      width: 500px;
-      max-width: 100%;
-      perspective: 1000px;
-    }
+    .mockup-wrapper { width: 500px; max-width: 100%; perspective: 1000px; }
     
     .social-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-      overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      display: none;
-      border: 1px solid rgba(0,0,0,0.05);
-      /* Render optimizations */
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: none; border: 1px solid rgba(0,0,0,0.05);
+      text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
-    
-    /* FIX CRITICO IMMAGINI SBIADITE: Rimosso popIn animation */
     .social-card.active { display: block; }
 
     /* --- SOCIAL SPECIFIC STYLES --- */
-    
-    /* Common Header Components */
     .sc-header { padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; position: relative; }
     .sc-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.1); }
     .sc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
@@ -260,45 +143,25 @@
     .sc-icon-verified { width: 15px; height: 15px; } 
     .sc-more { margin-left: auto; color: #606770; cursor: pointer; }
 
-    /* Content & FIX TYPOGRAPHY */
-    .sc-text { 
-      padding: 0 16px 12px 16px; 
-      font-size: 0.93rem; 
-      color: #050505; 
-      white-space: pre-wrap; 
-      /* FIX: Interlinea ridotta e spaziatura normale */
-      line-height: 1.35; 
-      letter-spacing: normal;
-      font-variant-ligatures: none;
-    }
+    .sc-text { padding: 0 16px 12px 16px; font-size: 0.93rem; color: #050505; white-space: pre-wrap; line-height: 1.35; letter-spacing: normal; font-variant-ligatures: none; }
     .sc-text span.link { color: #1877F2; cursor: pointer; }
     .sc-image-container { width: 100%; background: #f0f2f5; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .sc-image { width: 100%; height: auto; display: block; }
     
-    /* Footers */
     .sc-footer { padding: 8px 16px; border-top: 1px solid #eee; }
     .sc-actions { display: flex; justify-content: space-between; align-items: center; color: #65676B; font-weight: 600; font-size: 0.9rem; }
     .action-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; }
     
-    /* FACEBOOK */
     .card-facebook { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
     .card-facebook .sc-name { color: #050505; }
     .card-facebook .sc-text { padding-top: 4px; }
     .fb-stats { padding: 10px 16px; display: flex; justify-content: space-between; font-size: 0.85rem; color: #65676B; border-bottom: 1px solid #dadde1; }
     
-    /* LINKEDIN */
-    .card-linkedin { 
-      font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; 
-      border-radius: 8px; 
-    }
+    .card-linkedin { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; border-radius: 8px; }
     .card-linkedin .sc-name { font-size: 0.9rem; font-weight: 600; }
     .card-linkedin .sc-meta { font-size: 0.75rem; }
-    .card-linkedin .sc-text { 
-      font-size: 0.9rem; 
-      padding-bottom: 8px;
-    }
+    .card-linkedin .sc-text { font-size: 0.9rem; padding-bottom: 8px; }
     
-    /* INSTAGRAM */
     .card-instagram { border-radius: 3px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     .card-instagram .sc-header { align-items: center; padding: 14px 16px; }
     .card-instagram .sc-name { font-size: 0.9rem; }
@@ -307,14 +170,12 @@
     .ig-actions { padding: 10px 16px 0 16px; display: flex; justify-content: space-between; }
     .ig-icons-left { display: flex; gap: 16px; }
     
-    /* X (TWITTER) */
     .card-x { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; border-radius: 16px; }
     .card-x .sc-name { font-weight: 700; font-size: 0.95rem; }
     .card-x .sc-handle { font-weight: 400; color: #536471; margin-left: 4px; }
     .card-x .sc-text { font-size: 1rem; padding-bottom: 12px; margin-top: -5px; }
     .card-x .sc-image-container { border-radius: 16px; border: 1px solid #cfd9de; margin: 0 16px 16px 16px; width: auto; overflow: hidden; }
     .x-footer { padding: 12px 16px; border-top: 1px solid #eff3f4; display: flex; justify-content: space-between; color: #536471; }
-
   </style>
 </head>
 <body>
@@ -322,7 +183,7 @@
   <div class="app-container">
     <aside class="editor-panel">
       <div class="editor-header">
-        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.4</div>
+        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.6</div>
       </div>
 
       <div class="editor-scroll">
@@ -345,16 +206,13 @@
           <input type="text" class="form-input" id="global-handle" placeholder="Es. @posteitaliane" value="@posteitaliane">
         </div>
 
-        <hr style="border: 0; border-top: 1px solid var(--border); margin: 25px 0;">
-
         <div class="section-label">Contenuto Post</div>
         
         <div class="news-selector" id="news-tabs">
           </div>
 
         <div style="background: #eef2ff; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #c7d2fe;">
-            <div style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Stai modificando: <span id="editor-platform-label">Facebook</span></div>
-            <div style="font-size: 0.75rem; color: #666;">Il contenuto che inserisci qui sarà specifico per questo canale.</div>
+            <div style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Modifica canale: <span id="editor-platform-label">Facebook</span></div>
         </div>
 
         <div class="input-group">
@@ -362,158 +220,84 @@
             <span>Testo del Post</span>
             <span id="char-count" style="font-weight:400; color:#999; font-size:0.75rem">0 car.</span>
           </label>
-          <textarea class="form-textarea" id="post-text" rows="5" placeholder="Scrivi qui il tuo post per questo canale..."></textarea>
+          <textarea class="form-textarea" id="post-text" rows="5" placeholder="Scrivi qui il tuo post..."></textarea>
           <span class="helper-link" onclick="app.copyTextToAll()">Copia questo testo su tutti i canali</span>
         </div>
 
         <div class="input-group">
           <label>Immagine del Post</label>
           <div class="file-drop" id="image-drop">
-             <span class="file-input-text">📁 Carica immagine per questo canale</span>
+             <span class="file-input-text">📁 Carica immagine</span>
              <input type="file" id="post-image" accept="image/*">
           </div>
           <span class="helper-link" onclick="app.copyImageToAll()">Usa questa immagine su tutti i canali</span>
         </div>
 
+        <div class="section-label">Gestione Progetto</div>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+          <button class="btn btn-secondary" onclick="app.exportJSON()">💾 Salva JSON</button>
+          <button class="btn btn-secondary" onclick="app.triggerImport()">📂 Carica JSON</button>
+          <input type="file" id="json-import-input" accept=".json" style="display:none" onchange="app.importJSON(this)">
+        </div>
+
+        <div class="section-label">Esportazione Web (HTML)</div>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" id="chk-facebook" checked> Facebook</label>
+          <label class="checkbox-item"><input type="checkbox" id="chk-linkedin" checked> LinkedIn</label>
+          <label class="checkbox-item"><input type="checkbox" id="chk-x" checked> X (Twitter)</label>
+          <label class="checkbox-item"><input type="checkbox" id="chk-instagram" checked> Instagram</label>
+        </div>
+        <button class="btn btn-success btn-full" onclick="app.exportHTML()">🌐 Esporta Pagina HTML</button>
+
       </div>
 
       <div class="editor-footer">
-        <button class="btn btn-danger" onclick="app.resetCurrent()">Reset News</button>
-        <button class="btn btn-primary" onclick="app.downloadZip()">Scarica ZIP (+Assets)</button>
+        <button class="btn btn-primary" onclick="app.downloadZip()">Scarica Immagini (ZIP)</button>
       </div>
     </aside>
 
     <main class="preview-panel">
       
       <div class="platform-tabs">
-        <button class="platform-btn fb active" onclick="app.setPlatform('facebook')">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.15 5.96C15.21 5.96 16.12 6.04 16.12 6.04V8.51H15.01C13.77 8.51 13.38 9.28 13.38 10.07V12.06H16.15L15.71 14.96H13.38V21.96C18.16 21.21 21.82 17.06 21.82 12.06C21.82 6.53 17.32 2.04 12 2.04Z"></path></svg>
-          Facebook
-        </button>
-        <button class="platform-btn li" onclick="app.setPlatform('linkedin')">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2A3.26 3.26 0 0 0 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17A1.4 1.4 0 0 1 15.71 13.57V18.5H18.5M6.88 8.56A1.68 1.68 0 0 0 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19A1.69 1.69 0 0 0 5.19 6.88C5.19 7.81 5.95 8.56 6.88 8.56M8.27 18.5V10.13H5.5V18.5H8.27Z"></path></svg>
-          LinkedIn
-        </button>
-        <button class="platform-btn x" onclick="app.setPlatform('x')">
-           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-           X
-        </button>
-        <button class="platform-btn ig" onclick="app.setPlatform('instagram')">
-           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"></path></svg>
-           Instagram
-        </button>
+        <button class="platform-btn fb active" onclick="app.setPlatform('facebook')">Facebook</button>
+        <button class="platform-btn li" onclick="app.setPlatform('linkedin')">LinkedIn</button>
+        <button class="platform-btn x" onclick="app.setPlatform('x')">X</button>
+        <button class="platform-btn ig" onclick="app.setPlatform('instagram')">Instagram</button>
       </div>
 
       <div class="mockup-wrapper">
-        
         <div id="card-facebook" class="social-card card-facebook active">
           <div class="sc-header">
             <img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img">
-            <div class="sc-info">
-              <div class="sc-name">
-                <span class="global-name-text">Nome Pagina</span> 
-                <svg class="sc-icon-verified" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15C11.6421 15 15 11.6421 15 7.5C15 3.35786 11.6421 0 7.5 0Z" fill="#1877F2"/>
-                    <path d="M6.3125 10.4375L3.4375 7.5625L4.3125 6.6875L6.3125 8.6875L10.6875 4.3125L11.5625 5.1875L6.3125 10.4375Z" fill="white"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M15 7.5C15 11.6421 11.6421 15 7.5 15C3.35786 15 0 11.6421 0 7.5C0 3.35786 3.35786 0 7.5 0C11.6421 0 15 3.35786 15 7.5ZM6.3125 10.4375L11.5625 5.1875L10.6875 4.3125L6.3125 8.6875L4.3125 6.6875L3.4375 7.5625L6.3125 10.4375Z" fill="#1877F2"/>
-                    <path d="M7.5 0L8.7 0.9C9.1 0.4 9.8 0.4 10.2 0.8L11.5 1.5L12.9 1.1C13.5 0.9 14.1 1.4 14.1 2.1V2.1L14.7 3.3L14.4 4.8C14.3 5.4 14.7 6.1 15.2 6.4L15.2 6.4L15 7.5L15.2 8.6C15.3 9.2 14.9 9.8 14.3 9.9L14.1 9.9L14.6 11.4C14.8 12.0 14.4 12.7 13.8 12.9L12.5 13.4L11.5 14.4C11.0 14.9 10.3 14.9 9.9 14.4L8.7 13.8L7.5 15L6.3 13.8L5.1 14.4C4.7 14.9 4.0 14.9 3.5 14.4L2.5 13.4L1.2 12.9C0.6 12.7 0.2 12.0 0.4 11.4L0.9 9.9L0.7 9.9C0.1 9.8 -0.3 9.2 -0.2 8.6L0 7.5L-0.2 6.4C-0.3 5.8 0.1 5.2 0.7 5.1L0.4 4.8L0.3 3.3L0.9 2.1C1.2 1.5 1.9 1.2 2.5 1.4L3.5 1.1L4.8 0.8C5.2 0.4 5.9 0.4 6.3 0.9L7.5 0Z" fill="#1877F2"/>
-                    <path d="M6.5 10.5L3.5 7.5L4.5 6.5L6.5 8.5L10.5 4.5L11.5 5.5L6.5 10.5Z" fill="white"/>
-                </svg>
-              </div>
-              <div class="sc-meta">1 h · <svg width="12" height="12" viewBox="0 0 16 16" fill="#65676B"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8z"></path><path d="M7.25 4.5a.75.75 0 011.5 0V8a.75.75 0 01-.397.66l-2.5 1.25a.75.75 0 01-.671-1.34l2.068-1.035V4.5z"></path></svg></div>
-            </div>
-            <div class="sc-more">•••</div>
-          </div>
-          <div class="sc-text news-text">Testo del post...</div>
-          <div class="sc-image-container">
-            <img src="" class="sc-image news-image" style="display:none">
-          </div>
-          <div class="fb-stats">
-            <span>👍 1.2K</span>
-            <span>45 commenti 12 condivisioni</span>
-          </div>
-          <div class="sc-footer">
-            <div class="sc-actions">
-              <div class="action-item">Mi piace</div>
-              <div class="action-item">Commenta</div>
-              <div class="action-item">Condividi</div>
-            </div>
-          </div>
+            <div class="sc-info"><div class="sc-name"><span class="global-name-text">Page</span><svg class="sc-icon-verified" viewBox="0 0 15 15" fill="none"><path d="M7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15C11.6421 15 15 11.6421 15 7.5C15 3.35786 11.6421 0 7.5 0Z" fill="#1877F2"/><path d="M6.3125 10.4375L3.4375 7.5625L4.3125 6.6875L6.3125 8.6875L10.6875 4.3125L11.5625 5.1875L6.3125 10.4375Z" fill="white"/></svg></div><div class="sc-meta">1 h · 🌍</div></div><div class="sc-more">•••</div></div>
+          <div class="sc-text news-text">...</div>
+          <div class="sc-image-container"><img src="" class="sc-image news-image" style="display:none"></div>
+          <div class="fb-stats"><span>👍 1.2K</span><span>45 commenti</span></div>
+          <div class="sc-footer"><div class="sc-actions"><div class="action-item">Mi piace</div><div class="action-item">Commenta</div><div class="action-item">Condividi</div></div></div>
         </div>
 
         <div id="card-linkedin" class="social-card card-linkedin">
-          <div class="sc-header">
-            <img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img">
-            <div class="sc-info">
-              <div class="sc-name global-name-text">Nome Pagina</div>
-              <div class="sc-meta">Azienda</div>
-              <div class="sc-meta">2 ore fa • <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M8 1a7 7 0 107 7 7 7 0 00-7-7zM8 14a6 6 0 116-6 6 6 0 01-6 6zM7 4h2v5H7V4zm0 6h2v2H7v-2z"></path></svg></div>
-            </div>
-            <div class="sc-more">•••</div>
-          </div>
-          <div class="sc-text news-text">Testo del post...</div>
-          <div class="sc-image-container">
-            <img src="" class="sc-image news-image" style="display:none">
-          </div>
-          <div class="sc-footer">
-             <div style="font-size:0.75rem; color:#666; margin-bottom:8px;">👍 👏 💡 842</div>
-             <hr style="border:0; border-top:1px solid #eee; margin-bottom:8px;">
-             <div class="sc-actions">
-               <div class="action-item">Consiglia</div>
-               <div class="action-item">Commenta</div>
-               <div class="action-item">Diffondi</div>
-               <div class="action-item">Invia</div>
-             </div>
-          </div>
+          <div class="sc-header"><img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img"><div class="sc-info"><div class="sc-name global-name-text">Page</div><div class="sc-meta">Azienda</div><div class="sc-meta">2 ore fa • 🌐</div></div><div class="sc-more">•••</div></div>
+          <div class="sc-text news-text">...</div>
+          <div class="sc-image-container"><img src="" class="sc-image news-image" style="display:none"></div>
+          <div class="sc-footer"><div class="sc-actions"><div class="action-item">Consiglia</div><div class="action-item">Commenta</div><div class="action-item">Diffondi</div><div class="action-item">Invia</div></div></div>
         </div>
 
         <div id="card-x" class="social-card card-x">
-          <div class="sc-header">
-            <img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img">
-            <div class="sc-info" style="flex-direction:row; align-items:center; justify-content:flex-start;">
-              <div class="sc-name global-name-text">Nome Pagina</div>
-              <div class="sc-handle global-handle-text">@handle</div>
-              <div class="sc-meta" style="margin-left:4px">· 2h</div>
-            </div>
-            <div class="sc-more">•••</div>
-          </div>
-          <div class="sc-text news-text" style="padding: 0 16px 8px 60px; margin-top: -15px;">Testo del post...</div>
-          <div class="sc-image-container" style="margin-left: 60px; width: calc(100% - 76px);">
-            <img src="" class="sc-image news-image" style="display:none">
-          </div>
-          <div class="x-footer" style="padding-left: 60px;">
-             <span>💬 24</span>
-             <span>RT 120</span>
-             <span>♡ 890</span>
-             <span>📊 12K</span>
-          </div>
+          <div class="sc-header"><img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img"><div class="sc-info" style="flex-direction:row; align-items:center;"><div class="sc-name global-name-text">Page</div><div class="sc-handle global-handle-text">@handle</div><div class="sc-meta" style="margin-left:4px">· 2h</div></div><div class="sc-more">•••</div></div>
+          <div class="sc-text news-text" style="padding: 0 16px 8px 60px; margin-top: -15px;">...</div>
+          <div class="sc-image-container" style="margin-left: 60px; width: calc(100% - 76px);"><img src="" class="sc-image news-image" style="display:none"></div>
+          <div class="x-footer" style="padding-left: 60px;"><span>💬 24</span><span>RT 120</span><span>♡ 890</span></div>
         </div>
 
         <div id="card-instagram" class="social-card card-instagram">
-          <div class="sc-header">
-            <img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img">
-            <div class="sc-info">
-              <div class="sc-name global-name-text">Nome Pagina</div>
-            </div>
-            <div class="sc-more">•••</div>
-          </div>
-          <div class="sc-image-container">
-            <img src="" class="sc-image news-image" style="display:none">
-          </div>
-          <div class="ig-actions">
-            <div class="ig-icons-left">
-              <span>♡</span>
-              <span>💬</span>
-              <span>✈️</span>
-            </div>
-            <div>🔖</div>
-          </div>
+          <div class="sc-header"><img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img"><div class="sc-info"><div class="sc-name global-name-text">Page</div></div><div class="sc-more">•••</div></div>
+          <div class="sc-image-container"><img src="" class="sc-image news-image" style="display:none"></div>
+          <div class="ig-actions"><div class="ig-icons-left"><span>♡</span><span>💬</span><span>✈️</span></div><div>🔖</div></div>
           <div style="padding: 0 16px; font-weight:600; font-size:0.9rem; margin-top:8px;">1.234 "Mi piace"</div>
-          <div class="sc-text news-text">Testo del post...</div>
+          <div class="sc-text news-text">...</div>
         </div>
-
       </div>
-
     </main>
   </div>
 
@@ -528,12 +312,7 @@
       state: {
         activeNews: 1,
         activePlatform: 'facebook',
-        global: {
-          name: 'Poste Italiane',
-          handle: '@posteitaliane',
-          avatar: null
-        },
-        // NEW STRUCTURE: { newsID: { facebook: {text, img}, linkedin: {text, img}... } }
+        global: { name: 'Poste Italiane', handle: '@posteitaliane', avatar: null },
         news: {} 
       },
 
@@ -557,28 +336,16 @@
       },
 
       bindEvents: function() {
-        // Global Inputs
-        document.getElementById('global-name').addEventListener('input', (e) => {
-          this.state.global.name = e.target.value;
-          this.updatePreviewGlobal();
-          this.saveState();
-        });
-
-        document.getElementById('global-handle').addEventListener('input', (e) => {
-          this.state.global.handle = e.target.value;
-          this.updatePreviewGlobal();
-          this.saveState();
-        });
-
-        // Global Avatar Upload
+        document.getElementById('global-name').addEventListener('input', (e) => { this.state.global.name = e.target.value; this.updatePreviewGlobal(); this.saveState(); });
+        document.getElementById('global-handle').addEventListener('input', (e) => { this.state.global.handle = e.target.value; this.updatePreviewGlobal(); this.saveState(); });
+        
         const avDrop = document.getElementById('avatar-drop');
         const avInput = document.getElementById('global-avatar');
         avInput.addEventListener('change', (e) => this.handleAvatarUpload(e.target.files[0]));
-        ['dragenter', 'dragover'].forEach(e => avDrop.addEventListener(e, (ev) => { ev.preventDefault(); avDrop.style.background = '#e6f7ff'; }));
-        ['dragleave', 'drop'].forEach(e => avDrop.addEventListener(e, (ev) => { ev.preventDefault(); avDrop.style.background = ''; }));
-        avDrop.addEventListener('drop', (e) => this.handleAvatarUpload(e.dataTransfer.files[0]));
+        avDrop.addEventListener('click', () => avInput.click());
+        avDrop.addEventListener('dragover', (e) => { e.preventDefault(); avDrop.style.background = '#e6f7ff'; });
+        avDrop.addEventListener('drop', (e) => { e.preventDefault(); this.handleAvatarUpload(e.dataTransfer.files[0]); });
 
-        // Post Inputs (Specific to Platform)
         document.getElementById('post-text').addEventListener('input', (e) => {
           const content = this.getCurrentContent();
           content.text = e.target.value;
@@ -590,45 +357,30 @@
         const imgDrop = document.getElementById('image-drop');
         const imgInput = document.getElementById('post-image');
         imgInput.addEventListener('change', (e) => this.handleImageUpload(e.target.files[0]));
-        ['dragenter', 'dragover'].forEach(e => imgDrop.addEventListener(e, (ev) => { ev.preventDefault(); imgDrop.style.background = '#e6f7ff'; }));
-        ['dragleave', 'drop'].forEach(e => imgDrop.addEventListener(e, (ev) => { ev.preventDefault(); imgDrop.style.background = ''; }));
-        imgDrop.addEventListener('drop', (e) => this.handleImageUpload(e.dataTransfer.files[0]));
+        imgDrop.addEventListener('click', () => imgInput.click());
+        imgDrop.addEventListener('dragover', (e) => { e.preventDefault(); imgDrop.style.background = '#e6f7ff'; });
+        imgDrop.addEventListener('drop', (e) => { e.preventDefault(); this.handleImageUpload(e.dataTransfer.files[0]); });
       },
 
-      // --- LOGIC ---
-
       getCurrentContent: function() {
-        // Init logic for deep structure
-        if(!this.state.news[this.state.activeNews]) {
-          this.state.news[this.state.activeNews] = {};
-        }
-        if(!this.state.news[this.state.activeNews][this.state.activePlatform]) {
-            this.state.news[this.state.activeNews][this.state.activePlatform] = { text: '', img: null };
-        }
+        if(!this.state.news[this.state.activeNews]) this.state.news[this.state.activeNews] = {};
+        if(!this.state.news[this.state.activeNews][this.state.activePlatform]) this.state.news[this.state.activeNews][this.state.activePlatform] = { text: '', img: null };
         return this.state.news[this.state.activeNews][this.state.activePlatform];
       },
 
       switchNews: function(id) {
         this.state.activeNews = id;
-        document.querySelectorAll('.news-tab').forEach((b, idx) => {
-          b.classList.toggle('active', (idx + 1) === id);
-        });
+        document.querySelectorAll('.news-tab').forEach((b, idx) => b.classList.toggle('active', (idx + 1) === id));
         this.refreshEditorInputs();
         this.updatePreviewContent();
       },
 
       setPlatform: function(id) {
         this.state.activePlatform = id;
-        
-        // Update Buttons UI
         document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
         document.querySelector(`.platform-btn.${id === 'facebook' ? 'fb' : id === 'linkedin' ? 'li' : id === 'instagram' ? 'ig' : 'x'}`).classList.add('active');
-        
-        // Show correct mockup
         document.querySelectorAll('.social-card').forEach(c => c.classList.remove('active'));
         document.getElementById(`card-${id}`).classList.add('active');
-
-        // Refresh inputs for this specific platform
         this.refreshEditorInputs();
         this.updatePreviewContent();
       },
@@ -638,7 +390,7 @@
         document.getElementById('editor-platform-label').innerText = this.state.activePlatform.charAt(0).toUpperCase() + this.state.activePlatform.slice(1);
         document.getElementById('post-text').value = data.text || '';
         document.getElementById('char-count').innerText = `${(data.text || '').length} car.`;
-        document.querySelector('#image-drop .file-input-text').innerText = data.img ? '📷 Immagine pronta' : '📁 Carica immagine per questo canale';
+        document.querySelector('#image-drop .file-input-text').innerText = data.img ? '📷 Immagine pronta' : '📁 Carica immagine';
       },
 
       handleAvatarUpload: function(file) {
@@ -648,9 +400,8 @@
           this.state.global.avatar = e.target.result;
           this.updatePreviewGlobal();
           this.saveState();
-          const mini = document.getElementById('avatar-preview-mini');
-          mini.src = e.target.result;
-          mini.style.display = 'block';
+          document.getElementById('avatar-preview-mini').src = e.target.result;
+          document.getElementById('avatar-preview-mini').style.display = 'block';
         };
         reader.readAsDataURL(file);
       },
@@ -659,8 +410,7 @@
         if(!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-          const content = this.getCurrentContent();
-          content.img = e.target.result;
+          this.getCurrentContent().img = e.target.result;
           document.querySelector('#image-drop .file-input-text').innerText = `📷 ${file.name}`;
           this.updatePreviewContent();
           this.saveState();
@@ -668,28 +418,25 @@
         reader.readAsDataURL(file);
       },
 
-      // COPY FUNCTIONS (New Feature)
       copyTextToAll: function() {
-        const currentText = this.getCurrentContent().text;
-        if(!currentText) return;
-        
+        const txt = this.getCurrentContent().text;
+        if(!txt) return;
         CONFIG.platforms.forEach(p => {
             if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
-            this.state.news[this.state.activeNews][p].text = currentText;
+            this.state.news[this.state.activeNews][p].text = txt;
         });
-        alert('Testo copiato su tutti i canali per questa News!');
+        alert('Testo copiato su tutti i canali!');
         this.saveState();
       },
 
       copyImageToAll: function() {
-        const currentImg = this.getCurrentContent().img;
-        if(!currentImg) return;
-        
+        const img = this.getCurrentContent().img;
+        if(!img) return;
         CONFIG.platforms.forEach(p => {
             if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
-            this.state.news[this.state.activeNews][p].img = currentImg;
+            this.state.news[this.state.activeNews][p].img = img;
         });
-        alert('Immagine applicata a tutti i canali per questa News!');
+        alert('Immagine applicata a tutti i canali!');
         this.saveState();
       },
 
@@ -701,26 +448,15 @@
       updatePreviewGlobal: function() {
         document.querySelectorAll('.global-name-text').forEach(el => el.innerText = this.state.global.name);
         document.querySelectorAll('.global-handle-text').forEach(el => el.innerText = this.state.global.handle);
-        document.querySelectorAll('.global-avatar-img').forEach(el => {
-          el.src = this.state.global.avatar || CONFIG.defaultAvatar;
-        });
+        document.querySelectorAll('.global-avatar-img').forEach(el => el.src = this.state.global.avatar || CONFIG.defaultAvatar);
       },
 
       updatePreviewContent: function() {
         const data = this.getCurrentContent();
-        
-        // Update Text
-        const formatted = this.formatText(data.text);
-        document.querySelector(`#card-${this.state.activePlatform} .news-text`).innerHTML = formatted;
-        
-        // Update Image
+        document.querySelector(`#card-${this.state.activePlatform} .news-text`).innerHTML = this.formatText(data.text);
         const imgEl = document.querySelector(`#card-${this.state.activePlatform} .news-image`);
-        if(data.img) {
-          imgEl.src = data.img;
-          imgEl.style.display = 'block';
-        } else {
-          imgEl.style.display = 'none';
-        }
+        imgEl.src = data.img || '';
+        imgEl.style.display = data.img ? 'block' : 'none';
       },
 
       updateUI: function() {
@@ -736,99 +472,166 @@
         this.updatePreviewGlobal();
       },
 
-      // --- SAVE/LOAD ---
-      saveState: function() {
-        localStorage.setItem('socialStudioStateV3', JSON.stringify(this.state));
-      },
-
+      saveState: function() { localStorage.setItem('socialStudioStateV3_5', JSON.stringify(this.state)); },
       loadState: function() {
-        const saved = localStorage.getItem('socialStudioStateV3');
-        if(saved) {
+        const saved = localStorage.getItem('socialStudioStateV3_5');
+        if(saved) try { this.state = { ...this.state, ...JSON.parse(saved) }; } catch(e) {}
+      },
+
+      // --- JSON Project Management ---
+      exportJSON: function() {
+        const blob = new Blob([JSON.stringify(this.state)], {type: "application/json"});
+        saveAs(blob, `SocialStudio_Project_News${this.state.activeNews}.json`);
+      },
+
+      triggerImport: function() { document.getElementById('json-import-input').click(); },
+
+      importJSON: function(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
           try {
-            const parsed = JSON.parse(saved);
-            this.state = { ...this.state, ...parsed, global: { ...this.state.global, ...parsed.global } };
-          } catch(e) { console.error("Error loading state", e); }
-        }
+            this.state = JSON.parse(e.target.result);
+            this.updateUI();
+            alert("Progetto caricato correttamente!");
+          } catch(err) { alert("Errore nel file JSON"); }
+        };
+        reader.readAsText(file);
       },
 
-      resetCurrent: function() {
-        if(confirm("Cancellare il contenuto di questa news (per tutti i canali)?")) {
-          this.state.news[this.state.activeNews] = {}; // Wipes all platforms for this news
-          this.saveState();
-          this.refreshEditorInputs();
-          this.updatePreviewContent();
-        }
-      },
+      // --- Improved HTML Export ---
+      exportHTML: function() {
+        const platforms = ['facebook', 'linkedin', 'x', 'instagram'];
+        const selected = platforms.filter(p => document.getElementById(`chk-${p}`).checked);
+        
+        if(selected.length === 0) { alert("Seleziona almeno un canale"); return; }
 
-      // Helper for Asset export
-      dataURItoBlob: function(dataURI) {
-        var byteString = atob(dataURI.split(',')[1]);
-        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-        var ab = new ArrayBuffer(byteString.length);
-        var ia = new Uint8Array(ab);
-        for (var i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-        return new Blob([ab], {type: mimeString});
+        let gridContent = '';
+        const currentP = this.state.activePlatform;
+
+        selected.forEach(p => {
+          this.setPlatform(p);
+          const cardEl = document.getElementById(`card-${p}`);
+          const clone = cardEl.cloneNode(true);
+          // Force layout properties for export
+          clone.style.display = 'block';
+          clone.style.width = '100%';
+          clone.style.maxWidth = '500px'; 
+          
+          // Badge colors
+          let badgeColor = '#333';
+          if(p==='facebook') badgeColor = '#1877F2';
+          if(p==='linkedin') badgeColor = '#0A66C2';
+          if(p==='instagram') badgeColor = 'linear-gradient(45deg, #f09433 0%, #dc2743 100%)';
+          
+          const labelName = p === 'x' ? 'X (Twitter)' : p.charAt(0).toUpperCase() + p.slice(1);
+
+          gridContent += `
+            <div class="mockup-item">
+               <div class="platform-badge" style="background:${badgeColor}">${labelName}</div>
+               ${clone.outerHTML}
+            </div>
+          `;
+        });
+
+        this.setPlatform(currentP); // Restore app state
+
+        const css = document.getElementsByTagName('style')[0].innerHTML;
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><title>Anteprima Social</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  ${css}
+  body { background: #f0f2f5; font-family: 'Inter', sans-serif; display:block; overflow-y:scroll; padding:0; margin:0;}
+  .main-export-container { max-width: 1100px; margin: 40px auto; padding: 20px; }
+  h1 { text-align:center; color:#333; margin-bottom:40px; }
+  
+  /* GRID LAYOUT FOR EXPORT */
+  .mockup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 40px;
+    justify-items: center;
+  }
+  
+  .mockup-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .platform-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  .social-card { 
+    animation: none !important; 
+    opacity: 1 !important; 
+    transform: none !important; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+</style>
+</head>
+<body>
+  <div class="main-export-container">
+    <h1>Anteprima Social</h1>
+    <div class="mockup-grid">
+      ${gridContent}
+    </div>
+  </div>
+</body>
+</html>`;
+
+        const blob = new Blob([htmlContent], {type: "text/html;charset=utf-8"});
+        saveAs(blob, `Mockup_Anteprima.html`);
       },
 
       downloadZip: function() {
         const zip = new JSZip();
-        const currentNewsId = this.state.activeNews;
-        const currentPlatform = this.state.activePlatform;
-        
-        // 1. CREATE ASSETS FOLDER
-        const assetsFolder = zip.folder(`assets_News${currentNewsId}`);
-        const newsData = this.state.news[currentNewsId] || {};
+        const nid = this.state.activeNews;
+        const cp = this.state.activePlatform;
+        const folder = zip.folder(`assets_News${nid}`);
+        const nData = this.state.news[nid] || {};
 
         CONFIG.platforms.forEach(p => {
-          const pData = newsData[p];
-          if (pData) {
-            // Save Text Copy
-            if (pData.text) {
-              assetsFolder.file(`${p}_copy.txt`, pData.text);
-            }
-            // Save Source Image
-            if (pData.img) {
-              // Convert base64 -> blob
-              const blob = this.dataURItoBlob(pData.img);
-              assetsFolder.file(`${p}_image.png`, blob);
-            }
-          }
+          if(nData[p]?.text) folder.file(`${p}_copy.txt`, nData[p].text);
+          if(nData[p]?.img) folder.file(`${p}_image.png`, this.dataURItoBlob(nData[p].img));
         });
 
-        // 2. GENERATE MOCKUPS SEQUENTIALLY
-        const processPlatform = async (index) => {
-            if(index >= CONFIG.platforms.length) {
-                this.setPlatform(currentPlatform); // Restore view
-                const content = await zip.generateAsync({type:"blob"});
-                saveAs(content, `SocialMockups_News${currentNewsId}.zip`);
-                return;
-            }
-
-            const p = CONFIG.platforms[index];
-            this.setPlatform(p);
-            
-            // Wait for fonts to be ready before capturing!
-            await document.fonts.ready;
-            // Small delay to allow img render
-            await new Promise(r => setTimeout(r, 100)); 
-            
-            const card = document.getElementById(`card-${p}`);
-            const canvas = await html2canvas(card, { 
-              scale: 2, 
-              useCORS: true,
-              // Legacy option to help with font rendering
-              letterRendering: 1 
-            });
-            
-            canvas.toBlob(blob => {
-                zip.file(`Mockup_News${currentNewsId}_${p}.png`, blob);
-                processPlatform(index + 1);
-            });
+        const process = async (idx) => {
+          if(idx >= CONFIG.platforms.length) {
+            this.setPlatform(cp);
+            saveAs(await zip.generateAsync({type:"blob"}), `SocialMockups_News${nid}.zip`);
+            return;
+          }
+          const p = CONFIG.platforms[idx];
+          this.setPlatform(p);
+          await document.fonts.ready;
+          await new Promise(r=>setTimeout(r,100));
+          const canvas = await html2canvas(document.getElementById(`card-${p}`), {scale:2, useCORS:true});
+          canvas.toBlob(blob => { zip.file(`Mockup_${p}.png`, blob); process(idx+1); });
         };
+        process(0);
+      },
 
-        processPlatform(0);
+      dataURItoBlob: function(dataURI) {
+        var byteString = atob(dataURI.split(',')[1]);
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+        return new Blob([ab], {type: mimeString});
       }
     };
 
