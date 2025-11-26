@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Studio 3.7 - Responsive Export</title>
+  <title>Social Studio 4.6 - Compact X Layout</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -148,34 +148,92 @@
     .sc-image-container { width: 100%; background: #f0f2f5; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .sc-image { width: 100%; height: auto; display: block; }
     
+    /* FOOTER & ICONS */
     .sc-footer { padding: 8px 16px; border-top: 1px solid #eee; }
     .sc-actions { display: flex; justify-content: space-between; align-items: center; color: #65676B; font-weight: 600; font-size: 0.9rem; }
-    .action-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; }
+    .action-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; cursor: pointer; }
     
+    /* Generic Icon Class */
+    .action-icon { width: 22px; height: 22px; fill: #65676B; }
+
+    /* FACEBOOK */
     .card-facebook { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
     .card-facebook .sc-name { color: #050505; }
     .card-facebook .sc-text { padding-top: 4px; }
     .fb-stats { padding: 10px 16px; display: flex; justify-content: space-between; font-size: 0.85rem; color: #65676B; border-bottom: 1px solid #dadde1; }
+    .card-facebook .action-icon { fill: none; stroke: #65676B; stroke-width: 2; width: 20px; height: 20px; }
     
+    /* LINKEDIN */
     .card-linkedin { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; border-radius: 8px; }
     .card-linkedin .sc-name { font-size: 0.9rem; font-weight: 600; }
     .card-linkedin .sc-meta { font-size: 0.75rem; }
     .card-linkedin .sc-text { font-size: 0.9rem; padding-bottom: 8px; }
+    .card-linkedin .action-icon { fill: none; stroke: #666666; stroke-width: 1.7; width: 22px; height: 22px; }
     
+    /* INSTAGRAM */
     .card-instagram { border-radius: 3px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     .card-instagram .sc-header { align-items: center; padding: 14px 16px; }
     .card-instagram .sc-name { font-size: 0.9rem; }
-    .card-instagram .sc-avatar { width: 32px; height: 32px; padding: 2px; border: 1px solid #dbdbdb; }
+    .card-instagram .sc-avatar { width: 32px; height: 32px; padding: 0; border: none; }
     .card-instagram .sc-text { padding: 12px 16px; font-size: 0.9rem; }
     .ig-actions { padding: 10px 16px 0 16px; display: flex; justify-content: space-between; }
     .ig-icons-left { display: flex; gap: 16px; }
+    .card-instagram .action-icon { fill: none; stroke: #262626; stroke-width: 2px; width: 24px; height: 24px; } 
     
+    /* X (TWITTER) - FIXED COMPACT SPACING */
     .card-x { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; border-radius: 16px; }
-    .card-x .sc-name { font-weight: 700; font-size: 0.95rem; }
-    .card-x .sc-handle { font-weight: 400; color: #536471; margin-left: 4px; }
-    .card-x .sc-text { font-size: 1rem; padding-bottom: 12px; margin-top: -5px; }
+    
+    .card-x .sc-header {
+      display: flex;
+      align-items: flex-start; 
+      padding-bottom: 2px; /* DRASTICALLY REDUCED */
+    }
+    
+    .card-x .sc-info {
+      flex-direction: row; 
+      align-items: baseline; 
+      justify-content: flex-start;
+      flex-wrap: wrap; 
+      gap: 4px; 
+    }
+    
+    .card-x .sc-name { 
+      font-weight: 700; 
+      font-size: 15px; 
+      color: #0F1419; 
+    }
+    
+    .card-x .sc-icon-verified { 
+      width: 18px; 
+      height: 18px; 
+      vertical-align: text-bottom;
+      margin-left: 0; 
+    }
+
+    .card-x .sc-handle { 
+      font-weight: 400; 
+      color: #536471; 
+      margin-left: 0; 
+      font-size: 15px;
+    }
+    
+    .card-x .sc-meta {
+      margin-top: 0;
+      color: #536471;
+      font-size: 15px;
+    }
+
+    /* FIX: PULL TEXT UP */
+    .card-x .sc-text { 
+        font-size: 15px; 
+        padding: 0 16px 12px 66px; 
+        margin-top: -8px; /* NEGATIVE MARGIN TO CLOSE GAP */
+        line-height: 1.4; 
+    }
+    
     .card-x .sc-image-container { border-radius: 16px; border: 1px solid #cfd9de; margin: 0 16px 16px 16px; width: auto; overflow: hidden; }
     .x-footer { padding: 12px 16px; border-top: 1px solid #eff3f4; display: flex; justify-content: space-between; color: #536471; }
+    .card-x .action-icon { fill: none; stroke: #536471; stroke-width: 1.5px; width: 18px; height: 18px; } 
   </style>
 </head>
 <body>
@@ -183,7 +241,7 @@
   <div class="app-container">
     <aside class="editor-panel">
       <div class="editor-header">
-        <div class="brand-title"><span class="brand-dot"></span> Social Studio 3.7</div>
+        <div class="brand-title"><span class="brand-dot"></span> Social Studio 4.6</div>
       </div>
 
       <div class="editor-scroll">
@@ -266,6 +324,7 @@
       </div>
 
       <div class="mockup-wrapper">
+        
         <div id="card-facebook" class="social-card card-facebook active">
           <div class="sc-header">
             <img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img">
@@ -273,27 +332,117 @@
           <div class="sc-text news-text">...</div>
           <div class="sc-image-container"><img src="" class="sc-image news-image" style="display:none"></div>
           <div class="fb-stats"><span>👍 1.2K</span><span>45 commenti</span></div>
-          <div class="sc-footer"><div class="sc-actions"><div class="action-item">Mi piace</div><div class="action-item">Commenta</div><div class="action-item">Condividi</div></div></div>
+          <div class="sc-footer">
+            <div class="sc-actions">
+              <div class="action-item">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                  <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+                Mi piace
+              </div>
+              <div class="action-item">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+                Commenta
+              </div>
+              <div class="action-item">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                  <path d="M15 8v-5l9 9-9 9v-5c-10 0-14 5-14 5s2-13 14-13z" stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+                Condividi
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="card-linkedin" class="social-card card-linkedin">
           <div class="sc-header"><img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img"><div class="sc-info"><div class="sc-name global-name-text">Page</div><div class="sc-meta">Azienda</div><div class="sc-meta">2 ore fa • 🌐</div></div><div class="sc-more">•••</div></div>
           <div class="sc-text news-text">...</div>
           <div class="sc-image-container"><img src="" class="sc-image news-image" style="display:none"></div>
-          <div class="sc-footer"><div class="sc-actions"><div class="action-item">Consiglia</div><div class="action-item">Commenta</div><div class="action-item">Diffondi</div><div class="action-item">Invia</div></div></div>
+          <div class="sc-footer">
+             <div class="sc-actions">
+               <div class="action-item">
+                 <svg class="action-icon" viewBox="0 0 24 24">
+                   <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" stroke-linejoin="round" stroke-linecap="round"></path>
+                 </svg>
+                 Consiglia
+               </div>
+               <div class="action-item">
+                 <svg class="action-icon" viewBox="0 0 24 24">
+                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke-linejoin="round" stroke-linecap="round"></path>
+                 </svg>
+                 Commenta
+               </div>
+               <div class="action-item">
+                 <svg class="action-icon" viewBox="0 0 24 24"><path d="M23 12l-4.61 7H16l4-6H8a3.92 3.92 0 00-4 3.84V17a4 4 0 00.19 1.24L5.12 21H3l-.73-2.22A6.4 6.4 0 012 16.82V17a6 6 0 016-6h12l-4-6h2.39z"></path></svg>
+                 Diffondi
+               </div>
+               <div class="action-item">
+                 <svg class="action-icon" viewBox="0 0 24 24"><path d="M21 3L0 10l7.66 4.26L16 8l-6.26 8.34L14 24l7-21z"></path></svg>
+                 Invia
+               </div>
+             </div>
+          </div>
         </div>
 
         <div id="card-x" class="social-card card-x">
-          <div class="sc-header"><img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img"><div class="sc-info" style="flex-direction:row; align-items:center;"><div class="sc-name global-name-text">Page</div><div class="sc-handle global-handle-text">@handle</div><div class="sc-meta" style="margin-left:4px">· 2h</div></div><div class="sc-more">•••</div></div>
-          <div class="sc-text news-text" style="padding: 0 16px 8px 60px; margin-top: -15px;">...</div>
+          <div class="sc-header">
+            <img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img">
+            <div class="sc-info">
+              <div class="sc-name global-name-text">Page</div>
+              <svg class="sc-icon-verified" viewBox="0 0 24 24" aria-label="Account verificato">
+                <g>
+                  <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.02-3.06-1.12-4.2-1.14-1.14-2.81-1.58-4.2-1.12C14.02 2.01 12.8 1.25 11.38 1.25c-1.42 0-2.64.76-3.34 2.09-1.39-.46-3.06-.02-4.2 1.12-1.14 1.14-1.58 2.81-1.12 4.2C1.36 9.33.6 10.55.6 11.98c0 1.43.76 2.65 2.09 3.34-.46 1.39-.02 3.06 1.12 4.2 1.14 1.14 2.81 1.58 4.2 1.12.67 1.31 1.91 2.09 3.34 2.09 1.43 0 2.67-.78 3.34-2.09 1.39.46 3.06.02 4.2-1.12 1.14-1.14 1.58-2.81 1.12-4.2 1.31-.67 2.09-1.91 2.09-3.34z" fill="#1D9BF0"></path>
+                  <path d="M9.76 17.24c-.37 0-.72-.15-.98-.41l-4.03-4.03c-.54-.54-.54-1.41 0-1.95s1.41-.54 1.95 0l3.06 3.06 6.69-6.69c.54-.54 1.41-.54 1.95 0s.54 1.41 0 1.95l-7.67 7.67c-.26.26-.61.41-.98.41z" fill="#ffffff"></path>
+                </g>
+              </svg>
+              <div class="sc-handle global-handle-text">@handle</div>
+              <div class="sc-meta">· 19min</div>
+            </div>
+            <div class="sc-more">•••</div>
+          </div>
+          <div class="sc-text news-text">...</div>
           <div class="sc-image-container" style="margin-left: 60px; width: calc(100% - 76px);"><img src="" class="sc-image news-image" style="display:none"></div>
-          <div class="x-footer" style="padding-left: 60px;"><span>💬 24</span><span>RT 120</span><span>♡ 890</span></div>
+          <div class="x-footer" style="padding-left: 60px;">
+             <div class="action-item">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+                <span>24</span>
+             </div>
+             <div class="action-item">
+                <svg class="action-icon" viewBox="0 0 24 24">
+                   <path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.364 9.48.002 8.02 4.5 3.88zM16.5 20.12l-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2H9.5V4h4c2.209 0 4 1.79 4 4v8.45l2.136-1.93 1.362 1.46-4.498 4.14z" stroke-width="0.5"></path>
+                </svg>
+                <span>120</span>
+             </div>
+             <div class="action-item">
+                <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <span>890</span>
+             </div>
+             <div class="action-item">
+               <svg class="action-icon" viewBox="0 0 24 24"><g><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path></g></svg>
+               <span>12K</span>
+             </div>
+          </div>
         </div>
 
         <div id="card-instagram" class="social-card card-instagram">
           <div class="sc-header"><img src="https://via.placeholder.com/40" class="sc-avatar global-avatar-img"><div class="sc-info"><div class="sc-name global-name-text">Page</div></div><div class="sc-more">•••</div></div>
           <div class="sc-image-container"><img src="" class="sc-image news-image" style="display:none"></div>
-          <div class="ig-actions"><div class="ig-icons-left"><span>♡</span><span>💬</span><span>✈️</span></div><div>🔖</div></div>
+          <div class="ig-actions">
+            <div class="ig-icons-left">
+              <svg class="action-icon" viewBox="0 0 24 24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.843 1.175 1.222 1.175 2.066 0a4.21 4.21 0 0 1 3.843-1.941z"></path></svg>
+              <svg class="action-icon" viewBox="0 0 24 24" style="margin-left:15px"><path d="M20.656 17.008a9.993 9.993 0 10-3.59 3.615L22 22z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path></svg>
+              <svg class="action-icon" viewBox="0 0 24 24" style="margin-left:15px"><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="2" y2="10.083"></line><polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></polygon></svg>
+            </div>
+            <div>
+              <svg class="action-icon" viewBox="0 0 24 24"><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg>
+            </div>
+          </div>
           <div style="padding: 0 16px; font-weight:600; font-size:0.9rem; margin-top:8px;">1.234 "Mi piace"</div>
           <div class="sc-text news-text">...</div>
         </div>
