@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Studio 5.8 - Final Refined Edition</title>
+  <title>Social Studio 5.9 - Complete Rationalized Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
 
     .app-container { display: flex; width: 100%; height: 100%; }
 
-    /* --- SIDEBAR (EDITOR) --- */
+    /* --- SIDEBAR & ACCORDIONS --- */
     .editor-panel {
       width: 420px;
       background: var(--panel-bg);
@@ -56,37 +56,35 @@
 
     .editor-scroll { flex: 1; overflow-y: auto; }
 
-    /* ACCORDION SYSTEM */
     .accordion-item { border-bottom: 1px solid var(--border); }
     .accordion-header {
       width: 100%; padding: 16px 20px; background: #fff; border: none;
       display: flex; justify-content: space-between; align-items: center;
       cursor: pointer; font-weight: 700; font-size: 0.8rem; color: var(--primary);
-      text-transform: uppercase; letter-spacing: 0.05em; transition: background 0.2s;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
     .accordion-header:hover { background: #f9fafb; }
-    .accordion-header::after { content: '▾'; font-size: 1.1rem; transition: transform 0.3s; color: var(--text-sec); }
+    .accordion-header::after { content: '▾'; font-size: 1.1rem; transition: transform 0.3s; }
     .accordion-item.active .accordion-header::after { transform: rotate(180deg); }
     .accordion-content { display: none; padding: 20px; background: #fff; }
     .accordion-item.active .accordion-content { display: block; }
 
-    /* FORM ELEMENTS */
+    /* INPUTS & HELPERS */
     .input-group { margin-bottom: 15px; }
     .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
     .form-input, .form-textarea {
       width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
       font-family: inherit; font-size: 0.9rem;
     }
-    .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .helper-link { font-size: 0.75rem; color: var(--fb-color); text-decoration: underline; cursor: pointer; margin-top: 5px; display: inline-block; font-weight: 500; }
     .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; }
 
-    .btn { padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; text-align: center; transition: all 0.2s; }
+    .btn { padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; text-align: center; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text-main); }
     .btn-success { background: #10B981; color: white; }
-    .btn-full { width: 100%; margin-top: 10px; }
 
-    /* --- PREVIEW PANEL (MOCKUPS) --- */
+    /* --- PREVIEW PANEL --- */
     .preview-panel {
       flex: 1; background-color: var(--bg-color);
       background-image: radial-gradient(#E5E7EB 1px, transparent 1px); background-size: 20px 20px;
@@ -104,7 +102,7 @@
     .platform-btn.ig.active { background: var(--ig-gradient); }
     .platform-btn.x.active { background: #000; }
 
-    .mockup-wrapper { width: 500px; max-width: 100%; position: relative; }
+    .mockup-wrapper { width: 500px; max-width: 100%; }
     
     .social-card {
       background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);
@@ -113,47 +111,35 @@
     }
     .social-card.active { display: block; }
 
-    /* CARD HEADER & AVATARS */
+    /* MOCKUP ELEMENTS */
     .sc-header { padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; }
     .sc-avatar-container { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
     .sc-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-    
     .avatar-collab-1 { width: 28px; height: 28px; border-radius: 50%; position: absolute; top: 0; left: 0; z-index: 2; border: 2px solid white; display: none; object-fit: cover; }
     .avatar-collab-2 { width: 28px; height: 28px; border-radius: 50%; position: absolute; bottom: 0; right: 0; z-index: 1; border: 2px solid white; display: none; object-fit: cover; }
-    
     .is-collab .sc-avatar { display: none; }
     .is-collab .avatar-collab-1, .is-collab .avatar-collab-2 { display: block; }
 
-    .sc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-    .sc-name { font-weight: 700; font-size: 0.95rem; color: #000; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; }
+    .sc-name { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; }
     .conjunction { font-weight: 400; color: #65676B; }
-    
     .sc-icon-verified { width: 16px; height: 16px; display: none; }
     .verified-active { display: inline-block; }
-
     .sc-meta { font-size: 0.8rem; color: #65676B; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
     .fb-world-icon { width: 12px; height: 12px; filter: grayscale(1); opacity: 0.6; }
 
-    /* CARD CONTENT */
     .sc-text { padding: 4px 16px 12px; font-size: 15px; line-height: 1.3333; color: #050505; white-space: pre-wrap; }
-    .sc-image-container { width: 100%; background: #f0f2f5; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .sc-image { width: 100%; height: auto; display: block; }
+    .sc-image-container { width: 100%; background: #f0f2f5; min-height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .sc-image { width: 100%; display: block; }
 
-    /* INTERACTION ICONS (MATCHING ATTACHED IMAGE) */
-    .sc-footer { padding: 4px 12px; border-top: 1px solid #ebedf0; }
-    .sc-actions { display: flex; justify-content: space-around; }
-    .action-item { 
-        display: flex; align-items: center; gap: 8px; padding: 10px 12px; 
-        color: #65676B; font-weight: 600; font-size: 0.9rem; cursor: pointer;
-    }
-    /* SVG paths matching immagine.png tratti sottili */
+    /* FOOTER ICONS (RICHIESTA 5) */
+    .sc-footer { border-top: 1px solid #eee; }
+    .sc-actions { display: flex; justify-content: space-around; padding: 4px 0; }
+    .action-item { display: flex; align-items: center; gap: 8px; padding: 10px; color: #65676B; font-weight: 600; font-size: 0.9rem; }
     .action-icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* Instagram Specific Fixes */
     .card-instagram .sc-avatar-container { width: 32px; height: 32px; }
     .card-instagram .avatar-collab-1, .card-instagram .avatar-collab-2 { width: 22px; height: 22px; }
 
-    /* Editor Specifics */
     .news-selector { display: flex; gap: 4px; background: #f1f1f1; padding: 4px; border-radius: 8px; margin-bottom: 15px; }
     .news-tab { flex: 1; border: none; background: transparent; padding: 6px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text-sec); }
     .news-tab.active { background: #fff; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -163,61 +149,64 @@
 
   <div class="app-container">
     <aside class="editor-panel">
-      <div class="editor-header">
-        <div class="brand-title"><span class="brand-dot"></span> Social Studio 5.8</div>
-      </div>
-
+      <div class="editor-header"><div class="brand-title"><span class="brand-dot"></span> Social Studio 5.9</div></div>
       <div class="editor-scroll">
+        
         <div class="accordion-item active">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">1. Profilo Principale</button>
+          <button class="accordion-header" onclick="app.toggleAccordion(this)">1. Profilo Pagina</button>
           <div class="accordion-content">
             <div class="input-group"><label>Logo / Avatar</label><input type="file" id="global-avatar" accept="image/*" class="form-input"></div>
             <div class="input-group"><label>Nome Pagina</label><input type="text" id="global-name" class="form-input" value="Poste Italiane"></div>
             <div class="input-group"><label>Handle (@username)</label><input type="text" id="global-handle" class="form-input" value="@posteitaliane"></div>
-            <label class="checkbox-item"><input type="checkbox" id="main-verified" checked> Account Verificato</label>
+            <label class="checkbox-item"><input type="checkbox" id="main-verified" checked> Badge Verificato</label>
           </div>
         </div>
 
         <div class="accordion-item">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">2. Collaborazione (Collab)</button>
+          <button class="accordion-header" onclick="app.toggleAccordion(this)">2. Collaborazione</button>
           <div class="accordion-content">
-            <label class="checkbox-item" style="margin-bottom:15px"><input type="checkbox" id="collab-active"> Attiva Collaborazione</label>
-            <div id="collab-fields" style="display:none; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+            <label class="checkbox-item" style="margin-bottom:15px"><input type="checkbox" id="collab-active"> Attiva Collab (FB/IG)</label>
+            <div id="collab-fields" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
                 <div class="input-group"><label>Logo Partner</label><input type="file" id="collab-avatar" accept="image/*" class="form-input"></div>
-                <div class="input-group"><label>Nome Partner (FB)</label><input type="text" id="collab-name" class="form-input" value="Partner"></div>
-                <div class="input-group"><label>Handle Partner (IG)</label><input type="text" id="collab-handle" class="form-input" value="@partner"></div>
+                <div class="input-group"><input type="text" id="collab-name" class="form-input" placeholder="Partner" value="Partner"></div>
+                <div class="input-group"><input type="text" id="collab-handle" class="form-input" placeholder="@partner" value="@partner"></div>
                 <label class="checkbox-item"><input type="checkbox" id="collab-verified" checked> Partner Verificato</label>
             </div>
           </div>
         </div>
 
         <div class="accordion-item">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">3. Contenuto del Post</button>
+          <button class="accordion-header" onclick="app.toggleAccordion(this)">3. Editor Contenuto</button>
           <div class="accordion-content">
             <div class="news-selector" id="news-tabs"></div>
-            <div style="background: #eef2ff; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 0.75rem; font-weight: 700; color: var(--primary);">
-                Editing: <span id="editor-platform-label">Facebook</span>
+            <div style="background: #eef2ff; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 0.75rem; font-weight: 700; color: var(--primary);">Modifica: <span id="editor-platform-label">FACEBOOK</span></div>
+            
+            <div class="input-group">
+                <label>Testo del Post</label>
+                <textarea class="form-textarea" id="post-text" rows="5"></textarea>
+                <span class="helper-link" onclick="app.copyTextToAll()">Copia questo testo su tutti i canali</span>
             </div>
-            <div class="input-group"><label>Testo del Post</label><textarea class="form-textarea" id="post-text" rows="5" placeholder="Scrivi il contenuto..."></textarea></div>
-            <div class="input-group"><label>Immagine Post</label><input type="file" id="post-image" accept="image/*" class="form-input"></div>
+            
+            <div class="input-group">
+                <label>Immagine Post</label>
+                <input type="file" id="post-image" accept="image/*" class="form-input">
+                <span class="helper-link" onclick="app.copyImageToAll()">Applica immagine a tutti i canali</span>
+            </div>
           </div>
         </div>
 
         <div class="accordion-item">
           <button class="accordion-header" onclick="app.toggleAccordion(this)">4. Esportazione</button>
           <div class="accordion-content">
-            <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <button class="btn btn-secondary btn-full" onclick="app.exportJSON()">💾 JSON</button>
-                <button class="btn btn-secondary btn-full" onclick="app.triggerImport()">📂 Carica</button>
-            </div>
-            <div class="checkbox-group">
+            <div style="display:flex; gap:10px; margin-bottom:20px;"><button class="btn btn-secondary" style="flex:1" onclick="app.exportJSON()">💾 JSON</button><button class="btn btn-secondary" style="flex:1" onclick="app.triggerImport()">📂 Carica</button></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom:15px;">
                 <label class="checkbox-item"><input type="checkbox" id="chk-facebook" checked> Facebook</label>
                 <label class="checkbox-item"><input type="checkbox" id="chk-linkedin" checked> LinkedIn</label>
                 <label class="checkbox-item"><input type="checkbox" id="chk-x" checked> X</label>
                 <label class="checkbox-item"><input type="checkbox" id="chk-instagram" checked> Instagram</label>
             </div>
-            <button class="btn btn-success btn-full" onclick="app.exportHTML()">🌐 Anteprima HTML</button>
-            <button class="btn btn-primary btn-full" onclick="app.downloadZip()" style="margin-top:10px">📦 Scarica ZIP</button>
+            <button class="btn btn-success btn-full" onclick="app.exportHTML()">🌐 Esporta Anteprima HTML</button>
+            <button class="btn btn-primary btn-full" onclick="app.downloadZip()" style="margin-top:10px">📦 Scarica ZIP Mockups</button>
           </div>
         </div>
         <input type="file" id="json-input" style="display:none" onchange="app.importJSON(this)">
@@ -235,16 +224,9 @@
       <div class="mockup-wrapper">
         <div id="card-facebook" class="social-card active">
           <div class="sc-header">
-            <div class="sc-avatar-container">
-                <img src="" class="sc-avatar main-avatar-img">
-                <img src="" class="avatar-collab-1 main-avatar-img">
-                <img src="" class="avatar-collab-2 partner-avatar-img">
-            </div>
+            <div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"><img src="" class="avatar-collab-1 main-avatar-img"><img src="" class="avatar-collab-2 partner-avatar-img"></div>
             <div class="sc-info">
-                <div class="sc-name">
-                    <span class="n1">Page</span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#1877F2"/></svg>
-                    <span class="conj"></span><span class="n2"></span><svg class="sc-icon-verified partner-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#1877F2"/></svg>
-                </div>
+                <div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#1877F2"/></svg><span class="conj"></span><span class="n2"></span><svg class="sc-icon-verified partner-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#1877F2"/></svg></div>
                 <div class="sc-meta">1 h · <svg class="fb-world-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
             </div>
           </div>
@@ -264,13 +246,11 @@
             <div class="sc-image-container"><img src="" class="sc-image news-image"></div>
             <div class="sc-text news-text">...</div>
         </div>
-
         <div id="card-linkedin" class="social-card">
             <div class="sc-header"><div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"></div><div class="sc-info"><div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#0A66C2"/></svg></div><div class="sc-meta">Azienda • 2h · 🌍</div></div></div>
             <div class="sc-text news-text">...</div>
             <div class="sc-image-container"><img src="" class="sc-image news-image"></div>
         </div>
-
         <div id="card-x" class="social-card">
             <div class="sc-header"><div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"></div><div class="sc-info"><div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#000"/></svg></div><div class="sc-meta">19 min</div></div></div>
             <div class="sc-text news-text">...</div>
@@ -284,7 +264,7 @@
     const app = {
       state: {
         activeNews: 1, activePlatform: 'facebook',
-        global: { name: 'Poste Italiane', handle: '@posteitaliane', avatar: null, isVerified: true, collabActive: false, collabName: 'Partner', collabHandle: '@partner', collabAvatar: null, collabVerified: true },
+        global: { name: 'Poste Italiane', handle: '@posteitaliane', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
         news: {}
       },
 
@@ -371,6 +351,24 @@
         });
       },
 
+      copyTextToAll() {
+        const txt = this.getCurrentData().text;
+        ['facebook','linkedin','x','instagram'].forEach(p => {
+            if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
+            this.state.news[this.state.activeNews][p].text = txt;
+        });
+        this.updatePreviewContent(); alert("Testo copiato su tutti i canali!");
+      },
+
+      copyImageToAll() {
+        const img = this.getCurrentData().img;
+        ['facebook','linkedin','x','instagram'].forEach(p => {
+            if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
+            this.state.news[this.state.activeNews][p].img = img;
+        });
+        this.updatePreviewContent(); alert("Immagine copiata su tutti i canali!");
+      },
+
       switchNews(id) { this.state.activeNews = id; this.renderTabs(); this.updateUI(); },
       setPlatform(p) {
         this.state.activePlatform = p;
@@ -379,7 +377,7 @@
         this.updateUI();
       },
 
-      exportJSON() { saveAs(new Blob([JSON.stringify(this.state, null, 2)], {type:"application/json"}), `Studio_N${this.state.activeNews}.json`); },
+      exportJSON() { saveAs(new Blob([JSON.stringify(this.state, null, 2)], {type:"application/json"}), `Progetto_Studio_N${this.state.activeNews}.json`); },
       triggerImport() { document.getElementById('json-input').click(); },
       importJSON(input) { const r = new FileReader(); r.onload = (e) => { this.state = JSON.parse(e.target.result); this.updateUI(); }; r.readAsText(input.files[0]); },
 
@@ -415,8 +413,8 @@
         zip.generateAsync({type:"blob"}).then(c => saveAs(c, `Mockups_N${this.state.activeNews}.zip`));
       },
 
-      saveState() { localStorage.setItem('socialStudio_v5_8', JSON.stringify(this.state)); },
-      loadState() { const saved = localStorage.getItem('socialStudio_v5_8'); if(saved) this.state = JSON.parse(saved); }
+      saveState() { localStorage.setItem('socialStudio_v5_9', JSON.stringify(this.state)); },
+      loadState() { const saved = localStorage.getItem('socialStudio_v5_9'); if(saved) this.state = JSON.parse(saved); }
     };
     window.onload = () => app.init();
   </script>
