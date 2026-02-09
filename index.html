@@ -303,7 +303,51 @@
         news: {}
       },
 
-      init() { this.loadState(); this.renderTabs(); this.bindEvents(); this.updateUI(); },
+      init() { 
+          this.injectResources(); // Inietta HTML e CSS per il video
+          this.loadState(); 
+          this.renderTabs(); 
+          this.bindEvents(); 
+          this.updateUI(); 
+      },
+
+      // Iniezione dinamica campi Video e CSS per non modificare HTML manualmente
+      injectResources() {
+          // 1. CSS per il player video
+          if (!document.getElementById('video-styles')) {
+              const style = document.createElement('style');
+              style.id = 'video-styles';
+              style.innerHTML = `
+                .video-container { position: relative; width: 100%; height: 100%; min-height: 200px; background: #000; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer; }
+                .video-cover { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
+                .play-btn { width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 2px solid white; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+                .play-btn:hover { transform: scale(1.1); background: rgba(200,0,0,0.8); }
+                .play-btn::after { content: ''; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent white; margin-left: 4px; }
+                .native-video { width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+                .playing .video-cover, .playing .play-btn { display: none; }
+                .playing .native-video { z-index: 3; }
+              `;
+              document.head.appendChild(style);
+          }
+
+          // 2. HTML Input Campi Video (dopo l'input immagine)
+          const imgGroup = document.querySelector('#post-image') ? document.querySelector('#post-image').closest('.input-group') : null;
+          if (imgGroup && !document.getElementById('post-video-url')) {
+              const div = document.createElement('div');
+              div.innerHTML = `
+                <div class="input-group" style="margin-top:15px; padding-top:15px; border-top:1px dashed #E5E7EB;">
+                    <label>Video URL (MP4)</label>
+                    <input type="text" id="post-video-url" class="form-input" placeholder="https://..." style="margin-bottom:5px;">
+                    <span class="helper-link" onclick="app.copyVideoToAll()">Applica video a tutti</span>
+                </div>
+                <div class="input-group">
+                    <label>Cover Video (Opzionale)</label>
+                    <input type="file" id="post-video-cover" accept="image/*" class="form-input">
+                </div>
+              `;
+              imgGroup.parentNode.insertBefore(div, imgGroup.nextSibling);
+          }
+      },
 
       toggleAccordion(btn) {
         const item = btn.parentElement;
@@ -312,7 +356,9 @@
       },
 
       renderTabs() {
-        const container = document.getElementById('news-tabs'); container.innerHTML = '';
+        const container = document.getElementById('news-tabs'); 
+        if(!container) return;
+        container.innerHTML = '';
         for(let i=1; i<=5; i++) {
           const btn = document.createElement('button'); btn.className = `news-tab ${i===this.state.activeNews ? 'active' : ''}`;
           btn.innerText = `N${i}`; btn.onclick = () => this.switchNews(i); container.appendChild(btn);
@@ -321,7 +367,9 @@
 
       bindEvents() {
         const listen = (id, key, sub = 'global', isCheck = false) => {
-            document.getElementById(id).addEventListener(isCheck ? 'change' : 'input', (e) => {
+            const el = document.getElementById(id);
+            if(!el) return;
+            el.addEventListener(isCheck ? 'change' : 'input', (e) => {
                 this.state[sub][key] = isCheck ? e.target.checked : e.target.value;
                 if(id === 'collab-active') document.getElementById('collab-fields').style.display = e.target.checked ? 'block' : 'none';
                 this.updateUI(); this.saveState();
@@ -329,10 +377,23 @@
         };
         listen('global-name', 'name'); listen('global-handle', 'handle'); listen('main-verified', 'isVerified', 'global', true);
         listen('collab-active', 'collabActive', 'global', true); listen('collab-name', 'collabName'); listen('collab-handle', 'collabHandle'); listen('collab-verified', 'collabVerified', 'global', true);
-        document.getElementById('post-text').addEventListener('input', (e) => { this.getCurrentData().text = e.target.value; this.updatePreviewContent(); this.saveState(); });
-        document.getElementById('global-avatar').onchange = (e) => this.handleFile(e.target.files[0], 'avatar');
-        document.getElementById('collab-avatar').onchange = (e) => this.handleFile(e.target.files[0], 'collabAvatar');
-        document.getElementById('post-image').onchange = (e) => this.handleFile(e.target.files[0], 'postImage');
+        
+        const txt = document.getElementById('post-text');
+        if(txt) txt.addEventListener('input', (e) => { this.getCurrentData().text = e.target.value; this.updatePreviewContent(); this.saveState(); });
+        
+        // Listener per Video URL - Delega o check esistenza
+        const vidUrl = document.getElementById('post-video-url');
+        if(vidUrl) vidUrl.addEventListener('input', (e) => {
+            this.getCurrentData().videoUrl = e.target.value;
+            this.updatePreviewContent(); this.saveState();
+        });
+
+        const av = document.getElementById('global-avatar'); if(av) av.onchange = (e) => this.handleFile(e.target.files[0], 'avatar');
+        const cv = document.getElementById('collab-avatar'); if(cv) cv.onchange = (e) => this.handleFile(e.target.files[0], 'collabAvatar');
+        const pi = document.getElementById('post-image'); if(pi) pi.onchange = (e) => this.handleFile(e.target.files[0], 'postImage');
+        
+        const pvc = document.getElementById('post-video-cover');
+        if(pvc) pvc.onchange = (e) => this.handleFile(e.target.files[0], 'videoCover');
       },
 
       handleFile(file, type) {
@@ -340,6 +401,7 @@
         reader.onload = (e) => {
             if(type === 'avatar') this.state.global.avatar = e.target.result;
             else if(type === 'collabAvatar') this.state.global.collabAvatar = e.target.result;
+            else if(type === 'videoCover') this.getCurrentData().videoCover = e.target.result;
             else this.getCurrentData().img = e.target.result;
             this.updateUI(); this.saveState();
         };
@@ -349,28 +411,43 @@
       getCurrentData() {
         const nid = this.state.activeNews, pid = this.state.activePlatform;
         if(!this.state.news[nid]) this.state.news[nid] = {};
-        if(!this.state.news[nid][pid]) this.state.news[nid][pid] = { text: '', img: null };
+        if(!this.state.news[nid][pid]) this.state.news[nid][pid] = { text: '', img: null, videoUrl: '', videoCover: null };
         return this.state.news[nid][pid];
       },
 
       updateUI() {
         const g = this.state.global;
-        document.getElementById('editor-platform-label').innerText = this.state.activePlatform.toUpperCase();
+        const platLabel = document.getElementById('editor-platform-label');
+        if(platLabel) platLabel.innerText = this.state.activePlatform.toUpperCase();
+        
         document.querySelectorAll('.social-card').forEach(card => {
             const isCollab = g.collabActive && (card.id === 'card-facebook' || card.id === 'card-instagram');
-            card.querySelector('.sc-avatar-container').classList.toggle('is-collab', isCollab);
+            const avatarContainer = card.querySelector('.sc-avatar-container');
+            if(avatarContainer) avatarContainer.classList.toggle('is-collab', isCollab);
+            
             const n1 = card.querySelector('.n1'), n2 = card.querySelector('.n2'), conj = card.querySelector('.conj');
-            n1.innerText = (card.id === 'card-instagram' || card.id === 'card-x') ? g.handle : g.name;
+            if(n1) n1.innerText = (card.id === 'card-instagram' || card.id === 'card-x') ? g.handle : g.name;
+            
             if(isCollab && n2) {
                 conj.innerHTML = `<span class="conjunction">${card.id === 'card-facebook' ? ' con ' : ', '}</span>`;
                 n2.innerText = card.id === 'card-facebook' ? g.collabName : g.collabHandle;
-                card.querySelector('.partner-v').classList.toggle('verified-active', g.collabVerified);
-            } else if(n2) { conj.innerText = ''; n2.innerText = ''; card.querySelector('.partner-v').classList.remove('verified-active'); }
-            card.querySelector('.main-v').classList.toggle('verified-active', g.isVerified);
+                const pv = card.querySelector('.partner-v');
+                if(pv) pv.classList.toggle('verified-active', g.collabVerified);
+            } else if(n2) { 
+                conj.innerText = ''; n2.innerText = ''; 
+                const pv = card.querySelector('.partner-v');
+                if(pv) pv.classList.remove('verified-active'); 
+            }
+            const mainV = card.querySelector('.main-v');
+            if(mainV) mainV.classList.toggle('verified-active', g.isVerified);
         });
         document.querySelectorAll('.main-avatar-img').forEach(img => img.src = g.avatar || 'https://via.placeholder.com/40');
         document.querySelectorAll('.partner-avatar-img').forEach(img => img.src = g.collabAvatar || 'https://via.placeholder.com/40');
-        document.getElementById('post-text').value = this.getCurrentData().text || '';
+        
+        const current = this.getCurrentData();
+        const pt = document.getElementById('post-text'); if(pt) pt.value = current.text || '';
+        const pvu = document.getElementById('post-video-url'); if(pvu) pvu.value = current.videoUrl || '';
+        
         this.updatePreviewContent();
       },
 
@@ -379,9 +456,29 @@
             const card = document.getElementById(`card-${pid}`);
             if(card) {
                 const data = this.state.news[this.state.activeNews][pid];
-                card.querySelector('.news-text').innerText = data.text || '';
-                const img = card.querySelector('.news-image');
-                img.src = data.img || ''; img.style.display = data.img ? 'block' : 'none';
+                const textEl = card.querySelector('.news-text');
+                if(textEl) textEl.innerText = data.text || '';
+                
+                // LOGICA VIDEO vs IMMAGINE
+                const container = card.querySelector('.sc-image-container');
+                if(container) {
+                    if (data.videoUrl && data.videoUrl.trim() !== '') {
+                        // Modo VIDEO
+                        const coverSrc = data.videoCover || data.img || 'https://via.placeholder.com/500x300?text=No+Cover';
+                        container.innerHTML = `
+                            <div class="video-container" onclick="this.classList.add('playing'); this.querySelector('video').play()">
+                                <img src="${coverSrc}" class="video-cover">
+                                <div class="play-btn"></div>
+                                <video src="${data.videoUrl}" class="native-video" playsinline loop controls></video>
+                            </div>
+                        `;
+                    } else {
+                        // Modo IMMAGINE STANDARD
+                        container.innerHTML = `<img src="${data.img || ''}" class="sc-image news-image">`;
+                        const img = container.querySelector('.news-image');
+                        if(img) img.style.display = data.img ? 'block' : 'none';
+                    }
+                }
             }
         });
       },
@@ -394,8 +491,17 @@
         });
         this.updatePreviewContent(); alert("Testo copiato su tutti i canali!");
       },
+      
+      copyVideoToAll() {
+        const current = this.getCurrentData();
+        ['facebook','linkedin','x','instagram'].forEach(p => {
+            if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
+            this.state.news[this.state.activeNews][p].videoUrl = current.videoUrl;
+            this.state.news[this.state.activeNews][p].videoCover = current.videoCover;
+        });
+        this.updatePreviewContent(); alert("Video e Cover applicati a tutti!");
+      },
 
-      // NUOVA FUNZIONE COPIA CLIPBOARD
       copyCurrentText(btn) {
           const text = document.getElementById('post-text').value;
           if(!text) return;
@@ -432,7 +538,7 @@
       },
 
       exportJSON() {
-        const prefix = document.getElementById('export-filename').value || 'Progetto';
+        const prefix = document.getElementById('export-filename') ? document.getElementById('export-filename').value : 'Progetto';
         const filename = `${prefix}_${this.getTimestamp()}.json`;
         saveAs(new Blob([JSON.stringify(this.state, null, 2)], {type:"application/json"}), filename); 
       },
@@ -440,15 +546,17 @@
       manualSave() {
         this.saveState();
         const btn = document.getElementById('btn-save-browser');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = "✅ Salvataggio riuscito!";
-        btn.style.background = "#10B981"; 
-        btn.style.color = "white";
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = ""; 
-            btn.style.color = "";
-        }, 2000);
+        if(btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Salvataggio riuscito!";
+            btn.style.background = "#10B981"; 
+            btn.style.color = "white";
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = ""; 
+                btn.style.color = "";
+            }, 2000);
+        }
       },
 
       resetApp() {
@@ -459,9 +567,11 @@
             global: { name: 'Nome Pagina', handle: '@nomepagina', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
             news: {}
         };
-        document.getElementById('global-avatar').value = '';
-        document.getElementById('collab-avatar').value = '';
-        document.getElementById('post-image').value = '';
+        const ga = document.getElementById('global-avatar'); if(ga) ga.value = '';
+        const ca = document.getElementById('collab-avatar'); if(ca) ca.value = '';
+        const pi = document.getElementById('post-image'); if(pi) pi.value = '';
+        const pvu = document.getElementById('post-video-url'); if(pvu) pvu.value = ''; 
+        const pvc = document.getElementById('post-video-cover'); if(pvc) pvc.value = '';
         this.renderTabs();
         this.updateUI();
       },
@@ -470,7 +580,8 @@
         const current = this.state.activeNews;
         if(!confirm(`Vuoi cancellare testi e immagini solo per la Notizia N${current}?`)) return;
         this.state.news[current] = {};
-        document.getElementById('post-image').value = '';
+        const pi = document.getElementById('post-image'); if(pi) pi.value = '';
+        const pvu = document.getElementById('post-video-url'); if(pvu) pvu.value = '';
         this.updateUI();
         this.saveState();
       },
@@ -491,7 +602,20 @@
             grid += `<div style="display:flex; flex-direction:column; align-items:center;"><div style="background:${color}; color:white; padding:6px 16px; border-radius:20px; font-weight:600; margin-bottom:12px; font-size:0.9rem;">${label}</div>${card.outerHTML}</div>`;
         });
         const styles = document.getElementById('main-styles').innerHTML;
-        const html = `<html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles} body { background:#f0f2f5; font-family:'Inter', sans-serif; padding:40px; } .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }</style></head><body><div class="grid">${grid}</div></body></html>`;
+        // Stili video per l'export
+        const videoStyles = `.video-container { position: relative; width: 100%; height: 100%; min-height: 200px; background: #000; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer; }
+            .video-cover { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
+            .play-btn { width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 2px solid white; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+            .play-btn:hover { transform: scale(1.1); background: rgba(200,0,0,0.8); }
+            .play-btn::after { content: ''; border-style: solid; border-width: 10px 0 10px 18px; border-color: transparent transparent transparent white; margin-left: 4px; }
+            .native-video { width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+            .playing .video-cover, .playing .play-btn { display: none; }
+            .playing .native-video { z-index: 3; }`;
+            
+        // NOTA: Qui uso <\/script> con la backslash per evitare di rompere il parser
+        const scriptCode = "document.querySelectorAll('.video-container').forEach(v=>v.onclick=function(){this.classList.add('playing');this.querySelector('video').play()})";
+        
+        const html = `<html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles} ${videoStyles} body { background:#f0f2f5; font-family:'Inter', sans-serif; padding:40px; } .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }</style></head><body><div class="grid">${grid}</div><script>${scriptCode}<\/script></body></html>`;
         saveAs(new Blob([html], {type: "text/html"}), `Anteprima_N${this.state.activeNews}.html`);
       },
 
@@ -502,7 +626,7 @@
         const cp = this.state.activePlatform;
         for(const p of selected) {
             this.setPlatform(p); await new Promise(r => setTimeout(r, 150));
-            const canvas = await html2canvas(document.getElementById(`card-${p}`), {scale:2, useCORS:true});
+            const canvas = await html2canvas(document.getElementById(`card-${p}`), {scale:2, useCORS:true, allowTaint: true});
             const blob = await new Promise(r => canvas.toBlob(r));
             zip.file(`${p}.png`, blob);
         }
