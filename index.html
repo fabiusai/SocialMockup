@@ -172,7 +172,7 @@
           <button class="accordion-header" onclick="app.toggleAccordion(this)">1. Profilo Pagina</button>
           <div class="accordion-content">
             <div class="input-group"><label>Logo / Avatar</label><input type="file" id="global-avatar" accept="image/*" class="form-input"></div>
-            <div class="input-group"><label>Nome Pagina</label><input type="text" id="global-name" class="form-input" value="Poste Italiane"></div>
+            <div class="input-group"><label>Nome Pagina</label><input type="text" id="global-name" class="form-input" value="Nome Pagina"></div>
             <div class="input-group"><label>Handle (@username)</label><input type="text" id="global-handle" class="form-input" value="@posteitaliane"></div>
             <label class="checkbox-item"><input type="checkbox" id="main-verified" checked> Badge Verificato</label>
           </div>
@@ -299,7 +299,7 @@
     const app = {
       state: {
         activeNews: 1, activePlatform: 'facebook',
-        global: { name: 'Poste Italiane', handle: '@posteitaliane', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
+        global: { name: 'Nome Pagina', handle: '@nomepagina', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
         news: {}
       },
 
@@ -456,7 +456,7 @@
         localStorage.removeItem('socialStudio_v5_9');
         this.state = {
             activeNews: 1, activePlatform: 'facebook',
-            global: { name: 'Poste Italiane', handle: '@posteitaliane', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
+            global: { name: 'Nome Pagina', handle: '@nomepagina', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
             news: {}
         };
         document.getElementById('global-avatar').value = '';
