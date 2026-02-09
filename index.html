@@ -614,13 +614,21 @@
         let grid = '';
         selected.forEach(p => {
             const card = document.getElementById(`card-${p}`).cloneNode(true);
-            card.style.display = 'block'; card.style.width = '100%'; card.style.maxWidth = '500px'; card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+            card.style.display = 'block'; 
+            // Reset larghezze per garantire fluidità nel container
+            card.style.width = '100%'; 
+            card.style.maxWidth = '500px'; 
+            card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+            
             let color = p === 'facebook' ? '#1877F2' : p === 'linkedin' ? '#0A66C2' : p === 'instagram' ? 'linear-gradient(45deg, #f09433 0%, #dc2743 100%)' : '#000';
             const label = p === 'x' ? 'X (Twitter)' : p.charAt(0).toUpperCase() + p.slice(1);
-            grid += `<div style="display:flex; flex-direction:column; align-items:center;"><div style="background:${color}; color:white; padding:6px 16px; border-radius:20px; font-weight:600; margin-bottom:12px; font-size:0.9rem;">${label}</div>${card.outerHTML}</div>`;
+            // Wrapper per la card che gestisce la larghezza massima
+            grid += `<div class="card-wrapper"><div class="platform-badge" style="background:${color};">${label}</div>${card.outerHTML}</div>`;
         });
+
         const styles = document.getElementById('main-styles').innerHTML;
-        // Stili video per l'export AGGIORNATI CON FIX CENTRATURA
+        
+        // Stili Video (mantenuti)
         const videoStyles = `.video-container { position: relative; width: 100%; height: 100%; min-height: 200px; background: #000; overflow:hidden; cursor:pointer; display: block; }
             .video-cover { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
             .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 3px solid white; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
@@ -629,10 +637,54 @@
             .native-video { width: 100%; height: 100%; object-fit: cover; display: block; z-index: 0; }
             .playing .video-cover, .playing .play-btn { display: none; }
             .playing .native-video { z-index: 3; }`;
+
+        // Stili Responsive e Fix Scroll
+        // NOTA: Usiamo !important per sovrascrivere le regole 'body' ereditate dall'editor
+        const responsiveStyles = `
+            body { 
+                background: #f0f2f5 !important; 
+                font-family: 'Inter', sans-serif; 
+                padding: 20px !important;
+                height: auto !important; /* Abilita lo scroll verticale */
+                overflow-y: auto !important; /* Abilita lo scroll verticale */
+                display: block !important; /* Rimuove il layout flex dell'app */
+            }
+            .grid { 
+                display: grid; 
+                grid-template-columns: 1fr; /* Default mobile: 1 colonna */
+                gap: 40px; 
+                max-width: 1200px; 
+                margin: 0 auto; 
+                padding-bottom: 50px;
+            }
+            @media (min-width: 768px) {
+                .grid { 
+                    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Desktop: griglia affiancata */
+                }
+            }
+            .card-wrapper {
+                display: flex; 
+                flex-direction: column; 
+                align-items: center;
+                width: 100%;
+            }
+            .platform-badge {
+                color: white; 
+                padding: 6px 16px; 
+                border-radius: 20px; 
+                font-weight: 600; 
+                margin-bottom: 12px; 
+                font-size: 0.9rem;
+            }
+            .social-card {
+                width: 100% !important; /* Assicura che la card non esca dallo schermo su mobile */
+                max-width: 500px !important;
+            }
+        `;
             
         const scriptCode = "document.querySelectorAll('.video-container').forEach(v=>v.onclick=function(){this.classList.add('playing');this.querySelector('video').play()})";
         
-        const html = `<html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles} ${videoStyles} body { background:#f0f2f5; font-family:'Inter', sans-serif; padding:40px; } .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }</style></head><body><div class="grid">${grid}</div><script>${scriptCode}<\/script></body></html>`;
+        const html = `<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles} ${videoStyles} ${responsiveStyles}</style></head><body><div class="grid">${grid}</div><script>${scriptCode}<\/script></body></html>`;
         saveAs(new Blob([html], {type: "text/html"}), `Anteprima_N${this.state.activeNews}.html`);
       },
 
