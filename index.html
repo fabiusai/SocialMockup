@@ -361,7 +361,10 @@
                 <label class="checkbox-item"><input type="checkbox" id="chk-instagram" checked> Instagram</label>
             </div>
             <button class="btn btn-success btn-full" onclick="app.exportHTML()">🌐 Esporta Anteprima HTML</button>
-            <button class="btn btn-primary btn-full" onclick="app.downloadZip()" style="margin-top:10px">📦 Scarica ZIP Mockups</button>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn btn-primary" style="flex:1" onclick="app.downloadZip()">📸 Mockups (.png)</button>
+                <button class="btn btn-secondary" style="flex:1; border-color:var(--primary); color:var(--primary)" onclick="app.downloadAssets()">🗂️ Asset (.zip)</button>
+            </div>
 
             <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
                 <button class="btn btn-primary btn-full" id="btn-save-browser" onclick="app.manualSave()" style="margin-bottom:10px; background-color: var(--text-sec);">💾 Salva nel Browser</button>
@@ -820,47 +823,74 @@
         const selected = ['facebook', 'linkedin', 'x', 'instagram'].filter(p => document.getElementById(`chk-${p}`).checked);
         if(selected.length === 0) { alert("Seleziona canali"); return; }
         
-        const prefix = document.getElementById('export-filename').value.trim() || 'Progetto';
+        const project = document.getElementById('export-filename').value.trim() || 'Progetto';
         const cp = this.state.activePlatform;
 
-        // Disabilita temporaneamente le animazioni per evitare screenshot sbiaditi
-        const noAnimStyle = document.createElement('style');
-        noAnimStyle.innerHTML = ".social-card { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; display: block !important; }";
-        document.head.appendChild(noAnimStyle);
+        // Disabilita temporaneamente animazioni/transizioni per evitare screenshot sbiaditi
+        const style = document.createElement('style');
+        style.innerHTML = `* { transition: none !important; animation: none !important; } .social-card { display: block !important; opacity: 1 !important; transform: none !important; }`;
+        document.head.appendChild(style);
 
         try {
+            // Nasconde tutte le card per gestirle manualmente
+            document.querySelectorAll('.social-card').forEach(c => c.style.display = 'none');
+
             for(const p of selected) {
-                // Nascondo tutti e mostro solo quello corrente manualmente per sicurezza
-                document.querySelectorAll('.social-card').forEach(c => c.style.display = 'none');
+                // Attiva manualmente la card specifica
                 const card = document.getElementById(`card-${p}`);
                 card.style.display = 'block';
-                
-                // Aggiorno lo stato UI (per i tab button)
+                // Aggiorna tab visuale
                 document.querySelectorAll('.platform-btn').forEach(b => b.classList.toggle('active', b.classList.contains(p.slice(0,2))));
-
-                // Attesa rendering DOM
-                await new Promise(r => setTimeout(r, 100));
-
-                const canvas = await html2canvas(card, {
-                    scale: 2, 
-                    useCORS: true, 
-                    allowTaint: true,
-                    backgroundColor: null
-                });
                 
-                canvas.toBlob(blob => {
-                    saveAs(blob, `${p}_${prefix}.png`);
-                });
+                await new Promise(r => setTimeout(r, 100)); // Breve attesa rendering
 
-                // Pausa tecnica per evitare blocchi del browser su download multipli
-                await new Promise(r => setTimeout(r, 500));
+                const canvas = await html2canvas(card, {scale:2, useCORS:true, allowTaint: true, backgroundColor:null});
+                // Salvataggio separato: es. facebook_Progetto.png
+                canvas.toBlob(b => saveAs(b, `${p}_${project}.png`));
+                
+                await new Promise(r => setTimeout(r, 400)); // Pausa per evitare blocchi browser
             }
         } finally {
-            // Pulizia e ripristino
-            noAnimStyle.remove();
-            document.querySelectorAll('.social-card').forEach(c => c.style.display = ''); // Rimuove style inline
+            style.remove();
+            document.querySelectorAll('.social-card').forEach(c => c.style.display = ''); // Rimuove stili inline
             this.setPlatform(cp);
         }
+      },
+
+      async downloadAssets() {
+        const selected = ['facebook', 'linkedin', 'x', 'instagram'].filter(p => document.getElementById(`chk-${p}`).checked);
+        if(selected.length === 0) { alert("Seleziona canali"); return; }
+
+        const zip = new JSZip();
+        const project = document.getElementById('export-filename').value.trim() || 'Social_Assets';
+        let txtReport = `PROJECT: ${project}\nEXPORT DATE: ${new Date().toLocaleString()}\n\n`;
+
+        selected.forEach(p => {
+            const data = this.state.news[this.state.activeNews][p] || {};
+            
+            // Costruzione File TXT
+            txtReport += `==================================================\n`;
+            txtReport += `PLATFORM: ${p.toUpperCase()}\n`;
+            txtReport += `==================================================\n`;
+            txtReport += `${data.text || '(Nessun testo)'}\n\n`;
+
+            if(data.videoUrl && data.videoUrl.trim() !== '') {
+                txtReport += `[VIDEO LINK]: ${data.videoUrl}\n`;
+                // Aggiunta Cover Video allo ZIP se presente
+                if(data.videoCover) {
+                    const ext = data.videoCover.match(/[^:/]\/(\w+);/) ? data.videoCover.match(/[^:/]\/(\w+);/)[1] : 'png';
+                    zip.file(`${p}_cover.${ext}`, data.videoCover.split(',')[1], {base64: true});
+                }
+            } else if (data.img) {
+                // Aggiunta Immagine Standard allo ZIP
+                const ext = data.img.match(/[^:/]\/(\w+);/) ? data.img.match(/[^:/]\/(\w+);/)[1] : 'png';
+                zip.file(`${p}_image.${ext}`, data.img.split(',')[1], {base64: true});
+            }
+            txtReport += `\n\n`;
+        });
+
+        zip.file(`${project}_Copy.txt`, txtReport);
+        zip.generateAsync({type:"blob"}).then(c => saveAs(c, `${project}_Assets.zip`));
       },
 
       saveState() { localStorage.setItem('socialStudio_v5_9', JSON.stringify(this.state)); },
