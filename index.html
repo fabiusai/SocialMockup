@@ -817,18 +817,50 @@
       },
 
       async downloadZip() {
-        const zip = new JSZip();
         const selected = ['facebook', 'linkedin', 'x', 'instagram'].filter(p => document.getElementById(`chk-${p}`).checked);
         if(selected.length === 0) { alert("Seleziona canali"); return; }
+        
+        const prefix = document.getElementById('export-filename').value.trim() || 'Progetto';
         const cp = this.state.activePlatform;
-        for(const p of selected) {
-            this.setPlatform(p); await new Promise(r => setTimeout(r, 150));
-            const canvas = await html2canvas(document.getElementById(`card-${p}`), {scale:2, useCORS:true, allowTaint: true});
-            const blob = await new Promise(r => canvas.toBlob(r));
-            zip.file(`${p}.png`, blob);
+
+        // Disabilita temporaneamente le animazioni per evitare screenshot sbiaditi
+        const noAnimStyle = document.createElement('style');
+        noAnimStyle.innerHTML = ".social-card { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; display: block !important; }";
+        document.head.appendChild(noAnimStyle);
+
+        try {
+            for(const p of selected) {
+                // Nascondo tutti e mostro solo quello corrente manualmente per sicurezza
+                document.querySelectorAll('.social-card').forEach(c => c.style.display = 'none');
+                const card = document.getElementById(`card-${p}`);
+                card.style.display = 'block';
+                
+                // Aggiorno lo stato UI (per i tab button)
+                document.querySelectorAll('.platform-btn').forEach(b => b.classList.toggle('active', b.classList.contains(p.slice(0,2))));
+
+                // Attesa rendering DOM
+                await new Promise(r => setTimeout(r, 100));
+
+                const canvas = await html2canvas(card, {
+                    scale: 2, 
+                    useCORS: true, 
+                    allowTaint: true,
+                    backgroundColor: null
+                });
+                
+                canvas.toBlob(blob => {
+                    saveAs(blob, `${p}_${prefix}.png`);
+                });
+
+                // Pausa tecnica per evitare blocchi del browser su download multipli
+                await new Promise(r => setTimeout(r, 500));
+            }
+        } finally {
+            // Pulizia e ripristino
+            noAnimStyle.remove();
+            document.querySelectorAll('.social-card').forEach(c => c.style.display = ''); // Rimuove style inline
+            this.setPlatform(cp);
         }
-        this.setPlatform(cp);
-        zip.generateAsync({type:"blob"}).then(c => saveAs(c, `Mockups_N${this.state.activeNews}.zip`));
       },
 
       saveState() { localStorage.setItem('socialStudio_v5_9', JSON.stringify(this.state)); },
