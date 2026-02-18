@@ -345,7 +345,10 @@
             
             <div class="editor-badge">
                 <span>Modifica: <span id="editor-platform-label">FACEBOOK</span></span>
-                <button class="copy-mini-btn" onclick="app.copyCurrentText(this)" title="Copia testo negli appunti">📋</button>
+                <div style="display:flex; gap:6px;">
+                    <button class="copy-mini-btn" title="Inserisci Lorem Ipsum" onclick="const l='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud #exercitation ullamco #laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'; document.getElementById('post-text').value=l; app.getCurrentData().text=l; app.updatePreviewContent(); app.saveState();">¶</button>
+                    <button class="copy-mini-btn" onclick="app.copyCurrentText(this)" title="Copia testo negli appunti">📋</button>
+                </div>
             </div>
             
             <div class="input-group">
