@@ -665,6 +665,11 @@
                 const data = this.state.news[this.state.activeNews][pid];
                 const textEl = card.querySelector('.news-text');
                 if(textEl) {
+                    // Formatter per colorare Hashtag e Link
+                    const fmt = (t) => (t||'').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                        .replace(/(#\w+)/g, '<span style="color:#0071e3">$1</span>')
+                        .replace(/(https?:\/\/[^\s]+)/g, '<span style="color:#0071e3">$1</span>');
+
                     if(pid === 'instagram') {
                         textEl.innerHTML = '';
                         const boldSpan = document.createElement('span');
@@ -672,9 +677,12 @@
                         boldSpan.style.marginRight = '6px';
                         boldSpan.innerText = this.state.global.handle.replace('@', '');
                         textEl.appendChild(boldSpan);
-                        textEl.appendChild(document.createTextNode(data.text || ''));
+                        
+                        const contentSpan = document.createElement('span');
+                        contentSpan.innerHTML = fmt(data.text);
+                        textEl.appendChild(contentSpan);
                     } else {
-                        textEl.innerText = data.text || '';
+                        textEl.innerHTML = fmt(data.text);
                     }
                 }
                 
