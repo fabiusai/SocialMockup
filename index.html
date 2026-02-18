@@ -668,7 +668,7 @@
                     // Formatter per colorare Hashtag e Link
                     const fmt = (t) => (t||'').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
                         .replace(/(#\w+)/g, '<span style="color:#0071e3">$1</span>')
-                        .replace(/(https?:\/\/[^\s]+)/g, '<span style="color:#0071e3">$1</span>');
+                        .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#0071e3;text-decoration:none;cursor:pointer;position:relative;z-index:10;" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">$1</a>');
 
                     if(pid === 'instagram') {
                         textEl.innerHTML = '';
