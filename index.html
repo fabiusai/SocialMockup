@@ -601,6 +601,19 @@
         
         const pvc = document.getElementById('post-video-cover');
         if(pvc) pvc.onchange = (e) => this.handleFile(e.target.files[0], 'videoCover');
+
+        // Permette di incollare immagini dagli appunti (es. CTRL+V / CMD+V) direttamente nel post
+        document.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || window.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const file = items[i].getAsFile();
+                    this.handleFile(file, 'postImage');
+                    e.preventDefault();
+                    break;
+                }
+            }
+        });
       },
 
       handleFile(file, type) {
