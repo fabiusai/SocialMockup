@@ -710,6 +710,11 @@
             }
             const mainV = card.querySelector('.main-v');
             if(mainV) mainV.classList.toggle('verified-active', g.isVerified);
+
+            if(card.id === 'card-linkedin') {
+                const meta = card.querySelector('.sc-meta');
+                if(meta) meta.innerHTML = 'Azienda • 2h · <span style="filter: grayscale(1); opacity: 0.6; font-size: 10px;">🌍</span>';
+            }
         });
         document.querySelectorAll('.main-avatar-img').forEach(img => img.src = g.avatar || 'https://via.placeholder.com/40');
         document.querySelectorAll('.partner-avatar-img').forEach(img => img.src = g.collabAvatar || 'https://via.placeholder.com/40');
