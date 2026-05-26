@@ -539,7 +539,7 @@
 
       // Iniezione dinamica campi Video e CSS per non modificare HTML manualmente
       injectResources() {
-          // 1. CSS per il player video
+          // 1. CSS per il player video, Carousel Instagram e Modale
           if (!document.getElementById('video-styles')) {
               const style = document.createElement('style');
               style.id = 'video-styles';
@@ -570,17 +570,85 @@
                 .native-video { width: 100%; height: 100%; object-fit: cover; display: block; z-index: 0; }
                 .playing .video-cover, .playing .play-btn { display: none; }
                 .playing .native-video { z-index: 3; }
+                /* Carousel Instagram */
+                .ig-image-wrap { position: relative; width: 100%; background: #000; display: flex; }
+                .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; width: 100%; scrollbar-width: none; -ms-overflow-style: none; }
+                .carousel-container::-webkit-scrollbar { display: none; }
+                .carousel-slide { flex: 0 0 100%; width: 100%; scroll-snap-align: start; object-fit: cover; aspect-ratio: 4/5; position: relative; }
+                .carousel-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 5; }
+                .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: background 0.2s; }
+                .carousel-dot.active { background: #fff; }
+                
+                /* Modal Styles */
+                .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+                .modal-overlay.open { display: flex; opacity: 1; }
+                .modal-content { background: #f5f5f7; width: 640px; max-width: 95%; max-height: 90vh; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
+                .modal-overlay.open .modal-content { transform: scale(1); }
+                .modal-header { padding: 16px 24px; border-bottom: 1px solid #d2d2d7; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+                .modal-header h3 { font-size: 1.1rem; margin: 0; font-weight: 600; color: #1d1d1f; }
+                .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #86868b; }
+                .modal-body { padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+                .modal-footer { padding: 16px 24px; border-top: 1px solid #d2d2d7; background: #fff; display: flex; justify-content: flex-end; }
+                .carousel-frame-list { display: flex; flex-direction: column; gap: 12px; }
+                .carousel-frame-item { display: flex; gap: 16px; background: #fff; padding: 12px; border-radius: 12px; border: 1px solid #d2d2d7; align-items: center; }
+                .cf-thumb { width: 60px; height: 75px; border-radius: 6px; background: #eee; flex-shrink: 0; position: relative; }
+                .cf-thumb::after { content: attr(data-type); position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.6rem; text-align: center; padding: 2px 0; text-transform: uppercase; font-weight: bold; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
+                .cf-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+                .cf-actions { display: flex; gap: 8px; flex-shrink: 0; }
+                .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #d2d2d7; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #1d1d1f; }
+                .btn-icon:hover { background: #f0f0f0; }
+                .btn-icon.danger { color: #ff3b30; border-color: rgba(255,59,48,0.3); }
               `;
               document.head.appendChild(style);
           }
+          
+          // Inietta HTML Modale
+          if (!document.getElementById('carousel-modal')) {
+              const modal = document.createElement('div');
+              modal.id = 'carousel-modal';
+              modal.className = 'modal-overlay';
+              modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Gestione Carousel (Instagram)</h3>
+                        <button class="modal-close" onclick="app.closeCarouselModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="ios-grid-2">
+                            <button class="btn btn-secondary" onclick="document.getElementById('cf-upload').click()">+ Aggiungi Immagini</button>
+                            <button class="btn btn-secondary" onclick="app.addCarouselFrame('video')">+ Aggiungi Video URL</button>
+                            <input type="file" id="cf-upload" multiple accept="image/*" style="display:none" onchange="app.handleCarouselMediaUpload(this)">
+                        </div>
+                        <div class="carousel-frame-list" id="carousel-frame-list"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="app.closeCarouselModal()">Fatto</button>
+                    </div>
+                </div>
+              `;
+              document.body.appendChild(modal);
+          }
 
-          // 2. HTML Input Campi Video (dopo l'input immagine)
+          // Abilita input multiplo per Carousel standard
+          const imgInp = document.getElementById('post-image');
+          if(imgInp && !imgInp.hasAttribute('multiple')) imgInp.setAttribute('multiple', 'multiple');
+
           const imgGroup = document.querySelector('#post-image') ? document.querySelector('#post-image').closest('.input-group') : null;
+          
+          // Tasto apri modale editor IG Carousel
+          if (imgGroup && !document.getElementById('btn-manage-carousel')) {
+              const btnDiv = document.createElement('div');
+              btnDiv.style.marginTop = '10px';
+              btnDiv.innerHTML = `<button id="btn-manage-carousel" class="btn btn-secondary btn-full" onclick="app.openCarouselModal()">🎨 Gestisci Carousel Avanzato (IG)</button>`;
+              imgGroup.appendChild(btnDiv);
+          }
+
+          // HTML Input Campi Video fallback
           if (imgGroup && !document.getElementById('post-video-url')) {
               const div = document.createElement('div');
               div.innerHTML = `
                 <div class="input-group" style="margin-top:15px; padding-top:15px; border-top:1px dashed #E5E7EB;">
-                    <label>Video URL (MP4)</label>
+                    <label>Video URL (MP4) - Fallback Standard</label>
                     <input type="text" id="post-video-url" class="form-input" placeholder="https://..." style="margin-bottom:5px;">
                     <span class="helper-link" onclick="app.copyVideoToAll()">Applica video a tutti</span>
                 </div>
@@ -591,6 +659,94 @@
               `;
               imgGroup.parentNode.insertBefore(div, imgGroup.nextSibling);
           }
+      },
+      
+      openCarouselModal() {
+          const pid = 'instagram';
+          if(!this.state.news[this.state.activeNews][pid]) this.getCurrentData();
+          let data = this.state.news[this.state.activeNews][pid];
+          if ((!data.igMedia || data.igMedia.length === 0) && data.imgs && data.imgs.length > 0) {
+              data.igMedia = data.imgs.map(src => ({type: 'image', src}));
+          } else if (!data.igMedia) {
+              data.igMedia = [];
+          }
+          this.renderCarouselList();
+          document.getElementById('carousel-modal').classList.add('open');
+      },
+
+      closeCarouselModal() {
+          document.getElementById('carousel-modal').classList.remove('open');
+          this.updateUI(); 
+          this.saveState();
+      },
+
+      renderCarouselList() {
+          const mediaList = this.state.news[this.state.activeNews]['instagram'].igMedia || [];
+          const listEl = document.getElementById('carousel-frame-list');
+          listEl.innerHTML = '';
+          if(mediaList.length === 0) {
+              listEl.innerHTML = '<div style="text-align:center; padding: 20px; color: #86868b; font-size: 0.9rem;">Nessun frame presente. Aggiungi immagini o video per il carousel.</div>';
+              return;
+          }
+          mediaList.forEach((item, index) => {
+              const div = document.createElement('div');
+              div.className = 'carousel-frame-item';
+              let thumbSrc = item.type === 'video' ? (item.cover || 'https://via.placeholder.com/60x75?text=VIDEO') : item.src;
+              let contentHtml = item.type === 'image' 
+                  ? `<div style="font-size: 0.85rem; font-weight:600;">Immagine Frame ${index + 1}</div>`
+                  : `<div style="font-size: 0.85rem; font-weight:600; margin-bottom:6px;">Video Frame ${index + 1}</div>
+                     <input type="text" class="form-input" style="padding:6px 10px; font-size:0.8rem; margin-bottom:6px;" placeholder="URL Video MP4..." value="${item.src || ''}" onchange="app.updateCarouselItem(${index}, 'src', this.value)">
+                     <input type="text" class="form-input" style="padding:6px 10px; font-size:0.8rem;" placeholder="URL Cover (Opzionale)..." value="${item.cover || ''}" onchange="app.updateCarouselItem(${index}, 'cover', this.value)">`;
+
+              div.innerHTML = `
+                  <div class="cf-thumb" data-type="${item.type}" style="background-image: url('${thumbSrc}'); background-size: cover; background-position: center;"></div>
+                  <div class="cf-content">${contentHtml}</div>
+                  <div class="cf-actions">
+                      <button class="btn-icon" onclick="app.moveCarouselItem(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>
+                      <button class="btn-icon" onclick="app.moveCarouselItem(${index}, 1)" ${index === mediaList.length - 1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>
+                      <button class="btn-icon danger" onclick="app.removeCarouselItem(${index})">🗑</button>
+                  </div>
+              `;
+              listEl.appendChild(div);
+          });
+      },
+
+      addCarouselFrame(type) {
+          this.state.news[this.state.activeNews]['instagram'].igMedia.push({ type: 'video', src: '', cover: '' });
+          this.renderCarouselList();
+      },
+
+      updateCarouselItem(index, key, value) {
+          this.state.news[this.state.activeNews]['instagram'].igMedia[index][key] = value;
+      },
+
+      moveCarouselItem(index, dir) {
+          const arr = this.state.news[this.state.activeNews]['instagram'].igMedia;
+          if (index + dir < 0 || index + dir >= arr.length) return;
+          const temp = arr[index];
+          arr[index] = arr[index + dir];
+          arr[index + dir] = temp;
+          this.renderCarouselList();
+      },
+
+      removeCarouselItem(index) {
+          this.state.news[this.state.activeNews]['instagram'].igMedia.splice(index, 1);
+          this.renderCarouselList();
+      },
+
+      handleCarouselMediaUpload(input) {
+          const files = Array.from(input.files);
+          if (files.length === 0) return;
+          const arr = this.state.news[this.state.activeNews]['instagram'].igMedia;
+          Promise.all(files.map(f => new Promise(res => {
+              const r = new FileReader();
+              r.onload = ev => res({ type: 'image', src: ev.target.result });
+              r.readAsDataURL(f);
+          }))).then(results => {
+              arr.push(...results);
+              this.renderCarouselList();
+              input.value = '';
+          });
       },
 
       toggleAccordion(btn) {
@@ -625,14 +781,12 @@
         const txt = document.getElementById('post-text');
         if(txt) txt.addEventListener('input', (e) => { this.getCurrentData().text = e.target.value; this.updatePreviewContent(); this.saveState(); });
         
-        // Listener per Video URL - Delega o check esistenza
         const vidUrl = document.getElementById('post-video-url');
         if(vidUrl) vidUrl.addEventListener('input', (e) => {
             this.getCurrentData().videoUrl = e.target.value;
             this.updatePreviewContent(); this.saveState();
         });
 
-        // Listener Engagement
         const engLikes = document.getElementById('eng-likes');
         if(engLikes) engLikes.addEventListener('input', (e) => { this.getCurrentData().likes = e.target.value; this.updatePreviewContent(); this.saveState(); });
         const engComments = document.getElementById('eng-comments');
@@ -642,12 +796,27 @@
 
         const av = document.getElementById('global-avatar'); if(av) av.onchange = (e) => this.handleFile(e.target.files[0], 'avatar');
         const cv = document.getElementById('collab-avatar'); if(cv) cv.onchange = (e) => this.handleFile(e.target.files[0], 'collabAvatar');
-        const pi = document.getElementById('post-image'); if(pi) pi.onchange = (e) => this.handleFile(e.target.files[0], 'postImage');
+        
+        const pi = document.getElementById('post-image'); 
+        if(pi) pi.onchange = (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                Promise.all(files.map(f => new Promise(res => {
+                    const r = new FileReader();
+                    r.onload = ev => res(ev.target.result);
+                    r.readAsDataURL(f);
+                }))).then(results => {
+                    this.getCurrentData().img = results[0];
+                    this.getCurrentData().imgs = results;
+                    this.getCurrentData().igMedia = results.map(src => ({type: 'image', src}));
+                    this.updateUI(); this.saveState();
+                });
+            }
+        };
         
         const pvc = document.getElementById('post-video-cover');
         if(pvc) pvc.onchange = (e) => this.handleFile(e.target.files[0], 'videoCover');
 
-        // Permette di incollare immagini dagli appunti (es. CTRL+V / CMD+V) direttamente nel post
         document.addEventListener('paste', (e) => {
             const items = (e.clipboardData || window.clipboardData).items;
             for (let i = 0; i < items.length; i++) {
@@ -667,7 +836,11 @@
             if(type === 'avatar') this.state.global.avatar = e.target.result;
             else if(type === 'collabAvatar') this.state.global.collabAvatar = e.target.result;
             else if(type === 'videoCover') this.getCurrentData().videoCover = e.target.result;
-            else this.getCurrentData().img = e.target.result;
+            else {
+                this.getCurrentData().img = e.target.result;
+                this.getCurrentData().imgs = [e.target.result];
+                this.getCurrentData().igMedia = [{type: 'image', src: e.target.result}];
+            }
             this.updateUI(); this.saveState();
         };
         reader.readAsDataURL(file);
@@ -676,7 +849,7 @@
       getCurrentData() {
         const nid = this.state.activeNews, pid = this.state.activePlatform;
         if(!this.state.news[nid]) this.state.news[nid] = {};
-        if(!this.state.news[nid][pid]) this.state.news[nid][pid] = { text: '', img: null, videoUrl: '', videoCover: null, likes: '', comments: '', shares: '' };
+        if(!this.state.news[nid][pid]) this.state.news[nid][pid] = { text: '', img: null, imgs: null, igMedia: [], videoUrl: '', videoCover: null, likes: '', comments: '', shares: '' };
         return this.state.news[nid][pid];
       },
 
@@ -737,7 +910,6 @@
                 const data = this.state.news[this.state.activeNews][pid];
                 const textEl = card.querySelector('.news-text');
                 if(textEl) {
-                    // Formatter per colorare Hashtag e Link
                     const fmt = (t) => (t||'').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
                         .replace(/(#\w+)/g, '<span style="color:#0071e3">$1</span>')
                         .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#0071e3;text-decoration:none;cursor:pointer;position:relative;z-index:10;" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">$1</a>');
@@ -758,11 +930,94 @@
                     }
                 }
                 
-                // LOGICA VIDEO vs IMMAGINE
                 const container = card.querySelector('.sc-image-container');
                 if(container) {
-                    if (data.videoUrl && data.videoUrl.trim() !== '') {
-                        // Modo VIDEO
+                    if (pid === 'instagram') {
+                        let igMedia = data.igMedia || [];
+                        if (igMedia.length === 0 && data.imgs && data.imgs.length > 0) {
+                            igMedia = data.imgs.map(src => ({ type: 'image', src: src }));
+                            data.igMedia = igMedia;
+                        }
+
+                        if (igMedia.length > 0) {
+                            const slides = igMedia.map((item, i) => {
+                                if (item.type === 'video') {
+                                    const coverSrc = item.cover || 'https://via.placeholder.com/500x625?text=VIDEO';
+                                    return `
+                                    <div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:#000;">
+                                        <div class="video-container" style="width:100%;height:100%;aspect-ratio:4/5;" onclick="this.classList.add('playing'); this.querySelector('video').play()">
+                                            <img src="${coverSrc}" class="video-cover" style="object-fit:cover;aspect-ratio:4/5;">
+                                            <div class="play-btn"></div>
+                                            <video src="${item.src}" class="native-video" style="object-fit:cover;aspect-ratio:4/5;" playsinline loop controls></video>
+                                        </div>
+                                    </div>`;
+                                } else {
+                                    return `<img src="${item.src}" class="carousel-slide" style="object-fit:cover;aspect-ratio:4/5;">`;
+                                }
+                            }).join('');
+
+                            if (igMedia.length > 1) {
+                                const dots = igMedia.map((_, i) => `<div class="carousel-dot-ig ${i===0?'active':''}"></div>`).join('');
+                                container.innerHTML = `
+                                    <style>
+                                        .ig-image-wrap-v2 { display: flex; flex-direction: column; width: 100%; background: #fff; }
+                                        .ig-carousel-outer { position: relative; width: 100%; background: #000; display: flex; }
+                                        .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: #737373; transition: opacity 0.2s; padding: 0; }
+                                        .carousel-arrow:hover { opacity: 0.8; background: #fff; }
+                                        .carousel-arrow.prev { left: 10px; }
+                                        .carousel-arrow.next { right: 10px; }
+                                        .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
+                                        .carousel-dots-ig { display: flex; gap: 5px; justify-content: center; padding: 12px 0 0 0; background: #fff; }
+                                        .carousel-dot-ig { width: 6px; height: 6px; border-radius: 50%; background: #A8A8A8; transition: background 0.2s; }
+                                        .carousel-dot-ig.active { background: #0095F6; }
+                                        .carousel-container { scroll-behavior: smooth; }
+                                    </style>
+                                    <div class="ig-image-wrap-v2">
+                                        <div class="ig-carousel-outer">
+                                            <button class="carousel-arrow prev hidden" onclick="
+                                                const c = this.nextElementSibling;
+                                                c.scrollBy({left: -c.offsetWidth, behavior: 'smooth'});
+                                            "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                                            
+                                            <div class="carousel-container" onscroll="
+                                                let idx = Math.round(this.scrollLeft / this.offsetWidth);
+                                                let dots = this.parentElement.nextElementSibling.querySelectorAll('.carousel-dot-ig');
+                                                if(dots.length) dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                                                
+                                                let prev = this.previousElementSibling;
+                                                let next = this.nextElementSibling;
+                                                if(idx === 0) prev.classList.add('hidden'); else prev.classList.remove('hidden');
+                                                if(idx === dots.length - 1) next.classList.add('hidden'); else next.classList.remove('hidden');
+                                            ">
+                                                ${slides}
+                                            </div>
+                                            
+                                            <button class="carousel-arrow next" onclick="
+                                                const c = this.previousElementSibling;
+                                                c.scrollBy({left: c.offsetWidth, behavior: 'smooth'});
+                                            "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+                                        </div>
+                                        <div class="carousel-dots-ig">${dots}</div>
+                                    </div>
+                                `;
+                            } else {
+                                container.innerHTML = `<div class="ig-image-wrap" style="background:#fff;">${slides}</div>`;
+                            }
+                        } else {
+                            if (data.videoUrl && data.videoUrl.trim() !== '') {
+                                const coverSrc = data.videoCover || data.img || 'https://via.placeholder.com/500x625?text=No+Cover';
+                                container.innerHTML = `
+                                    <div class="video-container" onclick="this.classList.add('playing'); this.querySelector('video').play()">
+                                        <img src="${coverSrc}" class="video-cover" style="object-fit:cover;aspect-ratio:4/5;">
+                                        <div class="play-btn"></div>
+                                        <video src="${data.videoUrl}" class="native-video" style="object-fit:cover;aspect-ratio:4/5;" playsinline loop controls></video>
+                                    </div>
+                                `;
+                            } else {
+                                container.innerHTML = `<img src="${data.img || ''}" class="sc-image news-image" style="aspect-ratio:4/5; object-fit:cover; display:${data.img?'block':'none'};">`;
+                            }
+                        }
+                    } else if (data.videoUrl && data.videoUrl.trim() !== '') {
                         const coverSrc = data.videoCover || data.img || 'https://via.placeholder.com/500x300?text=No+Cover';
                         container.innerHTML = `
                             <div class="video-container" onclick="this.classList.add('playing'); this.querySelector('video').play()">
@@ -772,14 +1027,12 @@
                             </div>
                         `;
                     } else {
-                        // Modo IMMAGINE STANDARD
                         container.innerHTML = `<img src="${data.img || ''}" class="sc-image news-image">`;
                         const img = container.querySelector('.news-image');
                         if(img) img.style.display = data.img ? 'block' : 'none';
                     }
                 }
 
-                // LOGICA ENGAGEMENT
                 const lk = parseInt(data.likes) || 0;
                 const cm = parseInt(data.comments) || 0;
                 const sh = parseInt(data.shares) || 0;
@@ -791,7 +1044,6 @@
                         const lkEl = card.querySelector('.fb-eng-likes'); if(lkEl) { lkEl.style.display = lk ? 'flex' : 'none'; card.querySelector('.fb-likes-count').innerText = lk; }
                         const cmEl = card.querySelector('.fb-eng-comments'); if(cmEl) { cmEl.style.display = cm ? 'inline' : 'none'; card.querySelector('.fb-comments-count').innerText = cm; }
                         const shEl = card.querySelector('.fb-eng-shares'); if(shEl) { shEl.style.display = sh ? 'inline' : 'none'; card.querySelector('.fb-shares-count').innerText = sh; }
-                        // Gestione pallino di separazione tra commenti e condivisioni
                         const fbSharesWrap = card.querySelector('.fb-eng-shares');
                         if(fbSharesWrap) {
                             fbSharesWrap.innerHTML = (cm ? ' • ' : '') + '<span class="fb-shares-count">' + sh + '</span> condivisioni';
@@ -857,12 +1109,18 @@
       },
 
       copyImageToAll() {
-        const img = this.getCurrentData().img;
+        const current = this.getCurrentData();
+        const imgToCopy = current.img;
         ['facebook','linkedin','x','instagram'].forEach(p => {
             if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
-            this.state.news[this.state.activeNews][p].img = img;
+            this.state.news[this.state.activeNews][p].img = imgToCopy;
+            if (p === 'instagram' && current.imgs) {
+                this.state.news[this.state.activeNews][p].imgs = current.imgs;
+            } else {
+                this.state.news[this.state.activeNews][p].imgs = [imgToCopy];
+            }
         });
-        this.updatePreviewContent(); alert("Immagine copiata su tutti i canali!");
+        this.updatePreviewContent(); alert("Immagine applicata a tutti! (Solo la prima su canali non-IG)");
       },
 
       switchNews(id) { this.state.activeNews = id; this.renderTabs(); this.updateUI(); },
@@ -959,14 +1217,8 @@
         });
 
         const styles = document.getElementById('main-styles').innerHTML;
-        const videoStyles = `.video-container { position: relative; width: 100%; height: 100%; min-height: 200px; background: #000; overflow:hidden; cursor:pointer; display: block; }
-            .video-cover { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
-            .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 68px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 3px solid white; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); backdrop-filter: blur(2px); }
-            .play-btn:hover { transform: translate(-50%, -50%) scale(1.1); background: rgba(0,0,0,0.7); }
-            .play-btn::after { content: ''; border-style: solid; border-width: 12px 0 12px 22px; border-color: transparent transparent transparent white; margin-left: 6px; }
-            .native-video { width: 100%; height: 100%; object-fit: cover; display: block; z-index: 0; }
-            .playing .video-cover, .playing .play-btn { display: none; }
-            .playing .native-video { z-index: 3; }`;
+        // Recupera dinamicamente gli stili iniettati per video e carousel
+        const videoStyles = document.getElementById('video-styles') ? document.getElementById('video-styles').innerHTML : '';
 
         const responsiveStyles = `
             body { background: #f0f2f5 !important; font-family: 'Inter', sans-serif; padding: 20px !important; height: auto !important; overflow-y: auto !important; display: block !important; }
