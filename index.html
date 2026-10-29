@@ -1,1336 +1,946 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Social Studio 6.1</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Studio 7.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style id="main-styles">
+:root{
+  --primary:#0071e3;--primary-hover:#0077ED;--bg-body:#F5F5F7;--border:#D2D2D7;--border-light:#E5E5EA;
+  --text-main:#1D1D1F;--text-sec:#86868B;--danger:#FF3B30;--ok:#34C759;--warn:#FF9500;
+  --fb-color:#1877F2;--li-color:#0A66C2;--ig-color:#d62976;--x-color:#000;
+  --radius:12px;--shadow-sm:0 1px 2px rgba(0,0,0,.04);--shadow-md:0 4px 12px rgba(0,0,0,.08);--shadow-lg:0 12px 24px rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;outline:none}
+body{font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg-body);color:var(--text-main);height:100vh;display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
 
-  <style id="main-styles">
-    :root {
-      /* Apple-inspired System Colors */
-      --primary: #0071e3; /* SF Blue */
-      --primary-hover: #0077ED;
-      --bg-body: #F5F5F7;
-      --panel-bg: rgba(255, 255, 255, 0.8);
-      --border: #D2D2D7; /* System Gray 4 */
-      --border-light: #E5E5EA; /* System Gray 5 */
-      --text-main: #1D1D1F;
-      --text-sec: #86868B;
-      --danger: #FF3B30;
-      
-      /* Brand Colors for Mockups only */
-      --fb-color: #1877F2;
-      --li-color: #0A66C2;
-      --ig-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-      
-      /* Effects */
-      --radius: 12px;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-      --shadow-lg: 0 12px 24px rgba(0,0,0,0.12);
-      --glass: blur(20px) saturate(180%);
-      --transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-    }
+/* ---------- TOP BAR ---------- */
+.topbar{height:60px;flex-shrink:0;background:rgba(255,255,255,.85);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:16px;padding:0 18px;z-index:50}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:1rem;white-space:nowrap}
+.brand-dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#00C6FB,#005BEA);box-shadow:0 2px 8px rgba(0,91,234,.3)}
+.project-input{border:1px solid transparent;background:transparent;border-radius:8px;padding:6px 10px;font-size:.9rem;font-weight:500;width:170px;color:var(--text-main)}
+.project-input:hover{border-color:var(--border-light)}
+.project-input:focus{border-color:var(--primary);background:#fff}
+.tb-sep{width:1px;height:28px;background:var(--border-light)}
+.tb-label{font-size:.68rem;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-right:6px}
+.seg{display:inline-flex;background:#E5E5EA;padding:3px;border-radius:10px;gap:2px}
+.seg-btn{border:none;background:transparent;padding:6px 12px;border-radius:7px;font-size:.82rem;font-weight:500;color:var(--text-sec);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s}
+.seg-btn:hover{color:var(--text-main)}
+.seg-btn.active{background:#fff;color:var(--text-main);font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.sdot{width:7px;height:7px;border-radius:50%;border:1.5px solid #b0b0b5;flex-shrink:0}
+.sdot.filled{background:var(--ok);border-color:var(--ok)}
+.ch-dot{width:8px;height:8px;border-radius:50%}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.autosave{font-size:.75rem;color:var(--text-sec);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.autosave .ok{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.autosave.err .ok{background:var(--danger)}
+.btn{padding:8px 14px;border-radius:8px;border:1px solid transparent;font-weight:500;cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover);box-shadow:0 2px 8px rgba(0,113,227,.25)}
+.btn-secondary{background:#fff;color:var(--text-main);border-color:var(--border)}
+.btn-secondary:hover{background:#f5f5f7}
+.btn-ghost{background:transparent;color:var(--text-sec)}
+.btn-ghost:hover{background:rgba(0,0,0,.05);color:var(--text-main)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-full{width:100%}
+.btn-sm{padding:5px 10px;font-size:.78rem}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text-main)}
+.icon-btn:hover{background:#f5f5f7}
+.account-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:20px;padding:3px 12px 3px 3px;cursor:pointer;font-size:.82rem;font-weight:500;max-width:200px}
+.account-btn img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.account-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      height: 100vh;
-      display: flex;
-      overflow: hidden; 
-      -webkit-font-smoothing: antialiased;
-    }
+/* dropdown */
+.dd{position:relative}
+.dd-menu{position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--border-light);border-radius:12px;box-shadow:var(--shadow-lg);min-width:250px;padding:8px;display:none;z-index:100}
+.dd.open .dd-menu{display:block}
+.dd-item{width:100%;text-align:left;border:none;background:transparent;padding:9px 10px;border-radius:7px;font-size:.85rem;cursor:pointer;display:flex;flex-direction:column;gap:2px;color:var(--text-main)}
+.dd-item:hover{background:#f2f2f7}
+.dd-item small{color:var(--text-sec);font-size:.72rem}
+.dd-item.danger{color:var(--danger)}
+.dd-sep{height:1px;background:var(--border-light);margin:6px 0}
+.dd-title{font-size:.68rem;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;padding:6px 10px 4px}
+.ch-checks{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;padding:4px 10px 8px}
 
-    .app-container { display: flex; width: 100%; height: 100%; }
+/* ---------- WORKSPACE ---------- */
+.workspace{flex:1;display:flex;min-height:0}
+.editor-col{width:520px;flex-shrink:0;background:rgba(255,255,255,.85);border-right:1px solid rgba(0,0,0,.08);overflow-y:auto;padding:18px 22px 40px}
+.editor-col::-webkit-scrollbar{width:6px}.editor-col::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:10px}
+.ctx-badge{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:12px;color:#fff;margin-bottom:16px;font-size:.85rem;font-weight:600;transition:background .2s}
+.ctx-badge small{font-weight:500;opacity:.85}
+.block{background:#fff;border:1px solid var(--border-light);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.block-title{font-size:.72rem;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em}
+.block-tools{display:flex;gap:6px;align-items:center}
+.mini-btn{background:#fff;border:1px solid var(--border);border-radius:6px;cursor:pointer;height:28px;min-width:28px;padding:0 8px;font-size:.78rem;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:var(--text-main)}
+.mini-btn:hover{background:#f5f5f7}
+label.lbl{display:block;font-size:.72rem;font-weight:600;margin-bottom:6px;color:var(--text-sec);text-transform:uppercase;letter-spacing:.04em}
+.form-input,.form-textarea{width:100%;padding:9px 12px;background:#fff;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:.92rem;color:var(--text-main);transition:all .15s}
+.form-input:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,113,227,.15)}
+.form-textarea{resize:none;min-height:220px;line-height:1.45;overflow:hidden}
+.input-group{margin-bottom:12px}
+.text-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:.75rem;color:var(--text-sec);gap:8px;flex-wrap:wrap}
+.counter{font-weight:600;font-variant-numeric:tabular-nums}
+.counter.warn{color:var(--warn)}.counter.over{color:var(--danger)}
+.link-btn{background:none;border:none;color:var(--primary);font-size:.78rem;font-weight:500;cursor:pointer;padding:0}
+.link-btn:hover{text-decoration:underline}
+.trunc-info{margin-top:6px;font-size:.74rem;color:var(--warn);display:none}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border-light)}
+.toggle-row small{display:block;color:var(--text-sec);font-size:.72rem}
+.switch{position:relative;width:38px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:#d1d1d6;border-radius:22px;cursor:pointer;transition:.2s}
+.switch span::before{content:'';position:absolute;width:18px;height:18px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+span{background:var(--ok)}
+.switch input:checked+span::before{transform:translateX(16px)}
+.checkbox-item{display:flex;align-items:center;gap:8px;font-size:.85rem;cursor:pointer;user-select:none;padding:3px 0}
+.checkbox-item input{accent-color:var(--primary);width:16px;height:16px}
+.media-tabs{display:flex;background:#E5E5EA;padding:3px;border-radius:9px;gap:2px;margin-bottom:12px}
+.media-tab{flex:1;border:none;background:transparent;padding:6px;font-size:.78rem;font-weight:600;border-radius:7px;cursor:pointer;color:var(--text-sec)}
+.media-tab.active{background:#fff;color:var(--text-main);box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.media-pane{display:none}.media-pane.active{display:block}
+.dropzone{border:1.5px dashed #c7c7cc;border-radius:12px;padding:18px;text-align:center;cursor:pointer;background:#fafafc;transition:all .15s;font-size:.85rem;color:var(--text-sec)}
+.dropzone:hover,.dropzone.drag{border-color:var(--primary);background:rgba(0,113,227,.05);color:var(--primary)}
+.dropzone b{color:var(--text-main);font-weight:600}
+.dropzone .dz-ico{font-size:1.4rem;display:block;margin-bottom:4px}
+.dropzone.compact{padding:10px;display:flex;align-items:center;gap:10px;text-align:left}
+.dropzone.compact img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--border-light)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.thumb{width:64px;height:64px;border-radius:8px;object-fit:cover;border:1px solid var(--border-light)}
+.pane-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.eng-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.eng-field{position:relative}
+.eng-field span{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.95rem;pointer-events:none}
+.eng-field input{padding-left:32px}
+.hint{font-size:.72rem;color:var(--text-sec);margin-top:8px}
+kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(--border-light);border-radius:4px;padding:0 4px}
 
-    /* --- EDITOR SIDEBAR --- */
-    .editor-panel {
-      width: 440px;
-      background: var(--panel-bg);
-      backdrop-filter: var(--glass);
-      -webkit-backdrop-filter: var(--glass);
-      border-right: 1px solid rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      z-index: 20;
-      box-shadow: 4px 0 24px rgba(0,0,0,0.02);
-    }
+/* ---------- PREVIEW ---------- */
+.preview-col{flex:1;min-width:0;display:flex;flex-direction:column;background-color:var(--bg-body);background-image:linear-gradient(rgba(0,0,0,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.03) 1px,transparent 1px);background-size:40px 40px}
+.preview-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;flex-shrink:0}
+.preview-scroll{flex:1;overflow:auto;padding:10px 32px 60px}
+.mockup-wrapper{width:500px;max-width:100%;margin:0 auto}
+.mockup-wrapper.grid{width:100%;max-width:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:28px;align-items:start}
+.grid-cell{display:none;flex-direction:column;gap:8px}
+.mockup-wrapper.grid .grid-cell{display:flex}
+.grid-label{font-size:.75rem;font-weight:600;color:var(--text-sec);display:flex;align-items:center;gap:6px}
+.mockup-wrapper.grid .social-card{display:block;cursor:pointer;transition:box-shadow .15s,outline-color .15s;outline:3px solid transparent;outline-offset:3px}
+.mockup-wrapper.grid .social-card.current{outline-color:var(--primary)}
+.mockup-wrapper:not(.grid) .grid-cell.active{display:flex}
+.mockup-wrapper:not(.grid) .grid-label{display:none}
+.zoom-ctrl{display:flex;align-items:center;gap:4px}
 
-    .editor-header { 
-        padding: 24px; 
-        background: transparent;
-        border-bottom: 1px solid var(--border-light); 
-        display: flex; align-items: center; justify-content: space-between;
-    }
-    .brand-title { 
-        color: var(--text-main); 
-        font-weight: 600; 
-        font-size: 1.05rem; 
-        display: flex; align-items: center; gap: 12px; letter-spacing: -0.01em;
-    }
-    .brand-dot { 
-        width: 28px; height: 28px; 
-        background: linear-gradient(135deg, #00C6FB 0%, #005BEA 100%); 
-        border-radius: 8px; 
-        box-shadow: 0 2px 8px rgba(0,91,234,0.3);
-    }
+/* SOCIAL CARD (fedeltà mockup invariata) */
+.social-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden;border:1px solid rgba(0,0,0,.05);font-family:"Segoe UI Historic","Segoe UI",Helvetica,Arial,sans-serif;width:100%}
+.sc-header{padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
+.sc-avatar-container{position:relative;width:40px;height:40px;flex-shrink:0}
+.sc-avatar{width:100%;height:100%;border-radius:50%;object-fit:cover;border:1px solid rgba(0,0,0,.1)}
+.avatar-collab-1{width:28px;height:28px;border-radius:50%;position:absolute;top:0;left:0;z-index:2;border:2px solid #fff;display:none;object-fit:cover}
+.avatar-collab-2{width:28px;height:28px;border-radius:50%;position:absolute;bottom:0;right:0;z-index:1;border:2px solid #fff;display:none;object-fit:cover}
+.is-collab .sc-avatar{display:none}
+.is-collab .avatar-collab-1,.is-collab .avatar-collab-2{display:block}
+.sc-name{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:4px;flex-wrap:wrap;line-height:1.2;color:#050505}
+.conjunction{font-weight:400;color:#65676B}
+.sc-icon-verified{width:16px;height:16px;display:none}
+.verified-active{display:inline-block}
+.sc-meta{font-size:.8rem;color:#65676B;display:flex;align-items:center;gap:4px;margin-top:2px}
+.fb-world-icon{width:12px;height:12px;opacity:.6}
+.sc-text{padding:4px 16px 12px;font-size:15px;line-height:1.3333;color:#050505;white-space:pre-wrap;word-wrap:break-word}
+.see-more{color:#65676B;font-weight:600;cursor:pointer}
+.sc-image-container{width:100%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.sc-image-container:empty{display:none}
+.sc-image{width:100%;display:block}
+.sc-footer{border-top:1px solid #eee}
+.sc-actions{display:flex;justify-content:space-around;padding:4px 0}
+.action-item{display:flex;align-items:center;gap:8px;padding:10px;color:#65676B;font-weight:600;font-size:.9rem;border-radius:4px}
+.action-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card-instagram .sc-avatar-container{width:32px;height:32px}
+.card-instagram .avatar-collab-1,.card-instagram .avatar-collab-2{width:22px;height:22px}
+.video-container{position:relative;width:100%;height:100%;min-height:200px;background:#000;overflow:hidden;cursor:pointer;display:block}
+.video-cover{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;z-index:1}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:68px;height:68px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2;border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.play-btn::after{content:'';border-style:solid;border-width:12px 0 12px 22px;border-color:transparent transparent transparent #fff;margin-left:6px}
+.native-video{width:100%;height:100%;object-fit:cover;display:block}
+.playing .video-cover,.playing .play-btn{display:none}
+.ig-wrap{display:flex;flex-direction:column;width:100%;background:#fff}
+.ig-outer{position:relative;width:100%;background:#000;display:flex}
+.carousel-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:100%;scrollbar-width:none;scroll-behavior:smooth}
+.carousel-container::-webkit-scrollbar{display:none}
+.carousel-slide{flex:0 0 100%;width:100%;scroll-snap-align:start;object-fit:cover;aspect-ratio:4/5}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;border:none;box-shadow:0 4px 12px rgba(0,0,0,.15);color:#737373;padding:0}
+.carousel-arrow.prev{left:10px}.carousel-arrow.next{right:10px}.carousel-arrow.hidden{opacity:0;pointer-events:none}
+.ig-dots{display:flex;gap:5px;justify-content:center;padding:12px 0 0;background:#fff}
+.ig-dot{width:6px;height:6px;border-radius:50%;background:#A8A8A8}.ig-dot.active{background:#0095F6}
 
-    .editor-scroll { flex: 1; overflow-y: auto; padding-bottom: 40px; }
-    /* Hide Scrollbar but keep functionality */
-    .editor-scroll::-webkit-scrollbar { width: 6px; }
-    .editor-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
-
-    /* ACCORDION RE-DESIGN */
-    .accordion-item { border-bottom: 1px solid var(--border-light); background: transparent; }
-    .accordion-header {
-      width: 100%; padding: 18px 24px; 
-      background: transparent; border: none;
-      display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; font-weight: 500; font-size: 0.85rem; color: var(--text-main);
-      transition: var(--transition);
-    }
-    .accordion-header:hover { background: rgba(0,0,0,0.02); color: var(--primary); }
-    .accordion-header::after { 
-        content: '›'; font-size: 1.4rem; color: var(--text-sec);
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); margin-top: -4px;
-    }
-    .accordion-item.active .accordion-header::after { transform: rotate(90deg); color: var(--primary); }
-    .accordion-content { 
-        display: none; padding: 10px 24px 24px; 
-        animation: slideDown 0.3s ease-out forwards;
-    }
-    .accordion-item.active .accordion-content { display: block; }
-
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* INPUTS & FORMS */
-    .input-group { margin-bottom: 18px; }
-    .input-group label { 
-        display: block; font-size: 0.75rem; font-weight: 600; 
-        margin-bottom: 8px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.04em;
-    }
-    .form-input, .form-textarea {
-      width: 100%; padding: 10px 14px; 
-      background: #FFFFFF;
-      border: 1px solid var(--border); 
-      border-radius: 10px;
-      font-family: inherit; font-size: 0.95rem; color: var(--text-main);
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
-    }
-    .form-input:focus, .form-textarea:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
-    }
-    .form-textarea { resize: vertical; min-height: 100px; }
-    
-    .helper-link { 
-        font-size: 0.75rem; color: var(--primary); 
-        text-decoration: none; cursor: pointer; margin-top: 6px; 
-        display: inline-block; font-weight: 500; opacity: 0.9;
-    }
-    .helper-link:hover { text-decoration: underline; opacity: 1; }
-
-    .checkbox-item { 
-        display: flex; align-items: center; gap: 10px; 
-        font-size: 0.9rem; cursor: pointer; color: var(--text-main); user-select: none;
-        padding: 4px 0;
-    }
-    .checkbox-item input[type="checkbox"] { accent-color: var(--primary); width: 16px; height: 16px; }
-
-    /* EDITOR BADGE & BUTTONS */
-    .editor-badge {
-        background: #F2F2F7; padding: 8px 12px; border-radius: 10px; margin-bottom: 16px;
-        font-size: 0.75rem; font-weight: 600; color: var(--text-sec);
-        display: flex; justify-content: space-between; align-items: center;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-    .copy-mini-btn {
-        background: white; border: 1px solid var(--border); border-radius: 6px;
-        cursor: pointer; width: 28px; height: 28px; font-size: 1rem;
-        transition: var(--transition); display: flex; align-items: center; justify-content: center;
-        box-shadow: var(--shadow-sm);
-    }
-    .copy-mini-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
-
-    /* --- NEW APPLE UI BUTTONS & LAYOUT --- */
-    .ios-section-label {
-        font-size: 0.7rem; font-weight: 600; color: var(--text-sec);
-        text-transform: uppercase; letter-spacing: 0.05em;
-        margin: 20px 0 8px 4px; display: block;
-    }
-    .ios-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-    
-    .btn { 
-        padding: 10px 16px; border-radius: 8px; border: 1px solid transparent; 
-        font-weight: 500; cursor: pointer; font-size: 0.9rem; text-align: center;
-        transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-        display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn:active { transform: scale(0.97); }
-
-    /* Primary: System Blue */
-    .btn-primary { 
-        background: var(--primary); color: white; 
-        border-color: transparent;
-    }
-    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 2px 8px rgba(0,113,227,0.25); }
-    
-    /* Secondary: Clean White/Grey */
-    .btn-secondary { 
-        background: #fff; color: var(--text-main); 
-        border-color: var(--border); 
-    }
-    .btn-secondary:hover { background: #f5f5f7; border-color: #c7c7cc; color: #000; }
-
-    /* Destructive/Ghost: Minimalist */
-    .btn-ghost-danger {
-        background: transparent; color: var(--text-sec); 
-        border: 1px solid transparent; font-size: 0.85rem;
-    }
-    .btn-ghost-danger:hover { color: var(--danger); background: rgba(255, 59, 48, 0.05); }
-
-    .btn-full { width: 100%; }
-
-    /* --- PREVIEW PANEL --- */
-    .preview-panel {
-      flex: 1; 
-      background-color: var(--bg-body);
-      /* Subtle grid pattern for precision feel */
-      background-image: 
-        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      display: flex; flex-direction: column; align-items: center; 
-      padding: 40px; overflow-y: auto;
-    }
-
-    /* SEGMENTED CONTROL TABS */
-    .platform-tabs { 
-        display: inline-flex; 
-        background: #E5E5EA; /* Segmented control bg */
-        padding: 4px; 
-        border-radius: 12px; 
-        margin-bottom: 40px;
-        position: relative;
-    }
-    .platform-btn {
-      background: transparent; border: none; 
-      padding: 8px 24px; border-radius: 8px;
-      font-weight: 500; font-size: 0.9rem; color: var(--text-sec); 
-      cursor: pointer; transition: all 0.2s ease;
-      position: relative; z-index: 2;
-    }
-    .platform-btn:hover { color: var(--text-main); }
-    .platform-btn.active { 
-        background: white; 
-        color: var(--text-main); 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        font-weight: 600;
-    }
-    /* Simple colored dots for active state identification */
-    .platform-btn.active::before {
-        content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-        margin-right: 6px; vertical-align: middle;
-    }
-    .platform-btn.fb.active::before { background: var(--fb-color); }
-    .platform-btn.li.active::before { background: var(--li-color); }
-    .platform-btn.ig.active::before { background: #d62976; }
-    .platform-btn.x.active::before { background: black; }
-
-    .mockup-wrapper { width: 500px; max-width: 100%; perspective: 1000px; }
-    
-    /* SOCIAL CARD BASE (Keeping internal structure intact for fidelity, styling container) */
-    .social-card {
-      background: white; border-radius: var(--radius); 
-      box-shadow: var(--shadow-lg);
-      overflow: hidden; display: none; 
-      border: 1px solid rgba(0,0,0,0.05);
-      font-family: "Segoe UI Historic", "Segoe UI", Helvetica, Arial, sans-serif;
-      animation: fadeInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .social-card.active { display: block; }
-
-    @keyframes fadeInScale {
-        from { opacity: 0; transform: scale(0.95) translateY(10px); }
-        to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    /* MOCKUP ELEMENTS - Keeping mostly original for preview accuracy */
-    .sc-header { padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; }
-    .sc-avatar-container { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
-    .sc-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,0,0,0.1); }
-    .avatar-collab-1 { width: 28px; height: 28px; border-radius: 50%; position: absolute; top: 0; left: 0; z-index: 2; border: 2px solid white; display: none; object-fit: cover; }
-    .avatar-collab-2 { width: 28px; height: 28px; border-radius: 50%; position: absolute; bottom: 0; right: 0; z-index: 1; border: 2px solid white; display: none; object-fit: cover; }
-    .is-collab .sc-avatar { display: none; }
-    .is-collab .avatar-collab-1, .is-collab .avatar-collab-2 { display: block; }
-
-    .sc-name { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; line-height: 1.2; color: #050505; }
-    .conjunction { font-weight: 400; color: #65676B; }
-    .sc-icon-verified { width: 16px; height: 16px; display: none; }
-    .verified-active { display: inline-block; }
-    .sc-meta { font-size: 0.8rem; color: #65676B; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
-    .fb-world-icon { width: 12px; height: 12px; filter: grayscale(1); opacity: 0.6; }
-
-    .sc-text { padding: 4px 16px 12px; font-size: 15px; line-height: 1.3333; color: #050505; white-space: pre-wrap; }
-    .sc-image-container { width: 100%; background: #f0f2f5; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .sc-image { width: 100%; display: block; }
-
-    /* FOOTER ICONS */
-    .sc-footer { border-top: 1px solid #eee; }
-    .sc-actions { display: flex; justify-content: space-around; padding: 4px 0; }
-    .action-item { display: flex; align-items: center; gap: 8px; padding: 10px; color: #65676B; font-weight: 600; font-size: 0.9rem; cursor: pointer; border-radius: 4px; transition: background 0.2s; }
-    .action-item:hover { background: #f2f2f2; }
-    .action-icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-
-    /* Platform specifics tweaks */
-    .card-instagram .sc-avatar-container { width: 32px; height: 32px; }
-    .card-instagram .avatar-collab-1, .card-instagram .avatar-collab-2 { width: 22px; height: 22px; }
-
-    /* NEWS SELECTOR - Segmented control mini */
-    .news-selector { display: flex; gap: 4px; background: #E5E5EA; padding: 3px; border-radius: 9px; margin-bottom: 15px; }
-    .news-tab { 
-        flex: 1; border: none; background: transparent; padding: 6px; 
-        font-size: 0.75rem; font-weight: 600; border-radius: 7px; 
-        cursor: pointer; color: var(--text-sec); transition: all 0.2s;
-    }
-    .news-tab:hover { color: var(--text-main); }
-    .news-tab.active { background: #fff; color: var(--text-main); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-  </style>
+/* ---------- DRAWER / MODAL / TOAST ---------- */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);z-index:200;display:none}
+.overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:95vw;background:#f5f5f7;z-index:210;transform:translateX(100%);transition:transform .25s cubic-bezier(.25,.1,.25,1);display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.15)}
+.drawer.open{transform:none}
+.drawer-head,.modal-head{padding:16px 20px;background:#fff;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center}
+.drawer-head h3,.modal-head h3{font-size:1.05rem;font-weight:600}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px}
+.close-x{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--text-sec)}
+.modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)}
+.modal.open{display:flex}
+.modal-box{background:#f5f5f7;width:640px;max-width:95%;max-height:90vh;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.2)}
+.modal-box.small{width:420px}
+.modal-body{padding:20px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px;font-size:.9rem;line-height:1.45}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border-light);background:#fff;display:flex;justify-content:flex-end;gap:8px}
+.cf-list{display:flex;flex-direction:column;gap:10px}
+.cf-item{display:flex;gap:14px;background:#fff;padding:10px;border-radius:12px;border:1px solid var(--border);align-items:center}
+.cf-thumb{width:56px;height:70px;border-radius:6px;background:#222 center/cover;flex-shrink:0;position:relative}
+.cf-thumb::after{content:attr(data-type);position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:.6rem;text-align:center;padding:2px 0;text-transform:uppercase;font-weight:700;border-radius:0 0 6px 6px}
+.cf-content{flex:1;display:flex;flex-direction:column;gap:6px;font-size:.85rem;font-weight:600}
+.cf-actions{display:flex;gap:6px}
+.toasts{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:400}
+.toast{background:#1d1d1f;color:#fff;padding:11px 16px;border-radius:10px;font-size:.85rem;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;animation:tin .25s ease-out;max-width:360px}
+.toast.err{background:var(--danger)}.toast.warn{background:#c77700}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.kbd-help{font-size:.72rem;color:var(--text-sec);line-height:1.8}
+</style>
 </head>
 <body>
 
-  <div class="app-container">
-    <aside class="editor-panel">
-      <div class="editor-header"><div class="brand-title"><span class="brand-dot"></span> Social Studio 6.1</div></div>
-      <div class="editor-scroll">
-        
-        <div class="accordion-item active">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">1. Profilo Pagina</button>
-          <div class="accordion-content">
-            <div class="input-group"><label>Logo / Avatar</label><input type="file" id="global-avatar" accept="image/*" class="form-input"></div>
-            <div class="input-group"><label>Nome Pagina</label><input type="text" id="global-name" class="form-input" value="Nome Pagina"></div>
-            <div class="input-group"><label>Handle (@username)</label><input type="text" id="global-handle" class="form-input" value="@nomepagina"></div>
-                        <label class="checkbox-item"><input type="checkbox" id="main-verified" checked> Badge Verificato</label>
-          </div>
+<!-- ================= TOP BAR ================= -->
+<header class="topbar">
+  <div class="brand"><span class="brand-dot"></span>Social Studio 7.0</div>
+  <input id="export-filename" class="project-input" value="Progetto" title="Nome progetto (usato nei file esportati)">
+  <div class="tb-sep"></div>
+  <div style="display:flex;align-items:center"><span class="tb-label">Notizia</span><div class="seg" id="news-tabs"></div></div>
+  <div style="display:flex;align-items:center"><span class="tb-label">Canale</span><div class="seg" id="platform-tabs"></div></div>
+  <div class="tb-right">
+    <div class="autosave" id="autosave"><span class="ok"></span><span id="autosave-txt">Non ancora salvato</span></div>
+    <button class="icon-btn" title="Carica progetto JSON" onclick="app.triggerImport()">↑</button>
+    <button class="icon-btn" title="Salva progetto JSON" onclick="app.exportJSON()">↓</button>
+    <div class="dd" id="dd-export">
+      <button class="btn btn-primary" onclick="app.toggleDD('dd-export',event)">Esporta ▾</button>
+      <div class="dd-menu" onclick="event.stopPropagation()">
+        <div class="dd-title">Canali da esportare</div>
+        <div class="ch-checks">
+          <label class="checkbox-item"><input type="checkbox" id="chk-facebook" checked> Facebook</label>
+          <label class="checkbox-item"><input type="checkbox" id="chk-linkedin" checked> LinkedIn</label>
+          <label class="checkbox-item"><input type="checkbox" id="chk-instagram" checked> Instagram</label>
+          <label class="checkbox-item"><input type="checkbox" id="chk-x" checked> X</label>
         </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">2. Collaborazione</button>
-          <div class="accordion-content">
-            <label class="checkbox-item" style="margin-bottom:15px"><input type="checkbox" id="collab-active"> Attiva Collab (FB/IG)</label>
-            <div id="collab-fields" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <div class="input-group"><label>Logo Partner</label><input type="file" id="collab-avatar" accept="image/*" class="form-input"></div>
-                <div class="input-group"><input type="text" id="collab-name" class="form-input" placeholder="Partner" value="Partner"></div>
-                <div class="input-group"><input type="text" id="collab-handle" class="form-input" placeholder="@partner" value="@partner"></div>
-                <label class="checkbox-item"><input type="checkbox" id="collab-verified" checked> Partner Verificato</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">3. Editor Contenuto</button>
-          <div class="accordion-content">
-            <div class="news-selector" id="news-tabs"></div>
-            
-            <div class="editor-badge">
-                <span>Modifica: <span id="editor-platform-label">FACEBOOK</span></span>
-                <div style="display:flex; gap:6px;">
-                    <button class="copy-mini-btn" title="Inserisci Lorem Ipsum" onclick="const l='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud #exercitation ullamco #laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'; document.getElementById('post-text').value=l; app.getCurrentData().text=l; app.updatePreviewContent(); app.saveState();">¶</button>
-                    <button class="copy-mini-btn" onclick="app.copyCurrentText(this)" title="Copia testo negli appunti">📋</button>
-                </div>
-            </div>
-            
-            <div class="input-group">
-                <label>Testo del Post</label>
-                <textarea class="form-textarea" id="post-text" rows="5"></textarea>
-                <span class="helper-link" onclick="app.copyTextToAll()">Copia questo testo su tutti i canali</span>
-            </div>
-            
-            <div class="input-group">
-                <label>Immagine Post</label>
-                <input type="file" id="post-image" accept="image/*" class="form-input">
-                <span class="helper-link" onclick="app.copyImageToAll()">Applica immagine a tutti i canali</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">4. Engagement</button>
-          <div class="accordion-content">
-            <div class="editor-badge" style="margin-bottom:15px;">
-                <span>Modifica Canale: <span class="eng-platform-label">FACEBOOK</span></span>
-            </div>
-            <div class="input-group"><label>Reazioni / Mi Piace</label><input type="number" id="eng-likes" class="form-input" min="0" placeholder="es. 120"></div>
-            <div class="input-group"><label>Commenti</label><input type="number" id="eng-comments" class="form-input" min="0" placeholder="es. 45"></div>
-            <div class="input-group"><label>Condivisioni / Repost</label><input type="number" id="eng-shares" class="form-input" min="0" placeholder="es. 12"></div>
-            <button class="btn btn-ghost-danger btn-full" style="margin-top: 10px;" onclick="const d = app.getCurrentData(); d.likes=''; d.comments=''; d.shares=''; document.getElementById('eng-likes').value=''; document.getElementById('eng-comments').value=''; document.getElementById('eng-shares').value=''; app.updatePreviewContent(); app.saveState();">Azzera Valori</button>
-          </div>
-        </div>
-
-        <div class="accordion-item">
-          <button class="accordion-header" onclick="app.toggleAccordion(this)">5. Esportazione & Tool</button>
-          <div class="accordion-content">
-            
-            <span class="ios-section-label">Dati Progetto</span>
-            <div class="input-group" style="margin-bottom:10px">
-                <input type="text" id="export-filename" class="form-input" value="Progetto" placeholder="Nome progetto...">
-            </div>
-            <div class="ios-grid-2">
-                <button class="btn btn-secondary" onclick="app.exportJSON()">↓ Salva JSON</button>
-                <button class="btn btn-secondary" onclick="app.triggerImport()">↑ Carica JSON</button>
-            </div>
-            <button class="btn btn-secondary btn-full" id="btn-save-browser" onclick="app.manualSave()">💾 Salva nel Browser</button>
-
-            <span class="ios-section-label">Canali Attivi</span>
-            <div style="background: rgba(0,0,0,0.03); border-radius: 8px; padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom:15px;">
-                <label class="checkbox-item"><input type="checkbox" id="chk-facebook" checked> Facebook</label>
-                <label class="checkbox-item"><input type="checkbox" id="chk-instagram" checked> Instagram</label>
-                <label class="checkbox-item"><input type="checkbox" id="chk-linkedin" checked> LinkedIn</label>
-                <label class="checkbox-item"><input type="checkbox" id="chk-x" checked> X (Twitter)</label>
-            </div>
-
-            <span class="ios-section-label">Esporta</span>
-            <div class="ios-grid-2">
-                <button class="btn btn-primary" onclick="app.downloadZip()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                    Esporta Mockup
-                </button>
-                <button class="btn btn-primary" onclick="app.downloadAssets()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                    Esporta Asset
-                </button>
-            </div>
-            <button class="btn btn-secondary btn-full" onclick="app.exportHTML()">🌐 Anteprima Web (.html)</button>
-
-            <div style="margin-top: 25px; border-top: 1px solid var(--border-light); padding-top: 10px;">
-                <div class="ios-grid-2">
-                    <button class="btn btn-ghost-danger" onclick="app.resetCurrentPage()">Pulisci Pagina</button>
-                    <button class="btn btn-ghost-danger" onclick="app.resetApp()">Reset Totale</button>
-                </div>
-            </div>
-
-          </div>
-        </div>
-        <input type="file" id="json-input" style="display:none" onchange="app.importJSON(this)">
+        <div class="dd-sep"></div>
+        <button class="dd-item" onclick="app.closeDD();app.downloadZip()">🖼 Mockup PNG<small>Un'immagine per ciascun canale selezionato</small></button>
+        <button class="dd-item" onclick="app.closeDD();app.downloadAssets()">📦 Asset ZIP<small>Immagini/cover e testi in un file .txt</small></button>
+        <button class="dd-item" onclick="app.closeDD();app.exportHTML()">🌐 Anteprima Web (.html)<small>Pagina condivisibile per l'approvazione</small></button>
       </div>
-    </aside>
-
-    <main class="preview-panel">
-      <div class="platform-tabs">
-        <button class="platform-btn fb active" onclick="app.setPlatform('facebook')">Facebook</button>
-        <button class="platform-btn li" onclick="app.setPlatform('linkedin')">LinkedIn</button>
-        <button class="platform-btn x" onclick="app.setPlatform('x')">X</button>
-        <button class="platform-btn ig" onclick="app.setPlatform('instagram')">Instagram</button>
-      </div>
-
-      <div class="mockup-wrapper">
-        <div id="card-facebook" class="social-card active">
-          <div class="sc-header">
-            <div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"><img src="" class="avatar-collab-1 main-avatar-img"><img src="" class="avatar-collab-2 partner-avatar-img"></div>
-            <div class="sc-info">
-                <div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#1877F2"/></svg><span class="conj"></span><span class="n2"></span><svg class="sc-icon-verified partner-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#1877F2"/></svg></div>
-                <div class="sc-meta">1 h · <svg class="fb-world-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
-            </div>
-          </div>
-          <div class="sc-text news-text">...</div>
-          <div class="sc-image-container"><img src="" class="sc-image news-image"></div>
-          <div class="sc-engagement fb-eng" style="padding: 10px 16px; display: none; justify-content: space-between; color: #65676b; font-size: 15px; border-bottom: 1px solid #ced0d4;">
-            <div class="fb-eng-likes" style="display: flex; align-items: center; gap: 4px;">
-                <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path d="M14.6 8.9l-2.4-.4.8-2.6c.1-.4 0-.8-.3-1-.2-.2-.6-.2-.9-.1l-4.1 4.5V17h6c.6 0 1.2-.4 1.4-1l1.3-5.2c.2-.7-.3-1.4-1-1.4z" fill="#fff"/><path d="M5 9h2v8H5z" fill="#fff"/></svg>
-                <span class="fb-likes-count"></span>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <span class="fb-eng-comments"><span class="fb-comments-count"></span> commenti</span>
-                <span class="fb-eng-shares"><span class="fb-shares-count"></span> condivisioni</span>
-            </div>
-          </div>
-          <div class="sc-footer"><div class="sc-actions">
-            <div class="action-item"><svg class="action-icon" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
-            <div class="action-item"><svg class="action-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
-            <div class="action-item"><svg class="action-icon" viewBox="0 0 24 24"><path d="M15 8v-5l9 9-9 9v-5c-10 0-14 5-14 5s2-13 14-13z"/></svg></div>
-          </div></div>
-        </div>
-
-        <div id="card-instagram" class="social-card">
-            <div class="sc-header" style="align-items: center; padding: 10px 14px;"><div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"><img src="" class="avatar-collab-1 main-avatar-img"><img src="" class="avatar-collab-2 partner-avatar-img"></div>
-                <div class="sc-info"><div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#0095f6"/></svg><span class="conj"></span><span class="n2"></span><svg class="sc-icon-verified partner-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#0095f6"/></svg></div></div>
-            </div>
-            <div class="sc-image-container"><img src="" class="sc-image news-image"></div>
-            <div class="sc-actions" style="justify-content: space-between; padding: 12px 14px 4px;">
-                <div style="display: flex; gap: 16px;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                </div>
-                <div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></div>
-            </div>
-            <div class="sc-engagement ig-eng" style="padding: 0 14px 6px; display: none; font-size: 14px; font-weight: 600; color: #000;">
-                <span class="ig-eng-likes" style="display:none;">Piace a <span class="ig-likes-count"></span> persone</span>
-                <span class="ig-eng-comments" style="display:none; color: #737373; font-weight: 400; margin-top: 4px;">Vedi tutti e <span class="ig-comments-count"></span> i commenti</span>
-            </div>
-            <div class="sc-text news-text">...</div>
-        </div>
-        <div id="card-linkedin" class="social-card">
-            <div class="sc-header"><div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"></div><div class="sc-info"><div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#0A66C2"/></svg></div><div class="sc-meta">Azienda • 2h · 🌍</div></div></div>
-            <div class="sc-text news-text">...</div>
-            <div class="sc-image-container"><img src="" class="sc-image news-image"></div>
-            <div class="sc-engagement li-eng" style="padding: 8px 16px; display: none; align-items: center; justify-content: space-between; font-size: 12px; color: #666666; border-bottom: 1px solid #e0e0e0;">
-                <div class="li-eng-likes" style="display: flex; align-items: center; gap: 4px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0A66C2"><circle cx="12" cy="12" r="12" fill="#0A66C2"/><path d="M14.6 8.9l-2.4-.4.8-2.6c.1-.4 0-.8-.3-1-.2-.2-.6-.2-.9-.1l-4.1 4.5V17h6c.6 0 1.2-.4 1.4-1l1.3-5.2c.2-.7-.3-1.4-1-1.4z" fill="#fff"/><path d="M5 9h2v8H5z" fill="#fff"/></svg>
-                    <span class="li-likes-count"></span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <span class="li-eng-comments"><span class="li-comments-count"></span> commenti</span>
-                    <span class="li-eng-shares">• <span class="li-shares-count"></span> diffusioni</span>
-                </div>
-            </div>
-            <div class="sc-footer">
-                <div class="sc-actions" style="justify-content: space-around; padding: 8px 0;">
-                    <div class="action-item" style="color: #666;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
-                    <div class="action-item" style="color: #666;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
-                    <div class="action-item" style="color: #666;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></div>
-                    <div class="action-item" style="color: #666;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
-                </div>
-            </div>
-        </div>
-        <div id="card-x" class="social-card">
-            <div class="sc-header"><div class="sc-avatar-container"><img src="" class="sc-avatar main-avatar-img"></div><div class="sc-info"><div class="sc-name"><span class="n1"></span><svg class="sc-icon-verified main-v" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z" fill="#000"/></svg></div><div class="sc-meta">19 min</div></div></div>
-            <div class="sc-text news-text">...</div>
-            <div class="sc-image-container"><img src="" class="sc-image news-image"></div>
-            <div class="sc-footer" style="border-top: 1px solid #eff3f4;">
-                <div class="sc-actions" style="justify-content: space-between; padding: 12px 30px; color: #536471;">
-                    <div style="cursor:pointer; display:flex; align-items:center; gap:8px;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="x-eng-comments" style="font-size:13px; display:none;"></span></div>
-                    <div style="cursor:pointer; display:flex; align-items:center; gap:8px;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg><span class="x-eng-shares" style="font-size:13px; display:none;"></span></div>
-                    <div style="cursor:pointer; display:flex; align-items:center; gap:8px;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span class="x-eng-likes" style="font-size:13px; display:none;"></span></div>
-                    <div style="cursor:pointer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></div>
-                </div>
-            </div>
+    </div>
+    <div class="dd" id="dd-more">
+      <button class="icon-btn" title="Altre azioni" onclick="app.toggleDD('dd-more',event)">⋯</button>
+      <div class="dd-menu" onclick="event.stopPropagation()">
+        <button class="dd-item" onclick="app.closeDD();app.resetCurrentPage()">Pulisci notizia corrente<small>Svuota testi, media ed engagement della notizia attiva</small></button>
+        <button class="dd-item" onclick="app.closeDD();app.resetLight()">Reset contenuti<small>Svuota tutte le notizie, mantiene nomi e loghi</small></button>
+        <div class="dd-sep"></div>
+        <button class="dd-item danger" onclick="app.closeDD();app.resetApp()">Reset totale<small>Cancella tutto, inclusi profilo e collaborazione</small></button>
+        <div class="dd-sep"></div>
+        <div class="dd-title">Scorciatoie</div>
+        <div class="kbd-help" style="padding:0 10px 6px">
+          <kbd>⌘/Ctrl</kbd>+<kbd>S</kbd> Salva progetto JSON<br>
+          <kbd>Alt/⌥</kbd>+<kbd>1</kbd>…<kbd>5</kbd> Notizia<br>
+          <kbd>Alt/⌥</kbd>+<kbd>F</kbd> <kbd>L</kbd> <kbd>I</kbd> <kbd>X</kbd> Canale<br>
+          <kbd>Alt/⌥</kbd>+<kbd>G</kbd> Vista tutti i canali
         </div>
       </div>
-    </main>
+    </div>
+    <button class="account-btn" onclick="app.openDrawer()" title="Impostazioni account"><img id="acc-avatar" alt=""><span id="acc-name">Nome Pagina</span></button>
   </div>
+</header>
 
-  <script>
-    const app = {
-      state: {
-        activeNews: 1, activePlatform: 'facebook',
-        global: { name: 'Nome Pagina', handle: '@nomepagina', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
-        news: {}
-      },
+<!-- ================= WORKSPACE ================= -->
+<div class="workspace">
+  <aside class="editor-col">
+    <div class="ctx-badge" id="ctx-badge"><span id="ctx-label">Facebook · Notizia N1</span><small id="ctx-sub">Stai modificando questo canale</small></div>
 
-      init() { 
-          this.injectResources(); // Inietta HTML e CSS per il video
-          this.loadState(); 
-          this.renderTabs(); 
-          this.bindEvents(); 
-          this.updateUI(); 
-      },
+    <!-- TESTO -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-title">Testo del post</span>
+        <div class="block-tools">
+          <button class="mini-btn" title="Inserisci testo segnaposto" onclick="app.insertLorem()">¶</button>
+          <button class="mini-btn" title="Copia testo negli appunti" onclick="app.copyCurrentText(this)">📋 Copia</button>
+        </div>
+      </div>
+      <textarea class="form-textarea" id="post-text" placeholder="Scrivi o incolla qui il copy…"></textarea>
+      <div class="text-meta">
+        <span class="counter" id="char-counter">0</span>
+        <button class="link-btn" onclick="app.copyTextToAll()">Copia questo testo su tutti i canali</button>
+      </div>
+      <div class="trunc-info" id="trunc-info"></div>
+      <div class="toggle-row">
+        <div>Mostra troncamento "Vedi altro"<small>Opzionale: per l'approvazione i mockup mostrano il testo completo</small></div>
+        <label class="switch"><input type="checkbox" id="toggle-trunc"><span></span></label>
+      </div>
+    </section>
 
-      // Iniezione dinamica campi Video e CSS per non modificare HTML manualmente
-      injectResources() {
-          // 1. CSS per il player video, Carousel Instagram e Modale
-          if (!document.getElementById('video-styles')) {
-              const style = document.createElement('style');
-              style.id = 'video-styles';
-              style.innerHTML = `
-                .video-container { position: relative; width: 100%; height: 100%; min-height: 200px; background: #000; overflow:hidden; cursor:pointer; display: block; }
-                .video-cover { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; }
-                /* Fix Centratura Assoluta Badge */
-                .play-btn { 
-                    position: absolute; 
-                    top: 50%; 
-                    left: 50%; 
-                    transform: translate(-50%, -50%); 
-                    width: 68px; 
-                    height: 68px; 
-                    background: rgba(0,0,0,0.6); 
-                    border-radius: 50%; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    z-index: 2; 
-                    border: 3px solid white; 
-                    transition: transform 0.2s; 
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.4); 
-                    backdrop-filter: blur(2px); 
-                }
-                .play-btn:hover { transform: translate(-50%, -50%) scale(1.1); background: rgba(0,0,0,0.7); }
-                .play-btn::after { content: ''; border-style: solid; border-width: 12px 0 12px 22px; border-color: transparent transparent transparent white; margin-left: 6px; }
-                .native-video { width: 100%; height: 100%; object-fit: cover; display: block; z-index: 0; }
-                .playing .video-cover, .playing .play-btn { display: none; }
-                .playing .native-video { z-index: 3; }
-                /* Carousel Instagram */
-                .ig-image-wrap { position: relative; width: 100%; background: #000; display: flex; }
-                .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; width: 100%; scrollbar-width: none; -ms-overflow-style: none; }
-                .carousel-container::-webkit-scrollbar { display: none; }
-                .carousel-slide { flex: 0 0 100%; width: 100%; scroll-snap-align: start; object-fit: cover; aspect-ratio: 4/5; position: relative; }
-                .carousel-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 5; }
-                .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: background 0.2s; }
-                .carousel-dot.active { background: #fff; }
-                
-                /* Modal Styles */
-                .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
-                .modal-overlay.open { display: flex; opacity: 1; }
-                .modal-content { background: #f5f5f7; width: 640px; max-width: 95%; max-height: 90vh; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.2s; }
-                .modal-overlay.open .modal-content { transform: scale(1); }
-                .modal-header { padding: 16px 24px; border-bottom: 1px solid #d2d2d7; display: flex; justify-content: space-between; align-items: center; background: #fff; }
-                .modal-header h3 { font-size: 1.1rem; margin: 0; font-weight: 600; color: #1d1d1f; }
-                .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #86868b; }
-                .modal-body { padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
-                .modal-footer { padding: 16px 24px; border-top: 1px solid #d2d2d7; background: #fff; display: flex; justify-content: flex-end; }
-                .carousel-frame-list { display: flex; flex-direction: column; gap: 12px; }
-                .carousel-frame-item { display: flex; gap: 16px; background: #fff; padding: 12px; border-radius: 12px; border: 1px solid #d2d2d7; align-items: center; }
-                .cf-thumb { width: 60px; height: 75px; border-radius: 6px; background: #eee; flex-shrink: 0; position: relative; }
-                .cf-thumb::after { content: attr(data-type); position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.6rem; text-align: center; padding: 2px 0; text-transform: uppercase; font-weight: bold; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
-                .cf-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-                .cf-actions { display: flex; gap: 8px; flex-shrink: 0; }
-                .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #d2d2d7; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #1d1d1f; }
-                .btn-icon:hover { background: #f0f0f0; }
-                .btn-icon.danger { color: #ff3b30; border-color: rgba(255,59,48,0.3); }
-              `;
-              document.head.appendChild(style);
-          }
-          
-          // Inietta HTML Modale
-          if (!document.getElementById('carousel-modal')) {
-              const modal = document.createElement('div');
-              modal.id = 'carousel-modal';
-              modal.className = 'modal-overlay';
-              modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Gestione Carousel (Instagram)</h3>
-                        <button class="modal-close" onclick="app.closeCarouselModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="ios-grid-2">
-                            <button class="btn btn-secondary" onclick="document.getElementById('cf-upload').click()">+ Aggiungi Immagini</button>
-                            <button class="btn btn-secondary" onclick="app.addCarouselFrame('video')">+ Aggiungi Video URL</button>
-                            <input type="file" id="cf-upload" multiple accept="image/*" style="display:none" onchange="app.handleCarouselMediaUpload(this)">
-                        </div>
-                        <div class="carousel-frame-list" id="carousel-frame-list"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" onclick="app.closeCarouselModal()">Fatto</button>
-                    </div>
-                </div>
-              `;
-              document.body.appendChild(modal);
-          }
+    <!-- MEDIA -->
+    <section class="block">
+      <div class="block-head"><span class="block-title">Media</span></div>
+      <div class="media-tabs">
+        <button class="media-tab active" data-tab="image" onclick="app.setMediaTab('image')">Immagine</button>
+        <button class="media-tab" data-tab="video" onclick="app.setMediaTab('video')">Video</button>
+        <button class="media-tab" data-tab="carousel" onclick="app.setMediaTab('carousel')">Carousel IG</button>
+      </div>
+      <div class="media-pane active" data-pane="image">
+        <div class="dropzone" id="dz-image"><span class="dz-ico">🖼</span><b>Trascina qui le immagini</b> o clicca per sceglierle<br><small>oppure incolla con <kbd>⌘V</kbd> / <kbd>Ctrl+V</kbd> · selezione multipla = carousel su IG</small></div>
+        <input type="file" id="post-image" accept="image/*" multiple hidden>
+        <div class="thumbs" id="image-thumbs"></div>
+        <div class="pane-actions">
+          <button class="link-btn" onclick="app.copyImageToAll()">Applica immagine a tutti i canali</button>
+          <button class="link-btn" style="color:var(--text-sec)" onclick="app.removeImage()">Rimuovi</button>
+        </div>
+      </div>
+      <div class="media-pane" data-pane="video">
+        <div class="input-group"><label class="lbl">URL video (MP4)</label><input type="text" id="post-video-url" class="form-input" placeholder="https://…"></div>
+        <label class="lbl">Cover video (opzionale)</label>
+        <div class="dropzone compact" id="dz-cover"><span class="dz-ico" style="margin:0">🎞</span><span id="cover-label"><b>Scegli o trascina la cover</b></span></div>
+        <input type="file" id="post-video-cover" accept="image/*" hidden>
+        <div class="pane-actions">
+          <button class="link-btn" onclick="app.copyVideoToAll()">Applica video a tutti i canali</button>
+          <button class="link-btn" style="color:var(--text-sec)" onclick="app.removeVideo()">Rimuovi</button>
+        </div>
+      </div>
+      <div class="media-pane" data-pane="carousel">
+        <p class="hint" style="margin:0 0 10px">Carousel avanzato per Instagram con immagini e video, riordinabili.</p>
+        <div class="thumbs" id="carousel-thumbs" style="margin-bottom:10px"></div>
+        <button class="btn btn-secondary btn-full" onclick="app.openCarouselModal()">🎨 Gestisci carousel Instagram</button>
+      </div>
+    </section>
 
-          // Abilita input multiplo per Carousel standard
-          const imgInp = document.getElementById('post-image');
-          if(imgInp && !imgInp.hasAttribute('multiple')) imgInp.setAttribute('multiple', 'multiple');
+    <!-- ENGAGEMENT -->
+    <section class="block">
+      <div class="block-head"><span class="block-title">Engagement</span><button class="link-btn" style="color:var(--text-sec)" onclick="app.resetEngagement()">Azzera</button></div>
+      <div class="eng-row">
+        <div class="eng-field" title="Reazioni / Mi piace"><span>👍</span><input type="number" id="eng-likes" class="form-input" min="0" placeholder="Like"></div>
+        <div class="eng-field" title="Commenti"><span>💬</span><input type="number" id="eng-comments" class="form-input" min="0" placeholder="Comm."></div>
+        <div class="eng-field" title="Condivisioni / Repost"><span>↗</span><input type="number" id="eng-shares" class="form-input" min="0" placeholder="Condiv."></div>
+      </div>
+    </section>
+  </aside>
 
-          const imgGroup = document.querySelector('#post-image') ? document.querySelector('#post-image').closest('.input-group') : null;
-          
-          // Tasto apri modale editor IG Carousel
-          if (imgGroup && !document.getElementById('btn-manage-carousel')) {
-              const btnDiv = document.createElement('div');
-              btnDiv.style.marginTop = '10px';
-              btnDiv.innerHTML = `<button id="btn-manage-carousel" class="btn btn-secondary btn-full" onclick="app.openCarouselModal()">🎨 Gestisci Carousel Avanzato (IG)</button>`;
-              imgGroup.appendChild(btnDiv);
-          }
+  <main class="preview-col">
+    <div class="preview-bar">
+      <div class="seg">
+        <button class="seg-btn" id="view-single" onclick="app.setView('single')">Canale singolo</button>
+        <button class="seg-btn" id="view-all" onclick="app.setView('all')">Tutti i canali</button>
+      </div>
+      <div class="zoom-ctrl">
+        <span class="tb-label">Zoom</span>
+        <div class="seg" id="zoom-seg"></div>
+      </div>
+    </div>
+    <div class="preview-scroll"><div class="mockup-wrapper" id="mockup-wrapper"></div></div>
+  </main>
+</div>
 
-          // HTML Input Campi Video fallback
-          if (imgGroup && !document.getElementById('post-video-url')) {
-              const div = document.createElement('div');
-              div.innerHTML = `
-                <div class="input-group" style="margin-top:15px; padding-top:15px; border-top:1px dashed #E5E7EB;">
-                    <label>Video URL (MP4) - Fallback Standard</label>
-                    <input type="text" id="post-video-url" class="form-input" placeholder="https://..." style="margin-bottom:5px;">
-                    <span class="helper-link" onclick="app.copyVideoToAll()">Applica video a tutti</span>
-                </div>
-                <div class="input-group">
-                    <label>Cover Video (Opzionale)</label>
-                    <input type="file" id="post-video-cover" accept="image/*" class="form-input">
-                </div>
-              `;
-              imgGroup.parentNode.insertBefore(div, imgGroup.nextSibling);
-          }
-      },
-      
-      openCarouselModal() {
-          const pid = 'instagram';
-          if(!this.state.news[this.state.activeNews][pid]) this.getCurrentData();
-          let data = this.state.news[this.state.activeNews][pid];
-          if ((!data.igMedia || data.igMedia.length === 0) && data.imgs && data.imgs.length > 0) {
-              data.igMedia = data.imgs.map(src => ({type: 'image', src}));
-          } else if (!data.igMedia) {
-              data.igMedia = [];
-          }
-          this.renderCarouselList();
-          document.getElementById('carousel-modal').classList.add('open');
-      },
+<!-- ================= DRAWER ACCOUNT ================= -->
+<div class="overlay" id="overlay" onclick="app.closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head"><h3>Impostazioni account</h3><button class="close-x" onclick="app.closeDrawer()">&times;</button></div>
+  <div class="drawer-body">
+    <section class="block">
+      <div class="block-head"><span class="block-title">Profilo pagina</span></div>
+      <label class="lbl">Logo / Avatar</label>
+      <div class="dropzone compact" id="dz-avatar" style="margin-bottom:12px"><img id="avatar-prev" alt=""><span><b>Scegli o trascina il logo</b></span></div>
+      <input type="file" id="global-avatar" accept="image/*" hidden>
+      <div class="input-group"><label class="lbl">Nome pagina</label><input type="text" id="global-name" class="form-input"></div>
+      <div class="input-group"><label class="lbl">Handle (@username)</label><input type="text" id="global-handle" class="form-input"></div>
+      <label class="checkbox-item"><input type="checkbox" id="main-verified"> Badge verificato</label>
+    </section>
+    <section class="block">
+      <div class="block-head"><span class="block-title">Collaborazione</span></div>
+      <label class="checkbox-item" style="margin-bottom:10px"><input type="checkbox" id="collab-active"> Attiva collab (Facebook / Instagram)</label>
+      <div id="collab-fields" style="display:none">
+        <label class="lbl">Logo partner</label>
+        <div class="dropzone compact" id="dz-collab" style="margin-bottom:12px"><img id="collab-prev" alt=""><span><b>Scegli o trascina il logo partner</b></span></div>
+        <input type="file" id="collab-avatar" accept="image/*" hidden>
+        <div class="input-group"><label class="lbl">Nome partner</label><input type="text" id="collab-name" class="form-input"></div>
+        <div class="input-group"><label class="lbl">Handle partner</label><input type="text" id="collab-handle" class="form-input"></div>
+        <label class="checkbox-item"><input type="checkbox" id="collab-verified"> Partner verificato</label>
+      </div>
+    </section>
+  </div>
+</aside>
 
-      closeCarouselModal() {
-          document.getElementById('carousel-modal').classList.remove('open');
-          this.updateUI(); 
-          this.saveState();
-      },
+<!-- ================= MODALI ================= -->
+<div class="modal" id="carousel-modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Gestione carousel (Instagram)</h3><button class="close-x" onclick="app.closeCarouselModal()">&times;</button></div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-secondary" onclick="document.getElementById('cf-upload').click()">+ Aggiungi immagini</button>
+        <button class="btn btn-secondary" onclick="app.addCarouselFrame()">+ Aggiungi video URL</button>
+        <input type="file" id="cf-upload" multiple accept="image/*" hidden onchange="app.handleCarouselMediaUpload(this)">
+      </div>
+      <div class="cf-list" id="carousel-frame-list"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-primary" onclick="app.closeCarouselModal()">Fatto</button></div>
+  </div>
+</div>
+<div class="modal" id="confirm-modal">
+  <div class="modal-box small">
+    <div class="modal-head"><h3 id="cm-title"></h3></div>
+    <div class="modal-body" id="cm-msg"></div>
+    <div class="modal-foot"><button class="btn btn-secondary" id="cm-cancel">Annulla</button><button class="btn btn-primary" id="cm-ok">Conferma</button></div>
+  </div>
+</div>
+<div class="toasts" id="toasts"></div>
+<input type="file" id="json-input" accept=".json,application/json" hidden onchange="app.importJSON(this)">
 
-      renderCarouselList() {
-          const mediaList = this.state.news[this.state.activeNews]['instagram'].igMedia || [];
-          const listEl = document.getElementById('carousel-frame-list');
-          listEl.innerHTML = '';
-          if(mediaList.length === 0) {
-              listEl.innerHTML = '<div style="text-align:center; padding: 20px; color: #86868b; font-size: 0.9rem;">Nessun frame presente. Aggiungi immagini o video per il carousel.</div>';
-              return;
-          }
-          mediaList.forEach((item, index) => {
-              const div = document.createElement('div');
-              div.className = 'carousel-frame-item';
-              let thumbSrc = item.type === 'video' ? (item.cover || 'https://via.placeholder.com/60x75?text=VIDEO') : item.src;
-              let contentHtml = item.type === 'image' 
-                  ? `<div style="font-size: 0.85rem; font-weight:600;">Immagine Frame ${index + 1}</div>`
-                  : `<div style="font-size: 0.85rem; font-weight:600; margin-bottom:6px;">Video Frame ${index + 1}</div>
-                     <input type="text" class="form-input" style="padding:6px 10px; font-size:0.8rem; margin-bottom:6px;" placeholder="URL Video MP4..." value="${item.src || ''}" onchange="app.updateCarouselItem(${index}, 'src', this.value)">
-                     <input type="text" class="form-input" style="padding:6px 10px; font-size:0.8rem;" placeholder="URL Cover (Opzionale)..." value="${item.cover || ''}" onchange="app.updateCarouselItem(${index}, 'cover', this.value)">`;
+<script>
+const PLATFORMS = ['facebook','linkedin','instagram','x'];
+const PINFO = {
+  facebook:{label:'Facebook',color:'#1877F2',limit:63206,trunc:480,more:'… Altro',key:'KeyF'},
+  linkedin:{label:'LinkedIn',color:'#0A66C2',limit:3000,trunc:210,more:'…altro',key:'KeyL'},
+  instagram:{label:'Instagram',color:'#d62976',limit:2200,trunc:125,more:'… altro',key:'KeyI'},
+  x:{label:'X',color:'#000000',limit:280,trunc:280,more:'',key:'KeyX'}
+};
+const STORE_KEY = 'socialStudio_v5_9'; // invariato: compatibile con i dati già salvati
+const svgUri = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+const PH_AVATAR = svgUri('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#E4E6EB"/><circle cx="20" cy="15" r="7" fill="#BCC0C4"/><path d="M6 36c2-8 8-11 14-11s12 3 14 11z" fill="#BCC0C4"/></svg>');
+const PH_VIDEO = svgUri('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 625"><rect width="500" height="625" fill="#1d1d1f"/><text x="250" y="330" font-family="Arial" font-size="28" fill="#666" text-anchor="middle">VIDEO</text></svg>');
+const VPATH = 'M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.4-1.4 2.7 2.7 5.9-5.9 1.4 1.4-7.3 7.3z';
+const V = (c,cls) => `<svg class="sc-icon-verified ${cls}" viewBox="0 0 24 24"><path d="${VPATH}" fill="${c}"/></svg>`;
+const AV = (collab=true) => `<div class="sc-avatar-container"><img class="sc-avatar main-avatar-img">${collab?'<img class="avatar-collab-1 main-avatar-img"><img class="avatar-collab-2 partner-avatar-img">':''}</div>`;
+const esc = t => (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-              div.innerHTML = `
-                  <div class="cf-thumb" data-type="${item.type}" style="background-image: url('${thumbSrc}'); background-size: cover; background-position: center;"></div>
-                  <div class="cf-content">${contentHtml}</div>
-                  <div class="cf-actions">
-                      <button class="btn-icon" onclick="app.moveCarouselItem(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''}>↑</button>
-                      <button class="btn-icon" onclick="app.moveCarouselItem(${index}, 1)" ${index === mediaList.length - 1 ? 'disabled style="opacity:0.3"' : ''}>↓</button>
-                      <button class="btn-icon danger" onclick="app.removeCarouselItem(${index})">🗑</button>
-                  </div>
-              `;
-              listEl.appendChild(div);
-          });
-      },
+const CARD_HTML = {
+facebook:`<div class="sc-header">${AV()}<div class="sc-info"><div class="sc-name"><span class="n1"></span>${V('#1877F2','main-v')}<span class="conj"></span><span class="n2"></span>${V('#1877F2','partner-v')}</div>
+<div class="sc-meta">1 h · <svg class="fb-world-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div></div></div>
+<div class="sc-text news-text"></div><div class="sc-image-container"></div>
+<div class="sc-engagement" style="padding:10px 16px;display:none;justify-content:space-between;color:#65676b;font-size:15px;border-bottom:1px solid #ced0d4">
+<div class="e-likes" style="display:flex;align-items:center;gap:4px"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path d="M14.6 8.9l-2.4-.4.8-2.6c.1-.4 0-.8-.3-1-.2-.2-.6-.2-.9-.1l-4.1 4.5V17h6c.6 0 1.2-.4 1.4-1l1.3-5.2c.2-.7-.3-1.4-1-1.4z" fill="#fff"/><path d="M5 9h2v8H5z" fill="#fff"/></svg><span class="c-likes"></span></div>
+<div class="e-right"></div></div>
+<div class="sc-footer"><div class="sc-actions">
+<div class="action-item"><svg class="action-icon" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+<div class="action-item"><svg class="action-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+<div class="action-item"><svg class="action-icon" viewBox="0 0 24 24"><path d="M15 8v-5l9 9-9 9v-5c-10 0-14 5-14 5s2-13 14-13z"/></svg></div></div></div>`,
+instagram:`<div class="sc-header" style="align-items:center;padding:10px 14px">${AV()}<div class="sc-info"><div class="sc-name"><span class="n1"></span>${V('#0095f6','main-v')}<span class="conj"></span><span class="n2"></span>${V('#0095f6','partner-v')}</div></div></div>
+<div class="sc-image-container"></div>
+<div class="sc-actions" style="justify-content:space-between;padding:12px 14px 4px"><div style="display:flex;gap:16px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+<div class="sc-engagement" style="padding:0 14px 6px;display:none;font-size:14px;font-weight:600;color:#000;flex-direction:column">
+<span class="e-likes">Piace a <span class="c-likes"></span> persone</span>
+<span class="e-comments" style="color:#737373;font-weight:400;margin-top:4px">Vedi tutti e <span class="c-comments"></span> i commenti</span></div>
+<div class="sc-text news-text"></div>`,
+linkedin:`<div class="sc-header">${AV(false)}<div class="sc-info"><div class="sc-name"><span class="n1"></span>${V('#0A66C2','main-v')}</div><div class="sc-meta">Azienda • 2h · <span style="filter:grayscale(1);opacity:.6;font-size:10px">🌍</span></div></div></div>
+<div class="sc-text news-text"></div><div class="sc-image-container"></div>
+<div class="sc-engagement" style="padding:8px 16px;display:none;align-items:center;justify-content:space-between;font-size:12px;color:#666;border-bottom:1px solid #e0e0e0">
+<div class="e-likes" style="display:flex;align-items:center;gap:4px"><svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#0A66C2"/><path d="M14.6 8.9l-2.4-.4.8-2.6c.1-.4 0-.8-.3-1-.2-.2-.6-.2-.9-.1l-4.1 4.5V17h6c.6 0 1.2-.4 1.4-1l1.3-5.2c.2-.7-.3-1.4-1-1.4z" fill="#fff"/><path d="M5 9h2v8H5z" fill="#fff"/></svg><span class="c-likes"></span></div>
+<div class="e-right"></div></div>
+<div class="sc-footer"><div class="sc-actions" style="padding:8px 0">
+<div class="action-item" style="color:#666"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></div>
+<div class="action-item" style="color:#666"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+<div class="action-item" style="color:#666"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+<div class="action-item" style="color:#666"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div></div></div>`,
+x:`<div class="sc-header">${AV(false)}<div class="sc-info"><div class="sc-name"><span class="n1"></span>${V('#000','main-v')}</div><div class="sc-meta">19 min</div></div></div>
+<div class="sc-text news-text"></div><div class="sc-image-container"></div>
+<div class="sc-footer" style="border-top:1px solid #eff3f4"><div class="sc-actions" style="justify-content:space-between;padding:12px 30px;color:#536471">
+<div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="x-c" style="font-size:13px"></span></div>
+<div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span class="x-s" style="font-size:13px"></span></div>
+<div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="x-l" style="font-size:13px"></span></div>
+<div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div></div></div>`
+};
 
-      addCarouselFrame(type) {
-          this.state.news[this.state.activeNews]['instagram'].igMedia.push({ type: 'video', src: '', cover: '' });
-          this.renderCarouselList();
-      },
+const DEFAULT_GLOBAL = { name:'Nome Pagina', handle:'@nomepagina', avatar:null, isVerified:true, collabActive:false, collabName:'Partner', collabHandle:'@partner', collabAvatar:null, collabVerified:true };
 
-      updateCarouselItem(index, key, value) {
-          this.state.news[this.state.activeNews]['instagram'].igMedia[index][key] = value;
-      },
+const app = {
+  state:null, mediaTab:'image', expanded:{},
 
-      moveCarouselItem(index, dir) {
-          const arr = this.state.news[this.state.activeNews]['instagram'].igMedia;
-          if (index + dir < 0 || index + dir >= arr.length) return;
-          const temp = arr[index];
-          arr[index] = arr[index + dir];
-          arr[index + dir] = temp;
-          this.renderCarouselList();
-      },
+  defaults(){ return { activeNews:1, activePlatform:'facebook', view:'single', zoom:1, showTruncation:false, global:{...DEFAULT_GLOBAL}, news:{} }; },
+  normalize(s){
+    const d = this.defaults(); s = s || {};
+    const out = {...d, ...s, global:{...d.global, ...(s.global||{})}, news:s.news||{}};
+    if(!PLATFORMS.includes(out.activePlatform)) out.activePlatform='facebook';
+    if(!(out.activeNews>=1 && out.activeNews<=5)) out.activeNews=1;
+    return out;
+  },
 
-      removeCarouselItem(index) {
-          this.state.news[this.state.activeNews]['instagram'].igMedia.splice(index, 1);
-          this.renderCarouselList();
-      },
+  init(){
+    this.loadState();
+    this.buildCards(); this.buildZoom();
+    this.bindEvents();
+    this.syncForm();
+    this.renderAll();
+  },
 
-      handleCarouselMediaUpload(input) {
-          const files = Array.from(input.files);
-          if (files.length === 0) return;
-          const arr = this.state.news[this.state.activeNews]['instagram'].igMedia;
-          Promise.all(files.map(f => new Promise(res => {
-              const r = new FileReader();
-              r.onload = ev => res({ type: 'image', src: ev.target.result });
-              r.readAsDataURL(f);
-          }))).then(results => {
-              arr.push(...results);
-              this.renderCarouselList();
-              input.value = '';
-          });
-      },
+  /* ---------- BUILD ---------- */
+  buildCards(){
+    const w = document.getElementById('mockup-wrapper');
+    w.innerHTML = PLATFORMS.map(p=>`<div class="grid-cell" data-p="${p}"><div class="grid-label"><span class="ch-dot" style="background:${PINFO[p].color}"></span>${PINFO[p].label}</div>
+      <div id="card-${p}" class="social-card card-${p}">${CARD_HTML[p]}</div></div>`).join('');
+    PLATFORMS.forEach(p=>{
+      document.getElementById('card-'+p).addEventListener('click',e=>{
+        if(e.target.closest('.see-more')){ this.expanded[this.state.activeNews+'-'+p]=!this.expanded[this.state.activeNews+'-'+p]; this.renderPreview(); e.stopPropagation(); return; }
+        if(this.state.view==='all' && this.state.activePlatform!==p) this.setPlatform(p);
+      });
+    });
+  },
+  buildZoom(){
+    document.getElementById('zoom-seg').innerHTML = [0.75,1,1.25].map(z=>`<button class="seg-btn" data-z="${z}" onclick="app.setZoom(${z})">${Math.round(z*100)}%</button>`).join('');
+  },
 
-      toggleAccordion(btn) {
-        const item = btn.parentElement;
-        document.querySelectorAll('.accordion-item').forEach(i => { if(i !== item) i.classList.remove('active'); });
-        item.classList.toggle('active');
-      },
+  /* ---------- DATA ---------- */
+  hasContent(d){ return !!(d && ((d.text&&d.text.trim()) || d.img || d.videoUrl || (d.igMedia&&d.igMedia.length))); },
+  getData(nid,pid){ const n=this.state.news[nid]; return n ? n[pid] : null; },
+  getCurrentData(){
+    const nid=this.state.activeNews, pid=this.state.activePlatform;
+    if(!this.state.news[nid]) this.state.news[nid]={};
+    if(!this.state.news[nid][pid]) this.state.news[nid][pid]={ text:'', img:null, imgs:null, igMedia:[], videoUrl:'', videoCover:null, likes:'', comments:'', shares:'' };
+    return this.state.news[nid][pid];
+  },
+  ensure(nid,p){ if(!this.state.news[nid]) this.state.news[nid]={}; if(!this.state.news[nid][p]) this.state.news[nid][p]={text:'',img:null,imgs:null,igMedia:[],videoUrl:'',videoCover:null,likes:'',comments:'',shares:''}; return this.state.news[nid][p]; },
 
-      renderTabs() {
-        const container = document.getElementById('news-tabs'); 
-        if(!container) return;
-        container.innerHTML = '';
-        for(let i=1; i<=5; i++) {
-          const btn = document.createElement('button'); btn.className = `news-tab ${i===this.state.activeNews ? 'active' : ''}`;
-          btn.innerText = `N${i}`; btn.onclick = () => this.switchNews(i); container.appendChild(btn);
-        }
-      },
+  /* ---------- EVENTS ---------- */
+  bindEvents(){
+    const g = () => this.state.global;
+    const bindText = (id,key) => document.getElementById(id).addEventListener('input',e=>{ g()[key]=e.target.value; this.renderGlobal(); this.saveState(); });
+    const bindChk = (id,key) => document.getElementById(id).addEventListener('change',e=>{ g()[key]=e.target.checked; if(id==='collab-active') document.getElementById('collab-fields').style.display=e.target.checked?'block':'none'; this.renderGlobal(); this.saveState(); });
+    bindText('global-name','name'); bindText('global-handle','handle'); bindText('collab-name','collabName'); bindText('collab-handle','collabHandle');
+    bindChk('main-verified','isVerified'); bindChk('collab-active','collabActive'); bindChk('collab-verified','collabVerified');
 
-      bindEvents() {
-        const listen = (id, key, sub = 'global', isCheck = false) => {
-            const el = document.getElementById(id);
-            if(!el) return;
-            el.addEventListener(isCheck ? 'change' : 'input', (e) => {
-                this.state[sub][key] = isCheck ? e.target.checked : e.target.value;
-                if(id === 'collab-active') document.getElementById('collab-fields').style.display = e.target.checked ? 'block' : 'none';
-                this.updateUI(); this.saveState();
-            });
-        };
-        listen('global-name', 'name'); listen('global-handle', 'handle'); listen('main-verified', 'isVerified', 'global', true);
-        listen('collab-active', 'collabActive', 'global', true); listen('collab-name', 'collabName'); listen('collab-handle', 'collabHandle'); listen('collab-verified', 'collabVerified', 'global', true);
-        
-        const txt = document.getElementById('post-text');
-        if(txt) txt.addEventListener('input', (e) => { this.getCurrentData().text = e.target.value; this.updatePreviewContent(); this.saveState(); });
-        
-        const vidUrl = document.getElementById('post-video-url');
-        if(vidUrl) vidUrl.addEventListener('input', (e) => {
-            this.getCurrentData().videoUrl = e.target.value;
-            this.updatePreviewContent(); this.saveState();
-        });
+    const ta = document.getElementById('post-text');
+    ta.addEventListener('input',e=>{ this.getCurrentData().text=e.target.value; this.autoGrow(); this.renderCounter(); this.renderPreview(); this.renderTabs(); this.saveState(); });
+    document.getElementById('post-video-url').addEventListener('input',e=>{ this.getCurrentData().videoUrl=e.target.value; this.renderPreview(); this.renderTabs(); this.saveState(); });
+    [['eng-likes','likes'],['eng-comments','comments'],['eng-shares','shares']].forEach(([id,k])=>
+      document.getElementById(id).addEventListener('input',e=>{ this.getCurrentData()[k]=e.target.value; this.renderPreview(); this.saveState(); }));
+    document.getElementById('toggle-trunc').addEventListener('change',e=>{ this.state.showTruncation=e.target.checked; this.expanded={}; this.renderCounter(); this.renderPreview(); this.saveState(); });
 
-        const engLikes = document.getElementById('eng-likes');
-        if(engLikes) engLikes.addEventListener('input', (e) => { this.getCurrentData().likes = e.target.value; this.updatePreviewContent(); this.saveState(); });
-        const engComments = document.getElementById('eng-comments');
-        if(engComments) engComments.addEventListener('input', (e) => { this.getCurrentData().comments = e.target.value; this.updatePreviewContent(); this.saveState(); });
-        const engShares = document.getElementById('eng-shares');
-        if(engShares) engShares.addEventListener('input', (e) => { this.getCurrentData().shares = e.target.value; this.updatePreviewContent(); this.saveState(); });
+    this.dropzone('dz-image','post-image',files=>this.setPostImages(files));
+    this.dropzone('dz-cover','post-video-cover',files=>this.handleFile(files[0],'videoCover'));
+    this.dropzone('dz-avatar','global-avatar',files=>this.handleFile(files[0],'avatar'));
+    this.dropzone('dz-collab','collab-avatar',files=>this.handleFile(files[0],'collabAvatar'));
 
-        const av = document.getElementById('global-avatar'); if(av) av.onchange = (e) => this.handleFile(e.target.files[0], 'avatar');
-        const cv = document.getElementById('collab-avatar'); if(cv) cv.onchange = (e) => this.handleFile(e.target.files[0], 'collabAvatar');
-        
-        const pi = document.getElementById('post-image'); 
-        if(pi) pi.onchange = (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                Promise.all(files.map(f => new Promise(res => {
-                    const r = new FileReader();
-                    r.onload = ev => res(ev.target.result);
-                    r.readAsDataURL(f);
-                }))).then(results => {
-                    this.getCurrentData().img = results[0];
-                    this.getCurrentData().imgs = results;
-                    this.getCurrentData().igMedia = results.map(src => ({type: 'image', src}));
-                    this.updateUI(); this.saveState();
-                });
-            }
-        };
-        
-        const pvc = document.getElementById('post-video-cover');
-        if(pvc) pvc.onchange = (e) => this.handleFile(e.target.files[0], 'videoCover');
+    document.addEventListener('paste',e=>{
+      const items=(e.clipboardData||window.clipboardData).items;
+      for(const it of items){ if(it.type.indexOf('image')!==-1){ this.setPostImages([it.getAsFile()]); this.setMediaTab('image'); e.preventDefault(); this.toast('Immagine incollata'); break; } }
+    });
+    document.addEventListener('click',()=>this.closeDD());
+    document.addEventListener('keydown',e=>this.onKey(e));
+    window.addEventListener('resize',()=>this.autoGrow());
+  },
+  dropzone(zoneId,inputId,cb){
+    const z=document.getElementById(zoneId), inp=document.getElementById(inputId);
+    z.addEventListener('click',()=>inp.click());
+    inp.addEventListener('change',e=>{ const f=Array.from(e.target.files); if(f.length) cb(f); inp.value=''; });
+    z.addEventListener('dragover',e=>{ e.preventDefault(); z.classList.add('drag'); });
+    z.addEventListener('dragleave',()=>z.classList.remove('drag'));
+    z.addEventListener('drop',e=>{ e.preventDefault(); z.classList.remove('drag'); const f=Array.from(e.dataTransfer.files).filter(x=>x.type.startsWith('image/')); if(f.length) cb(f); else this.toast('Formato non supportato: trascina un\'immagine','warn'); });
+  },
+  onKey(e){
+    if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); this.exportJSON(); return; }
+    if(e.key==='Escape'){ this.closeDrawer(); this.closeDD(); if(document.getElementById('carousel-modal').classList.contains('open')) this.closeCarouselModal(); return; }
+    if(!e.altKey || e.metaKey || e.ctrlKey) return;
+    const m=e.code.match(/^Digit([1-5])$/);
+    if(m && !e.shiftKey){ e.preventDefault(); this.switchNews(+m[1]); return; }
+    const p=PLATFORMS.find(x=>PINFO[x].key===e.code);
+    if(p){ e.preventDefault(); this.setPlatform(p); return; }
+    if(e.code==='KeyG'){ e.preventDefault(); this.setView(this.state.view==='all'?'single':'all'); }
+  },
 
-        document.addEventListener('paste', (e) => {
-            const items = (e.clipboardData || window.clipboardData).items;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    const file = items[i].getAsFile();
-                    this.handleFile(file, 'postImage');
-                    e.preventDefault();
-                    break;
-                }
-            }
-        });
-      },
+  /* ---------- FILES ---------- */
+  readFile(f){ return new Promise(res=>{ const r=new FileReader(); r.onload=ev=>res(ev.target.result); r.readAsDataURL(f); }); },
+  async setPostImages(files){
+    const results = await Promise.all(files.map(f=>this.readFile(f)));
+    const d=this.getCurrentData();
+    d.img=results[0]; d.imgs=results; d.igMedia=results.map(src=>({type:'image',src}));
+    this.renderAll(); this.saveState();
+    if(results.length>1) this.toast(`${results.length} immagini caricate (carousel su Instagram)`);
+  },
+  async handleFile(file,type){
+    if(!file) return;
+    const src = await this.readFile(file);
+    if(type==='avatar') this.state.global.avatar=src;
+    else if(type==='collabAvatar') this.state.global.collabAvatar=src;
+    else if(type==='videoCover') this.getCurrentData().videoCover=src;
+    this.renderAll(); this.saveState();
+  },
+  removeImage(){ const d=this.getCurrentData(); d.img=null; d.imgs=null; d.igMedia=[]; this.renderAll(); this.saveState(); },
+  removeVideo(){ const d=this.getCurrentData(); d.videoUrl=''; d.videoCover=null; this.renderAll(); this.saveState(); },
 
-      handleFile(file, type) {
-        if(!file) return; const reader = new FileReader();
-        reader.onload = (e) => {
-            if(type === 'avatar') this.state.global.avatar = e.target.result;
-            else if(type === 'collabAvatar') this.state.global.collabAvatar = e.target.result;
-            else if(type === 'videoCover') this.getCurrentData().videoCover = e.target.result;
-            else {
-                this.getCurrentData().img = e.target.result;
-                this.getCurrentData().imgs = [e.target.result];
-                this.getCurrentData().igMedia = [{type: 'image', src: e.target.result}];
-            }
-            this.updateUI(); this.saveState();
-        };
-        reader.readAsDataURL(file);
-      },
+  /* ---------- NAV ---------- */
+  switchNews(id){ this.state.activeNews=id; this.mediaTab=null; this.renderAll(); this.saveState(); },
+  setPlatform(p){ this.state.activePlatform=p; this.mediaTab=null; this.renderAll(); this.saveState(); },
+  setView(v){ this.state.view=v; this.renderPreviewLayout(); this.saveState(); },
+  setZoom(z){ this.state.zoom=z; this.renderPreviewLayout(); this.saveState(); },
+  setMediaTab(t){ this.mediaTab=t; this.renderMediaTab(); },
+  toggleDD(id,e){ e.stopPropagation(); const el=document.getElementById(id); const open=el.classList.contains('open'); this.closeDD(); if(!open) el.classList.add('open'); },
+  closeDD(){ document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')); },
+  openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); },
+  closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); },
 
-      getCurrentData() {
-        const nid = this.state.activeNews, pid = this.state.activePlatform;
-        if(!this.state.news[nid]) this.state.news[nid] = {};
-        if(!this.state.news[nid][pid]) this.state.news[nid][pid] = { text: '', img: null, imgs: null, igMedia: [], videoUrl: '', videoCover: null, likes: '', comments: '', shares: '' };
-        return this.state.news[nid][pid];
-      },
+  /* ---------- RENDER ---------- */
+  renderAll(){ this.renderTabs(); this.renderContext(); this.renderEditor(); this.renderGlobal(); this.renderPreviewLayout(); },
+  renderTabs(){
+    const s=this.state;
+    const nt=document.getElementById('news-tabs'); nt.innerHTML='';
+    for(let i=1;i<=5;i++){
+      const filled = PLATFORMS.some(p=>this.hasContent(this.getData(i,p)));
+      const b=document.createElement('button'); b.className='seg-btn'+(i===s.activeNews?' active':'');
+      b.innerHTML=`<span class="sdot ${filled?'filled':''}"></span>N${i}`; b.title=`Notizia ${i}${filled?' (con contenuti)':' (vuota)'} · Alt+${i}`;
+      b.onclick=()=>this.switchNews(i); nt.appendChild(b);
+    }
+    const pt=document.getElementById('platform-tabs'); pt.innerHTML='';
+    PLATFORMS.forEach(p=>{
+      const filled=this.hasContent(this.getData(s.activeNews,p));
+      const b=document.createElement('button'); b.className='seg-btn'+(p===s.activePlatform?' active':'');
+      b.innerHTML=`<span class="ch-dot" style="background:${PINFO[p].color}"></span>${PINFO[p].label}<span class="sdot ${filled?'filled':''}"></span>`;
+      b.title=`${PINFO[p].label} · Alt+${PINFO[p].key.slice(3)}`;
+      b.onclick=()=>this.setPlatform(p); pt.appendChild(b);
+    });
+  },
+  renderContext(){
+    const p=this.state.activePlatform, b=document.getElementById('ctx-badge');
+    b.style.background = p==='instagram' ? 'linear-gradient(45deg,#f09433,#dc2743,#bc1888)' : PINFO[p].color;
+    document.getElementById('ctx-label').textContent=`${PINFO[p].label} · Notizia N${this.state.activeNews}`;
+  },
+  renderEditor(){
+    const d=this.getCurrentData();
+    document.getElementById('post-text').value=d.text||'';
+    document.getElementById('post-video-url').value=d.videoUrl||'';
+    document.getElementById('eng-likes').value=d.likes||'';
+    document.getElementById('eng-comments').value=d.comments||'';
+    document.getElementById('eng-shares').value=d.shares||'';
+    document.getElementById('toggle-trunc').checked=!!this.state.showTruncation;
+    document.getElementById('image-thumbs').innerHTML=(d.imgs||(d.img?[d.img]:[])).map(s=>`<img class="thumb" src="${s}">`).join('');
+    document.getElementById('cover-label').innerHTML = d.videoCover ? `<img src="${d.videoCover}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;vertical-align:middle"> <b>Cover caricata</b> · clicca per sostituire` : '<b>Scegli o trascina la cover</b>';
+    const ig=this.getData(this.state.activeNews,'instagram');
+    const media=(ig&&ig.igMedia)||[];
+    document.getElementById('carousel-thumbs').innerHTML = media.length ? media.map(m=>`<img class="thumb" src="${m.type==='video'?(m.cover||PH_VIDEO):m.src}">`).join('') : '<span class="hint" style="margin:0">Nessun frame nel carousel.</span>';
+    if(!this.mediaTab) this.mediaTab = d.videoUrl ? 'video' : 'image';
+    this.renderMediaTab(); this.renderCounter(); requestAnimationFrame(()=>this.autoGrow());
+  },
+  renderMediaTab(){
+    document.querySelectorAll('.media-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===this.mediaTab));
+    document.querySelectorAll('.media-pane').forEach(p=>p.classList.toggle('active',p.dataset.pane===this.mediaTab));
+  },
+  renderCounter(){
+    const p=this.state.activePlatform, t=document.getElementById('post-text').value, n=[...t].length, lim=PINFO[p].limit;
+    const c=document.getElementById('char-counter');
+    c.textContent = `${n.toLocaleString('it-IT')} / ${lim.toLocaleString('it-IT')} caratteri`;
+    c.className='counter'+(n>lim?' over':(n>lim*0.9?' warn':''));
+    const ti=document.getElementById('trunc-info');
+    if(this.state.showTruncation && p!=='x' && n>PINFO[p].trunc){ ti.style.display='block'; ti.textContent=`"Vedi altro" dopo circa ${PINFO[p].trunc} caratteri (stima, varia per dispositivo)`; }
+    else ti.style.display='none';
+  },
+  autoGrow(){ const ta=document.getElementById('post-text'); ta.style.height='auto'; ta.style.height=Math.max(220,ta.scrollHeight+2)+'px'; },
+  renderGlobal(){
+    const g=this.state.global;
+    document.getElementById('acc-avatar').src=g.avatar||PH_AVATAR;
+    document.getElementById('acc-name').textContent=g.name||'Profilo';
+    document.getElementById('avatar-prev').src=g.avatar||PH_AVATAR;
+    document.getElementById('collab-prev').src=g.collabAvatar||PH_AVATAR;
+    PLATFORMS.forEach(p=>{
+      const card=document.getElementById('card-'+p);
+      const isCollab=g.collabActive && (p==='facebook'||p==='instagram');
+      card.querySelector('.sc-avatar-container').classList.toggle('is-collab',isCollab);
+      const n1=card.querySelector('.n1'), n2=card.querySelector('.n2'), conj=card.querySelector('.conj');
+      n1.innerText = p==='instagram' ? (g.handle||'').replace('@','') : (p==='x' ? g.handle : g.name);
+      if(n2){
+        if(isCollab){ conj.innerHTML=`<span class="conjunction">${p==='facebook'?' con ':', '}</span>`; n2.innerText = p==='facebook'?g.collabName:(g.collabHandle||'').replace('@',''); }
+        else { conj.innerHTML=''; n2.innerText=''; }
+        card.querySelector('.partner-v').classList.toggle('verified-active',isCollab&&g.collabVerified);
+      }
+      card.querySelector('.main-v').classList.toggle('verified-active',!!g.isVerified);
+      card.querySelectorAll('.main-avatar-img').forEach(i=>i.src=g.avatar||PH_AVATAR);
+      card.querySelectorAll('.partner-avatar-img').forEach(i=>i.src=g.collabAvatar||PH_AVATAR);
+    });
+    this.renderPreview();
+  },
+  renderPreviewLayout(){
+    const s=this.state, w=document.getElementById('mockup-wrapper');
+    w.classList.toggle('grid',s.view==='all');
+    w.style.zoom=s.zoom;
+    document.getElementById('view-single').classList.toggle('active',s.view!=='all');
+    document.getElementById('view-all').classList.toggle('active',s.view==='all');
+    document.querySelectorAll('#zoom-seg .seg-btn').forEach(b=>b.classList.toggle('active',+b.dataset.z===s.zoom));
+    document.querySelectorAll('.grid-cell').forEach(c=>c.classList.toggle('active',c.dataset.p===s.activePlatform));
+    PLATFORMS.forEach(p=>document.getElementById('card-'+p).classList.toggle('current',p===s.activePlatform));
+    this.renderPreview();
+  },
+  fmt(t){
+    return esc(t).replace(/(#[\wÀ-ÿ]+)/g,'<span style="color:#0071e3">$1</span>')
+      .replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" style="color:#0071e3;text-decoration:none">$1</a>');
+  },
+  textHTML(p,text){
+    const info=PINFO[p], key=this.state.activeNews+'-'+p;
+    if(this.state.showTruncation && p!=='x' && [...(text||'')].length>info.trunc && !this.expanded[key]){
+      const cut=[...text].slice(0,info.trunc).join('').trimEnd();
+      return this.fmt(cut)+`<span class="see-more">${info.more}</span>`;
+    }
+    return this.fmt(text);
+  },
+  mediaHTML(p,d){
+    if(p==='instagram'){
+      let ig=d.igMedia||[];
+      if(!ig.length && d.imgs && d.imgs.length) ig=d.imgs.map(src=>({type:'image',src}));
+      if(ig.length){
+        const slides=ig.map((it,i)=> it.type==='video'
+          ? `<div class="carousel-slide" style="background:#000"><div class="video-container" style="aspect-ratio:4/5" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${esc(it.cover)||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(it.src)}" class="native-video" playsinline loop controls></video></div></div>`
+          : `<img src="${it.src}" class="carousel-slide">`).join('');
+        if(ig.length===1) return `<div class="ig-wrap">${slides.replace('carousel-slide','carousel-slide" style="flex:none;width:100%')}</div>`;
+        const dots=ig.map((_,i)=>`<div class="ig-dot ${i?'':'active'}"></div>`).join('');
+        return `<div class="ig-wrap"><div class="ig-outer">
+          <button class="carousel-arrow prev hidden" onclick="event.stopPropagation();const c=this.nextElementSibling;c.scrollBy({left:-c.offsetWidth})">‹</button>
+          <div class="carousel-container" onscroll="app.onCarouselScroll(this)">${slides}</div>
+          <button class="carousel-arrow next" onclick="event.stopPropagation();const c=this.previousElementSibling;c.scrollBy({left:c.offsetWidth})">›</button>
+          </div><div class="ig-dots">${dots}</div></div>`;
+      }
+    }
+    if(d.videoUrl && d.videoUrl.trim()){
+      const ar = p==='instagram' ? 'aspect-ratio:4/5;' : '';
+      return `<div class="video-container" style="${ar}" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${d.videoCover||d.img||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(d.videoUrl)}" class="native-video" playsinline loop controls></video></div>`;
+    }
+    if(d.img) return `<img src="${d.img}" class="sc-image" ${p==='instagram'?'style="aspect-ratio:4/5;object-fit:cover"':''}>`;
+    return '';
+  },
+  onCarouselScroll(c){
+    const idx=Math.round(c.scrollLeft/c.offsetWidth);
+    if(c.dataset.last!==String(idx)){ c.dataset.last=idx; c.querySelectorAll('video').forEach(v=>v.pause()); }
+    const dots=c.parentElement.nextElementSibling.querySelectorAll('.ig-dot');
+    dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+    c.previousElementSibling.classList.toggle('hidden',idx===0);
+    c.nextElementSibling.classList.toggle('hidden',idx===dots.length-1);
+  },
+  renderPreview(){
+    const nid=this.state.activeNews;
+    PLATFORMS.forEach(p=>{
+      const card=document.getElementById('card-'+p);
+      const d=this.getData(nid,p)||{};
+      const textEl=card.querySelector('.news-text');
+      const body=this.textHTML(p,d.text||'');
+      textEl.innerHTML = p==='instagram' ? `<span style="font-weight:700;margin-right:6px">${esc((this.state.global.handle||'').replace('@',''))}</span>${body}` : body;
+      textEl.style.display = (d.text||p==='instagram') ? '' : 'none';
+      const mc=card.querySelector('.sc-image-container');
+      const sig=[d.img&&d.img.length,(d.imgs||[]).length,JSON.stringify((d.igMedia||[]).map(m=>[m.type,(m.src||'').length,m.cover])),d.videoUrl,d.videoCover&&d.videoCover.length].join('|');
+      if(mc.dataset.sig!==sig){ mc.dataset.sig=sig; mc.innerHTML=this.mediaHTML(p,d); }
+      const lk=parseInt(d.likes)||0, cm=parseInt(d.comments)||0, sh=parseInt(d.shares)||0;
+      const n=x=>x.toLocaleString('it-IT');
+      if(p==='x'){
+        [['x-c',cm],['x-s',sh],['x-l',lk]].forEach(([c,v])=>card.querySelector('.'+c).textContent=v?n(v):'');
+        return;
+      }
+      const eng=card.querySelector('.sc-engagement');
+      if(p==='instagram'){
+        eng.style.display=(lk||cm)?'flex':'none';
+        card.querySelector('.e-likes').style.display=lk?'':'none'; card.querySelector('.c-likes').textContent=n(lk);
+        card.querySelector('.e-comments').style.display=cm?'':'none'; card.querySelector('.c-comments').textContent=n(cm);
+        return;
+      }
+      eng.style.display=(lk||cm||sh)?'flex':'none';
+      card.querySelector('.e-likes').style.visibility=lk?'visible':'hidden'; card.querySelector('.c-likes').textContent=n(lk);
+      const parts=[]; if(cm) parts.push(`${n(cm)} commenti`); if(sh) parts.push(`${n(sh)} ${p==='facebook'?'condivisioni':'diffusioni'}`);
+      card.querySelector('.e-right').textContent=parts.join(' • ');
+    });
+  },
+  syncForm(){
+    const g=this.state.global;
+    document.getElementById('global-name').value=g.name||'';
+    document.getElementById('global-handle').value=g.handle||'';
+    document.getElementById('main-verified').checked=!!g.isVerified;
+    document.getElementById('collab-active').checked=!!g.collabActive;
+    document.getElementById('collab-fields').style.display=g.collabActive?'block':'none';
+    document.getElementById('collab-name').value=g.collabName||'';
+    document.getElementById('collab-handle').value=g.collabHandle||'';
+    document.getElementById('collab-verified').checked=!!g.collabVerified;
+    if(this.state.projectName) document.getElementById('export-filename').value=this.state.projectName;
+  },
 
-      updateUI() {
-        const g = this.state.global;
-        const platLabel = document.getElementById('editor-platform-label');
-        if(platLabel) platLabel.innerText = this.state.activePlatform.toUpperCase();
-        
-        document.querySelectorAll('.eng-platform-label').forEach(el => el.innerText = this.state.activePlatform.toUpperCase());
+  /* ---------- TEXT ACTIONS ---------- */
+  insertLorem(){
+    const l='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud #exercitation ullamco #laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
+    this.getCurrentData().text=l; this.renderEditor(); this.renderPreview(); this.renderTabs(); this.saveState();
+  },
+  copyCurrentText(btn){
+    const t=document.getElementById('post-text').value; if(!t){ this.toast('Nessun testo da copiare','warn'); return; }
+    navigator.clipboard.writeText(t).then(()=>this.toast('Testo copiato negli appunti')).catch(()=>this.toast('Copia non riuscita','err'));
+  },
+  async copyTextToAll(){
+    const txt=this.getCurrentData().text||'', nid=this.state.activeNews;
+    const diff=PLATFORMS.filter(p=>p!==this.state.activePlatform && (this.getData(nid,p)||{}).text && this.getData(nid,p).text!==txt);
+    if(diff.length && !(await this.confirm('Sovrascrivere i testi?',`I canali <b>${diff.map(p=>PINFO[p].label).join(', ')}</b> hanno già un testo diverso, che verrà sostituito.`,'Sovrascrivi'))) return;
+    PLATFORMS.forEach(p=>this.ensure(nid,p).text=txt);
+    this.renderAll(); this.saveState(); this.toast('Testo copiato su tutti i canali');
+  },
+  copyImageToAll(){
+    const c=this.getCurrentData(), nid=this.state.activeNews;
+    if(!c.img){ this.toast('Nessuna immagine da applicare','warn'); return; }
+    PLATFORMS.forEach(p=>{ const d=this.ensure(nid,p); d.img=c.img;
+      if(p==='instagram'){ d.imgs=c.imgs||[c.img]; d.igMedia=d.imgs.map(src=>({type:'image',src})); } else d.imgs=[c.img]; });
+    this.renderAll(); this.saveState(); this.toast('Immagine applicata a tutti i canali (solo la prima sui canali diversi da IG)');
+  },
+  copyVideoToAll(){
+    const c=this.getCurrentData(), nid=this.state.activeNews;
+    if(!c.videoUrl){ this.toast('Nessun video da applicare','warn'); return; }
+    PLATFORMS.forEach(p=>{ const d=this.ensure(nid,p); d.videoUrl=c.videoUrl; d.videoCover=c.videoCover; });
+    this.renderAll(); this.saveState(); this.toast('Video e cover applicati a tutti i canali');
+  },
+  resetEngagement(){ const d=this.getCurrentData(); d.likes=d.comments=d.shares=''; this.renderEditor(); this.renderPreview(); this.saveState(); },
 
-        document.querySelectorAll('.social-card').forEach(card => {
-            const isCollab = g.collabActive && (card.id === 'card-facebook' || card.id === 'card-instagram');
-            const avatarContainer = card.querySelector('.sc-avatar-container');
-            if(avatarContainer) avatarContainer.classList.toggle('is-collab', isCollab);
-            
-            const n1 = card.querySelector('.n1'), n2 = card.querySelector('.n2'), conj = card.querySelector('.conj');
-            if(n1) {
-                if(card.id === 'card-instagram') n1.innerText = g.handle.replace('@', '');
-                else n1.innerText = (card.id === 'card-x') ? g.handle : g.name;
-            }
-            
-            if(isCollab && n2) {
-                conj.innerHTML = `<span class="conjunction">${card.id === 'card-facebook' ? ' con ' : ', '}</span>`;
-                n2.innerText = card.id === 'card-facebook' ? g.collabName : g.collabHandle;
-                const pv = card.querySelector('.partner-v');
-                if(pv) pv.classList.toggle('verified-active', g.collabVerified);
-            } else if(n2) { 
-                conj.innerText = ''; n2.innerText = ''; 
-                const pv = card.querySelector('.partner-v');
-                if(pv) pv.classList.remove('verified-active'); 
-            }
-            const mainV = card.querySelector('.main-v');
-            if(mainV) mainV.classList.toggle('verified-active', g.isVerified);
+  /* ---------- CAROUSEL ---------- */
+  igData(){ const d=this.ensure(this.state.activeNews,'instagram'); if((!d.igMedia||!d.igMedia.length) && d.imgs && d.imgs.length) d.igMedia=d.imgs.map(src=>({type:'image',src})); if(!d.igMedia) d.igMedia=[]; return d; },
+  openCarouselModal(){ this.igData(); this.renderCarouselList(); document.getElementById('carousel-modal').classList.add('open'); },
+  closeCarouselModal(){ document.getElementById('carousel-modal').classList.remove('open'); this.renderAll(); this.saveState(); },
+  renderCarouselList(){
+    const list=this.igData().igMedia, el=document.getElementById('carousel-frame-list');
+    if(!list.length){ el.innerHTML='<div style="text-align:center;padding:20px;color:#86868b">Nessun frame presente. Aggiungi immagini o video.</div>'; return; }
+    el.innerHTML=list.map((it,i)=>`<div class="cf-item"><div class="cf-thumb" data-type="${it.type}" style="background-image:url('${it.type==='video'?(it.cover||PH_VIDEO):it.src}')"></div>
+      <div class="cf-content">${it.type==='image'?`Immagine · frame ${i+1}`:`Video · frame ${i+1}
+        <input class="form-input" style="padding:6px 10px;font-size:.8rem" placeholder="URL video MP4…" value="${esc(it.src)}" onchange="app.updateCarouselItem(${i},'src',this.value)">
+        <input class="form-input" style="padding:6px 10px;font-size:.8rem" placeholder="URL cover (opzionale)…" value="${esc(it.cover)}" onchange="app.updateCarouselItem(${i},'cover',this.value)">`}</div>
+      <div class="cf-actions"><button class="mini-btn" ${i===0?'disabled style="opacity:.3"':''} onclick="app.moveCarouselItem(${i},-1)">↑</button><button class="mini-btn" ${i===list.length-1?'disabled style="opacity:.3"':''} onclick="app.moveCarouselItem(${i},1)">↓</button><button class="mini-btn" style="color:var(--danger)" onclick="app.removeCarouselItem(${i})">🗑</button></div></div>`).join('');
+  },
+  addCarouselFrame(){ this.igData().igMedia.push({type:'video',src:'',cover:''}); this.renderCarouselList(); },
+  updateCarouselItem(i,k,v){ this.igData().igMedia[i][k]=v; this.renderCarouselList(); },
+  moveCarouselItem(i,dir){ const a=this.igData().igMedia; if(i+dir<0||i+dir>=a.length) return; [a[i],a[i+dir]]=[a[i+dir],a[i]]; this.renderCarouselList(); },
+  removeCarouselItem(i){ this.igData().igMedia.splice(i,1); this.renderCarouselList(); },
+  async handleCarouselMediaUpload(input){
+    const files=Array.from(input.files); if(!files.length) return;
+    const res=await Promise.all(files.map(f=>this.readFile(f)));
+    this.igData().igMedia.push(...res.map(src=>({type:'image',src}))); this.renderCarouselList(); input.value='';
+  },
 
-            if(card.id === 'card-linkedin') {
-                const meta = card.querySelector('.sc-meta');
-                if(meta) meta.innerHTML = 'Azienda • 2h · <span style="filter: grayscale(1); opacity: 0.6; font-size: 10px;">🌍</span>';
-            }
-        });
-        document.querySelectorAll('.main-avatar-img').forEach(img => img.src = g.avatar || 'https://via.placeholder.com/40');
-        document.querySelectorAll('.partner-avatar-img').forEach(img => img.src = g.collabAvatar || 'https://via.placeholder.com/40');
-        
-        const current = this.getCurrentData();
-        const pt = document.getElementById('post-text'); if(pt) pt.value = current.text || '';
-        const pvu = document.getElementById('post-video-url'); if(pvu) pvu.value = current.videoUrl || '';
-        
-        const el = document.getElementById('eng-likes'); if(el) el.value = current.likes || '';
-        const ec = document.getElementById('eng-comments'); if(ec) ec.value = current.comments || '';
-        const es = document.getElementById('eng-shares'); if(es) es.value = current.shares || '';
+  /* ---------- FEEDBACK ---------- */
+  toast(msg,type=''){
+    const t=document.createElement('div'); t.className='toast '+type; t.innerHTML=(type==='err'?'⚠️ ':type==='warn'?'⚠️ ':'✓ ')+msg;
+    document.getElementById('toasts').appendChild(t); setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); },2800);
+  },
+  confirm(title,msg,okLabel='Conferma',danger=false){
+    return new Promise(res=>{
+      const m=document.getElementById('confirm-modal');
+      document.getElementById('cm-title').textContent=title; document.getElementById('cm-msg').innerHTML=msg;
+      const ok=document.getElementById('cm-ok'), cancel=document.getElementById('cm-cancel');
+      ok.textContent=okLabel; ok.className='btn '+(danger?'btn-danger':'btn-primary');
+      const done=v=>{ m.classList.remove('open'); ok.onclick=cancel.onclick=null; res(v); };
+      ok.onclick=()=>done(true); cancel.onclick=()=>done(false); m.classList.add('open');
+    });
+  },
 
-        this.updatePreviewContent();
-      },
-
-      updatePreviewContent() {
-        Object.keys(this.state.news[this.state.activeNews] || {}).forEach(pid => {
-            const card = document.getElementById(`card-${pid}`);
-            if(card) {
-                const data = this.state.news[this.state.activeNews][pid];
-                const textEl = card.querySelector('.news-text');
-                if(textEl) {
-                    const fmt = (t) => (t||'').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                        .replace(/(#\w+)/g, '<span style="color:#0071e3">$1</span>')
-                        .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#0071e3;text-decoration:none;cursor:pointer;position:relative;z-index:10;" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">$1</a>');
-
-                    if(pid === 'instagram') {
-                        textEl.innerHTML = '';
-                        const boldSpan = document.createElement('span');
-                        boldSpan.style.fontWeight = '700';
-                        boldSpan.style.marginRight = '6px';
-                        boldSpan.innerText = this.state.global.handle.replace('@', '');
-                        textEl.appendChild(boldSpan);
-                        
-                        const contentSpan = document.createElement('span');
-                        contentSpan.innerHTML = fmt(data.text);
-                        textEl.appendChild(contentSpan);
-                    } else {
-                        textEl.innerHTML = fmt(data.text);
-                    }
-                }
-                
-                const container = card.querySelector('.sc-image-container');
-                if(container) {
-                    if (pid === 'instagram') {
-                        let igMedia = data.igMedia || [];
-                        if (igMedia.length === 0 && data.imgs && data.imgs.length > 0) {
-                            igMedia = data.imgs.map(src => ({ type: 'image', src: src }));
-                            data.igMedia = igMedia;
-                        }
-
-                        if (igMedia.length > 0) {
-                            const slides = igMedia.map((item, i) => {
-                                if (item.type === 'video') {
-                                    const coverSrc = item.cover || 'https://via.placeholder.com/500x625?text=VIDEO';
-                                    const isFirst = (i === 0);
-                                    return `
-                                    <div class="carousel-slide" style="display:flex;align-items:center;justify-content:center;background:#000;">
-                                        <div class="video-container ${isFirst ? 'playing' : ''}" style="width:100%;height:100%;aspect-ratio:4/5;" onclick="this.classList.add('playing'); this.querySelector('video').play()">
-                                            <img src="${coverSrc}" class="video-cover" style="object-fit:cover;aspect-ratio:4/5;">
-                                            <div class="play-btn"></div>
-                                            <video src="${item.src}" class="native-video" style="object-fit:cover;aspect-ratio:4/5;" playsinline loop controls ${isFirst ? 'autoplay' : ''}></video>
-                                        </div>
-                                    </div>`;
-                                } else {
-                                    return `<img src="${item.src}" class="carousel-slide" style="object-fit:cover;aspect-ratio:4/5;">`;
-                                }
-                            }).join('');
-
-                            if (igMedia.length > 1) {
-                                const dots = igMedia.map((_, i) => `<div class="carousel-dot-ig ${i===0?'active':''}"></div>`).join('');
-                                container.innerHTML = `
-                                    <style>
-                                        .ig-image-wrap-v2 { display: flex; flex-direction: column; width: 100%; background: #fff; }
-                                        .ig-carousel-outer { position: relative; width: 100%; background: #000; display: flex; }
-                                        .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: #737373; transition: opacity 0.2s; padding: 0; }
-                                        .carousel-arrow:hover { opacity: 0.8; background: #fff; }
-                                        .carousel-arrow.prev { left: 10px; }
-                                        .carousel-arrow.next { right: 10px; }
-                                        .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
-                                        .carousel-dots-ig { display: flex; gap: 5px; justify-content: center; padding: 12px 0 0 0; background: #fff; }
-                                        .carousel-dot-ig { width: 6px; height: 6px; border-radius: 50%; background: #A8A8A8; transition: background 0.2s; }
-                                        .carousel-dot-ig.active { background: #0095F6; }
-                                        .carousel-container { scroll-behavior: smooth; }
-                                    </style>
-                                    <div class="ig-image-wrap-v2">
-                                        <div class="ig-carousel-outer">
-                                            <button class="carousel-arrow prev hidden" onclick="
-                                                const c = this.nextElementSibling;
-                                                c.scrollBy({left: -c.offsetWidth, behavior: 'smooth'});
-                                            "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-                                            
-                                            <div class="carousel-container" data-last-idx="0" onscroll="
-                                                let idx = Math.round(this.scrollLeft / this.offsetWidth);
-                                                
-                                                if (this.dataset.lastIdx !== String(idx)) {
-                                                    this.dataset.lastIdx = idx;
-                                                    
-                                                    // Interrompe i video attivi e li resetta
-                                                    this.querySelectorAll('video').forEach(v => v.pause());
-                                                    
-                                                    // Autoplay del video se presente nello slide attivo
-                                                    let activeSlide = this.children[idx];
-                                                    if (activeSlide) {
-                                                        let vid = activeSlide.querySelector('video');
-                                                        if (vid) {
-                                                            activeSlide.querySelector('.video-container').classList.add('playing');
-                                                            vid.play();
-                                                        }
-                                                    }
-                                                }
-                                                
-                                                let dots = this.parentElement.nextElementSibling.querySelectorAll('.carousel-dot-ig');
-                                                if(dots.length) dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-                                                
-                                                let prev = this.previousElementSibling;
-                                                let next = this.nextElementSibling;
-                                                if(idx === 0) prev.classList.add('hidden'); else prev.classList.remove('hidden');
-                                                if(idx === dots.length - 1) next.classList.add('hidden'); else next.classList.remove('hidden');
-                                            ">
-                                                ${slides}
-                                            </div>
-                                            
-                                            <button class="carousel-arrow next" onclick="
-                                                const c = this.previousElementSibling;
-                                                c.scrollBy({left: c.offsetWidth, behavior: 'smooth'});
-                                            "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
-                                        </div>
-                                        <div class="carousel-dots-ig">${dots}</div>
-                                    </div>
-                                `;
-                            } else {
-                                container.innerHTML = `<div class="ig-image-wrap" style="background:#fff;">${slides}</div>`;
-                            }
-                        } else {
-                            if (data.videoUrl && data.videoUrl.trim() !== '') {
-                                const coverSrc = data.videoCover || data.img || 'https://via.placeholder.com/500x625?text=No+Cover';
-                                container.innerHTML = `
-                                    <div class="video-container" onclick="this.classList.add('playing'); this.querySelector('video').play()">
-                                        <img src="${coverSrc}" class="video-cover" style="object-fit:cover;aspect-ratio:4/5;">
-                                        <div class="play-btn"></div>
-                                        <video src="${data.videoUrl}" class="native-video" style="object-fit:cover;aspect-ratio:4/5;" playsinline loop controls></video>
-                                    </div>
-                                `;
-                            } else {
-                                container.innerHTML = `<img src="${data.img || ''}" class="sc-image news-image" style="aspect-ratio:4/5; object-fit:cover; display:${data.img?'block':'none'};">`;
-                            }
-                        }
-                    } else if (data.videoUrl && data.videoUrl.trim() !== '') {
-                        const coverSrc = data.videoCover || data.img || 'https://via.placeholder.com/500x300?text=No+Cover';
-                        container.innerHTML = `
-                            <div class="video-container" onclick="this.classList.add('playing'); this.querySelector('video').play()">
-                                <img src="${coverSrc}" class="video-cover">
-                                <div class="play-btn"></div>
-                                <video src="${data.videoUrl}" class="native-video" playsinline loop controls></video>
-                            </div>
-                        `;
-                    } else {
-                        container.innerHTML = `<img src="${data.img || ''}" class="sc-image news-image">`;
-                        const img = container.querySelector('.news-image');
-                        if(img) img.style.display = data.img ? 'block' : 'none';
-                    }
-                }
-
-                const lk = parseInt(data.likes) || 0;
-                const cm = parseInt(data.comments) || 0;
-                const sh = parseInt(data.shares) || 0;
-                
-                if (pid === 'facebook') {
-                    const eng = card.querySelector('.sc-engagement');
-                    if (eng) {
-                        eng.style.display = (lk || cm || sh) ? 'flex' : 'none';
-                        const lkEl = card.querySelector('.fb-eng-likes'); if(lkEl) { lkEl.style.display = lk ? 'flex' : 'none'; card.querySelector('.fb-likes-count').innerText = lk; }
-                        const cmEl = card.querySelector('.fb-eng-comments'); if(cmEl) { cmEl.style.display = cm ? 'inline' : 'none'; card.querySelector('.fb-comments-count').innerText = cm; }
-                        const shEl = card.querySelector('.fb-eng-shares'); if(shEl) { shEl.style.display = sh ? 'inline' : 'none'; card.querySelector('.fb-shares-count').innerText = sh; }
-                        const fbSharesWrap = card.querySelector('.fb-eng-shares');
-                        if(fbSharesWrap) {
-                            fbSharesWrap.innerHTML = (cm ? ' • ' : '') + '<span class="fb-shares-count">' + sh + '</span> condivisioni';
-                        }
-                    }
-                } else if (pid === 'instagram') {
-                    const eng = card.querySelector('.sc-engagement');
-                    if (eng) {
-                        eng.style.display = (lk || cm) ? 'block' : 'none';
-                        const lkEl = card.querySelector('.ig-eng-likes'); if(lkEl) { lkEl.style.display = lk ? 'block' : 'none'; card.querySelector('.ig-likes-count').innerText = lk; }
-                        const cmEl = card.querySelector('.ig-eng-comments'); if(cmEl) { cmEl.style.display = cm ? 'block' : 'none'; card.querySelector('.ig-comments-count').innerText = cm; }
-                    }
-                } else if (pid === 'linkedin') {
-                    const eng = card.querySelector('.sc-engagement');
-                    if (eng) {
-                        eng.style.display = (lk || cm || sh) ? 'flex' : 'none';
-                        const lkEl = card.querySelector('.li-eng-likes'); if(lkEl) { lkEl.style.display = lk ? 'flex' : 'none'; card.querySelector('.li-likes-count').innerText = lk; }
-                        const cmEl = card.querySelector('.li-eng-comments'); if(cmEl) { cmEl.style.display = cm ? 'inline' : 'none'; card.querySelector('.li-comments-count').innerText = cm; }
-                        const shEl = card.querySelector('.li-eng-shares'); if(shEl) { shEl.style.display = sh ? 'inline' : 'none'; card.querySelector('.li-shares-count').innerText = sh; }
-                        const liSharesWrap = card.querySelector('.li-eng-shares');
-                        if(liSharesWrap && sh) {
-                            liSharesWrap.innerHTML = (cm ? ' • ' : '') + '<span class="li-shares-count">' + sh + '</span> diffusioni';
-                        }
-                    }
-                } else if (pid === 'x') {
-                    const cmEl = card.querySelector('.x-eng-comments'); if(cmEl) { cmEl.style.display = cm ? 'inline' : 'none'; cmEl.innerText = cm; }
-                    const shEl = card.querySelector('.x-eng-shares'); if(shEl) { shEl.style.display = sh ? 'inline' : 'none'; shEl.innerText = sh; }
-                    const lkEl = card.querySelector('.x-eng-likes'); if(lkEl) { lkEl.style.display = lk ? 'inline' : 'none'; lkEl.innerText = lk; }
-                }
-            }
-        });
-      },
-
-      copyTextToAll() {
-        const txt = this.getCurrentData().text;
-        ['facebook','linkedin','x','instagram'].forEach(p => {
-            if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
-            this.state.news[this.state.activeNews][p].text = txt;
-        });
-        this.updatePreviewContent(); alert("Testo copiato su tutti i canali!");
-      },
-      
-      copyVideoToAll() {
-        const current = this.getCurrentData();
-        ['facebook','linkedin','x','instagram'].forEach(p => {
-            if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
-            this.state.news[this.state.activeNews][p].videoUrl = current.videoUrl;
-            this.state.news[this.state.activeNews][p].videoCover = current.videoCover;
-        });
-        this.updatePreviewContent(); alert("Video e Cover applicati a tutti!");
-      },
-
-      copyCurrentText(btn) {
-          const text = document.getElementById('post-text').value;
-          if(!text) return;
-          navigator.clipboard.writeText(text).then(() => {
-              const original = btn.innerText;
-              btn.innerText = "✅";
-              setTimeout(() => btn.innerText = original, 1500);
-          }).catch(err => {
-              console.error(err); alert("Errore copia");
-          });
-      },
-
-      copyImageToAll() {
-        const current = this.getCurrentData();
-        const imgToCopy = current.img;
-        ['facebook','linkedin','x','instagram'].forEach(p => {
-            if(!this.state.news[this.state.activeNews][p]) this.state.news[this.state.activeNews][p] = {};
-            this.state.news[this.state.activeNews][p].img = imgToCopy;
-            if (p === 'instagram' && current.imgs) {
-                this.state.news[this.state.activeNews][p].imgs = current.imgs;
-            } else {
-                this.state.news[this.state.activeNews][p].imgs = [imgToCopy];
-            }
-        });
-        this.updatePreviewContent(); alert("Immagine applicata a tutti! (Solo la prima su canali non-IG)");
-      },
-
-      switchNews(id) { this.state.activeNews = id; this.renderTabs(); this.updateUI(); },
-      setPlatform(p) {
-        this.state.activePlatform = p;
-        document.querySelectorAll('.platform-btn').forEach(b => b.classList.toggle('active', b.classList.contains(p.slice(0,2))));
-        document.querySelectorAll('.social-card').forEach(c => c.classList.toggle('active', c.id === `card-${p}`));
-        this.updateUI();
-      },
-
-      getTimestamp() {
-        const now = new Date();
-        const pad = (n) => n < 10 ? '0' + n : n;
-        return `${now.getFullYear()}_${pad(now.getMonth()+1)}_${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}`;
-      },
-
-      exportJSON() {
-        const prefix = document.getElementById('export-filename') ? document.getElementById('export-filename').value : 'Progetto';
-        const filename = `${prefix}_${this.getTimestamp()}.json`;
-        saveAs(new Blob([JSON.stringify(this.state, null, 2)], {type:"application/json"}), filename); 
-      },
-
-      manualSave() {
-        this.saveState();
-        const btn = document.getElementById('btn-save-browser');
-        if(btn) {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "✅ Salvataggio riuscito!";
-            btn.style.background = "#10B981"; 
-            btn.style.color = "white";
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = ""; 
-                btn.style.color = "";
-            }, 2000);
-        }
-      },
-
-      resetApp() {
-        if(!confirm("⚠️ ATTENZIONE: Questa azione cancellerà tutti i dati dell'applicazione. Continuare?")) return;
-        localStorage.removeItem('socialStudio_v5_9');
-        this.state = {
-            activeNews: 1, activePlatform: 'facebook',
-            global: { name: 'Nome Pagina', handle: '@nomepagina', avatar: null, isVerified: true, collabActive: false, collabName: 'Eni', collabHandle: '@eni', collabAvatar: null, collabVerified: true },
-            news: {}
-        };
-        const ga = document.getElementById('global-avatar'); if(ga) ga.value = '';
-        const ca = document.getElementById('collab-avatar'); if(ca) ca.value = '';
-        const pi = document.getElementById('post-image'); if(pi) pi.value = '';
-        const pvu = document.getElementById('post-video-url'); if(pvu) pvu.value = ''; 
-        const pvc = document.getElementById('post-video-cover'); if(pvc) pvc.value = '';
-        this.renderTabs();
-        this.updateUI();
-      },
-
-      resetCurrentPage() {
-        const current = this.state.activeNews;
-        if(!confirm(`Vuoi cancellare testi e immagini solo per la Notizia N${current}?`)) return;
-        this.state.news[current] = {};
-        const pi = document.getElementById('post-image'); if(pi) pi.value = '';
-        const pvu = document.getElementById('post-video-url'); if(pvu) pvu.value = '';
-        this.updateUI();
-        this.saveState();
-      },
-
-      triggerImport() { document.getElementById('json-input').click(); },
-      importJSON(input) { const r = new FileReader(); r.onload = (e) => { this.state = JSON.parse(e.target.result); this.updateUI(); }; r.readAsText(input.files[0]); },
-
-      exportHTML() {
-        const platforms = ['facebook', 'linkedin', 'x', 'instagram'];
-        const selected = platforms.filter(p => document.getElementById(`chk-${p}`).checked);
-        if(selected.length === 0) { alert("Seleziona canali"); return; }
-        
-        const prefix = document.getElementById('export-filename') ? document.getElementById('export-filename').value : 'Progetto';
-        const filename = `${prefix}_${this.getTimestamp()}.html`;
-
-        let grid = '';
-        selected.forEach(p => {
-            const card = document.getElementById(`card-${p}`).cloneNode(true);
-            card.style.display = 'block'; 
-            card.style.width = '100%'; 
-            card.style.maxWidth = '500px'; 
-            card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
-            
-            // Fix icona mappamondo LinkedIn monocromatica
-            if(p === 'linkedin') {
-                const meta = card.querySelector('.sc-meta');
-                if(meta) meta.innerHTML = meta.innerHTML.replace('🌍', '<span style="filter: grayscale(1); opacity: 0.6; font-size: 10px;">🌍</span>');
-            }
-            
-            let color = p === 'facebook' ? '#1877F2' : p === 'linkedin' ? '#0A66C2' : p === 'instagram' ? 'linear-gradient(45deg, #f09433 0%, #dc2743 100%)' : '#000';
-            const label = p === 'x' ? 'X (Twitter)' : p.charAt(0).toUpperCase() + p.slice(1);
-            grid += `<div class="card-wrapper"><div class="platform-badge" style="background:${color};">${label}</div>${card.outerHTML}</div>`;
-        });
-
-        const styles = document.getElementById('main-styles').innerHTML;
-        // Recupera dinamicamente gli stili iniettati per video e carousel
-        const videoStyles = document.getElementById('video-styles') ? document.getElementById('video-styles').innerHTML : '';
-
-        const responsiveStyles = `
-            body { background: #f0f2f5 !important; font-family: 'Inter', sans-serif; padding: 20px !important; height: auto !important; overflow-y: auto !important; display: block !important; }
-            .grid { display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; padding-bottom: 50px; }
-            @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); } }
-            .card-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
-            .platform-badge { color: white; padding: 6px 16px; border-radius: 20px; font-weight: 600; margin-bottom: 12px; font-size: 0.9rem; }
-            .social-card { width: 100% !important; max-width: 500px !important; }
-        `;
-            
-        const scriptCode = "document.querySelectorAll('.video-container').forEach(v=>v.onclick=function(){this.classList.add('playing');this.querySelector('video').play()})";
-        const html = `<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles} ${videoStyles} ${responsiveStyles}</style></head><body><div class="grid">${grid}</div><script>${scriptCode}<\/script></body></html>`;
-        saveAs(new Blob([html], {type: "text/html"}), filename);
-      },
-
-      async downloadZip() {
-        const selected = ['facebook', 'linkedin', 'x', 'instagram'].filter(p => document.getElementById(`chk-${p}`).checked);
-        if(selected.length === 0) { alert("Seleziona canali"); return; }
-        
-        const project = document.getElementById('export-filename').value.trim() || 'Progetto';
-        const cp = this.state.activePlatform;
-
-        // Disabilita temporaneamente animazioni/transizioni per evitare screenshot sbiaditi
-        const style = document.createElement('style');
-        style.innerHTML = `* { transition: none !important; animation: none !important; } .social-card { display: block !important; opacity: 1 !important; transform: none !important; }`;
-        document.head.appendChild(style);
-
-        try {
-            // Nasconde tutte le card per gestirle manualmente
-            document.querySelectorAll('.social-card').forEach(c => c.style.display = 'none');
-
-            for(const p of selected) {
-                // Attiva manualmente la card specifica
-                const card = document.getElementById(`card-${p}`);
-                card.style.display = 'block';
-                // Aggiorna tab visuale
-                document.querySelectorAll('.platform-btn').forEach(b => b.classList.toggle('active', b.classList.contains(p.slice(0,2))));
-                
-                await new Promise(r => setTimeout(r, 100)); // Breve attesa rendering
-
-                const canvas = await html2canvas(card, {scale:2, useCORS:true, allowTaint: true, backgroundColor:null});
-                // Salvataggio separato: es. facebook_Progetto.png
-                canvas.toBlob(b => saveAs(b, `${p}_${project}.png`));
-                
-                await new Promise(r => setTimeout(r, 400)); // Pausa per evitare blocchi browser
-            }
-        } finally {
-            style.remove();
-            document.querySelectorAll('.social-card').forEach(c => c.style.display = ''); // Rimuove stili inline
-            this.setPlatform(cp);
-        }
-      },
-
-      async downloadAssets() {
-        const selected = ['facebook', 'linkedin', 'x', 'instagram'].filter(p => document.getElementById(`chk-${p}`).checked);
-        if(selected.length === 0) { alert("Seleziona canali"); return; }
-
-        const zip = new JSZip();
-        const project = document.getElementById('export-filename').value.trim() || 'Social_Assets';
-        let txtReport = `PROJECT: ${project}\nEXPORT DATE: ${new Date().toLocaleString()}\n\n`;
-
-        selected.forEach(p => {
-            const data = this.state.news[this.state.activeNews][p] || {};
-            
-            // Costruzione File TXT
-            txtReport += `==================================================\n`;
-            txtReport += `PLATFORM: ${p.toUpperCase()}\n`;
-            txtReport += `==================================================\n`;
-            txtReport += `${data.text || '(Nessun testo)'}\n\n`;
-
-            if(data.videoUrl && data.videoUrl.trim() !== '') {
-                txtReport += `[VIDEO LINK]: ${data.videoUrl}\n`;
-                // Aggiunta Cover Video allo ZIP se presente
-                if(data.videoCover) {
-                    const ext = data.videoCover.match(/[^:/]\/(\w+);/) ? data.videoCover.match(/[^:/]\/(\w+);/)[1] : 'png';
-                    zip.file(`${p}_cover.${ext}`, data.videoCover.split(',')[1], {base64: true});
-                }
-            } else if (data.img) {
-                // Aggiunta Immagine Standard allo ZIP
-                const ext = data.img.match(/[^:/]\/(\w+);/) ? data.img.match(/[^:/]\/(\w+);/)[1] : 'png';
-                zip.file(`${p}_image.${ext}`, data.img.split(',')[1], {base64: true});
-            }
-            txtReport += `\n\n`;
-        });
-
-        zip.file(`${project}_Copy.txt`, txtReport);
-        zip.generateAsync({type:"blob"}).then(c => saveAs(c, `${project}_Assets.zip`));
-      },
-
-      saveState() { localStorage.setItem('socialStudio_v5_9', JSON.stringify(this.state)); },
-      loadState() { const saved = localStorage.getItem('socialStudio_v5_9'); if(saved) this.state = JSON.parse(saved); }
+  /* ---------- PERSISTENZA ---------- */
+  saveState(){
+    this.state.projectName=document.getElementById('export-filename').value;
+    const el=document.getElementById('autosave'), tx=document.getElementById('autosave-txt');
+    try{
+      localStorage.setItem(STORE_KEY,JSON.stringify(this.state));
+      const d=new Date(); el.classList.remove('err');
+      tx.textContent=`Salvato automaticamente · ore ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }catch(e){
+      el.classList.add('err'); tx.textContent='Salvataggio browser non riuscito';
+      if(!this._quotaWarned){ this._quotaWarned=true; this.toast('Spazio del browser esaurito (immagini pesanti): salva il progetto in JSON','err'); }
+    }
+  },
+  loadState(){
+    try{ const s=localStorage.getItem(STORE_KEY); this.state=this.normalize(s?JSON.parse(s):null); }
+    catch(e){ this.state=this.normalize(null); }
+  },
+  getTimestamp(){ const n=new Date(),p=x=>String(x).padStart(2,'0'); return `${n.getFullYear()}_${p(n.getMonth()+1)}_${p(n.getDate())}_${p(n.getHours())}_${p(n.getMinutes())}`; },
+  projectName(def='Progetto'){ return document.getElementById('export-filename').value.trim()||def; },
+  exportJSON(){ this.saveState(); saveAs(new Blob([JSON.stringify(this.state,null,2)],{type:'application/json'}),`${this.projectName()}_${this.getTimestamp()}.json`); this.toast('Progetto JSON salvato'); },
+  triggerImport(){ document.getElementById('json-input').click(); },
+  importJSON(input){
+    const f=input.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=e=>{
+      try{ this.state=this.normalize(JSON.parse(e.target.result)); }
+      catch(err){ this.toast('File JSON non valido','err'); return; }
+      this.expanded={}; this.mediaTab=null;
+      document.querySelectorAll('.sc-image-container').forEach(c=>c.dataset.sig='');
+      this.syncForm(); this.renderAll(); this.saveState(); this.toast('Progetto caricato');
     };
-    window.onload = () => app.init();
-  </script>
+    r.readAsText(f); input.value='';
+  },
+  async resetCurrentPage(){
+    const n=this.state.activeNews;
+    if(!(await this.confirm('Pulisci notizia',`Vuoi cancellare testi, media ed engagement della <b>Notizia N${n}</b> su tutti i canali?`,'Pulisci',true))) return;
+    this.state.news[n]={}; this.mediaTab=null; this.renderAll(); this.saveState(); this.toast(`Notizia N${n} svuotata`);
+  },
+  async resetLight(){
+    if(!(await this.confirm('Reset contenuti','Verranno cancellati testi, media ed engagement di <b>tutte le notizie</b>.<br>Restano invariati nome pagina, handle, logo, badge e collaborazione.','Reset contenuti',true))) return;
+    this.state.news={}; this.state.activeNews=1; this.expanded={}; this.mediaTab=null;
+    this.renderAll(); this.saveState(); this.toast('Contenuti azzerati, profilo mantenuto');
+  },
+  async resetApp(){
+    if(!(await this.confirm('Reset totale','Questa azione cancella <b>tutti i dati</b>, inclusi profilo, loghi e collaborazione. Continuare?','Cancella tutto',true))) return;
+    localStorage.removeItem(STORE_KEY);
+    this.state=this.normalize(null); this.expanded={}; this.mediaTab=null;
+    document.getElementById('export-filename').value='Progetto';
+    this.syncForm(); this.renderAll(); this.saveState(); this.toast('Applicazione azzerata');
+  },
+
+  /* ---------- EXPORT ---------- */
+  selectedChannels(){ const s=PLATFORMS.filter(p=>document.getElementById('chk-'+p).checked); if(!s.length) this.toast('Seleziona almeno un canale nel menu Esporta','warn'); return s; },
+  async downloadZip(){
+    const sel=this.selectedChannels(); if(!sel.length) return;
+    const project=this.projectName(), w=document.getElementById('mockup-wrapper');
+    const prevView=this.state.view, prevZoom=this.state.zoom;
+    const st=document.createElement('style'); st.innerHTML='*{transition:none!important;animation:none!important}.social-card{outline:none!important}';
+    document.head.appendChild(st);
+    this.state.view='all'; this.state.zoom=1; this.renderPreviewLayout();
+    this.toast('Generazione mockup in corso…');
+    try{
+      for(const p of sel){
+        await new Promise(r=>setTimeout(r,120));
+        const canvas=await html2canvas(document.getElementById('card-'+p),{scale:2,useCORS:true,allowTaint:true,backgroundColor:null});
+        await new Promise(r=>canvas.toBlob(b=>{ saveAs(b,`${p}_${project}.png`); r(); }));
+        await new Promise(r=>setTimeout(r,350));
+      }
+      this.toast('Mockup esportati');
+    }catch(e){ this.toast('Errore durante l\'esportazione','err'); }
+    finally{ st.remove(); this.state.view=prevView; this.state.zoom=prevZoom; this.renderPreviewLayout(); }
+  },
+  async downloadAssets(){
+    const sel=this.selectedChannels(); if(!sel.length) return;
+    const zip=new JSZip(), project=this.projectName('Social_Assets');
+    let txt=`PROJECT: ${project}\nNOTIZIA: N${this.state.activeNews}\nEXPORT DATE: ${new Date().toLocaleString('it-IT')}\n\n`;
+    const ext=s=>{ const m=s.match(/^data:image\/(\w+);/); return m?m[1].replace('jpeg','jpg'):'png'; };
+    sel.forEach(p=>{
+      const d=this.getData(this.state.activeNews,p)||{};
+      txt+=`==================================================\nPLATFORM: ${p.toUpperCase()}\n==================================================\n${d.text||'(Nessun testo)'}\n\n`;
+      if(d.videoUrl&&d.videoUrl.trim()){ txt+=`[VIDEO LINK]: ${d.videoUrl}\n`; if(d.videoCover&&d.videoCover.startsWith('data:')) zip.file(`${p}_cover.${ext(d.videoCover)}`,d.videoCover.split(',')[1],{base64:true}); }
+      else if(p==='instagram' && d.igMedia && d.igMedia.length>1){
+        d.igMedia.forEach((m,i)=>{ if(m.type==='image'&&m.src.startsWith('data:')) zip.file(`${p}_frame${i+1}.${ext(m.src)}`,m.src.split(',')[1],{base64:true}); else if(m.type==='video') txt+=`[FRAME ${i+1} VIDEO]: ${m.src}\n`; });
+      }
+      else if(d.img&&d.img.startsWith('data:')) zip.file(`${p}_image.${ext(d.img)}`,d.img.split(',')[1],{base64:true});
+      txt+='\n\n';
+    });
+    zip.file(`${project}_Copy.txt`,txt);
+    const blob=await zip.generateAsync({type:'blob'}); saveAs(blob,`${project}_Assets.zip`); this.toast('Asset esportati');
+  },
+  exportHTML(){
+    const sel=this.selectedChannels(); if(!sel.length) return;
+    let grid='';
+    sel.forEach(p=>{
+      const card=document.getElementById('card-'+p).cloneNode(true);
+      card.classList.remove('current'); card.removeAttribute('id'); card.style.cssText='display:block;width:100%;max-width:500px;box-shadow:0 4px 20px rgba(0,0,0,.1)';
+      const color=p==='instagram'?'linear-gradient(45deg,#f09433,#dc2743)':PINFO[p].color;
+      grid+=`<div class="card-wrapper"><div class="platform-badge" style="background:${color}">${p==='x'?'X':PINFO[p].label}</div>${card.outerHTML}</div>`;
+    });
+    const styles=document.getElementById('main-styles').innerHTML;
+    const extra=`body{background:#f0f2f5!important;padding:20px!important;height:auto!important;overflow-y:auto!important;display:block!important}
+      .grid{display:grid;grid-template-columns:1fr;gap:40px;max-width:1200px;margin:0 auto;padding-bottom:50px}
+      @media(min-width:768px){.grid{grid-template-columns:repeat(auto-fit,minmax(400px,1fr))}}
+      .card-wrapper{display:flex;flex-direction:column;align-items:center;width:100%}
+      .platform-badge{color:#fff;padding:6px 16px;border-radius:20px;font-weight:600;margin-bottom:12px;font-size:.9rem}
+      .see-more{cursor:default}`;
+    const script=`const app={onCarouselScroll(c){const i=Math.round(c.scrollLeft/c.offsetWidth);c.querySelectorAll('video').forEach(v=>{if(c.dataset.last!==String(i))v.pause()});c.dataset.last=i;const d=c.parentElement.nextElementSibling.querySelectorAll('.ig-dot');d.forEach((x,j)=>x.classList.toggle('active',j===i));c.previousElementSibling.classList.toggle('hidden',i===0);c.nextElementSibling.classList.toggle('hidden',i===d.length-1)}};`;
+    const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(this.projectName())}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles}${extra}</style></head><body><div class="grid">${grid}</div><script>${script}<\/script></body></html>`;
+    saveAs(new Blob([html],{type:'text/html'}),`${this.projectName()}_${this.getTimestamp()}.html`); this.toast('Anteprima web esportata');
+  }
+};
+document.getElementById('export-filename').addEventListener('input',()=>app.saveState());
+window.onload=()=>app.init();
+</script>
 </body>
 </html>
