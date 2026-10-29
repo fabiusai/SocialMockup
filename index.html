@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Social Studio 7.0</title>
+<title>Social Studio 7.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
@@ -45,11 +45,8 @@ button{font-family:inherit}
 .btn-primary:hover{background:var(--primary-hover);box-shadow:0 2px 8px rgba(0,113,227,.25)}
 .btn-secondary{background:#fff;color:var(--text-main);border-color:var(--border)}
 .btn-secondary:hover{background:#f5f5f7}
-.btn-ghost{background:transparent;color:var(--text-sec)}
-.btn-ghost:hover{background:rgba(0,0,0,.05);color:var(--text-main)}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-full{width:100%}
-.btn-sm{padding:5px 10px;font-size:.78rem}
 .icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;color:var(--text-main)}
 .icon-btn:hover{background:#f5f5f7}
 .account-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:20px;padding:3px 12px 3px 3px;cursor:pointer;font-size:.82rem;font-weight:500;max-width:200px}
@@ -123,20 +120,24 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
 
 /* ---------- PREVIEW ---------- */
 .preview-col{flex:1;min-width:0;display:flex;flex-direction:column;background-color:var(--bg-body);background-image:linear-gradient(rgba(0,0,0,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.03) 1px,transparent 1px);background-size:40px 40px}
-.preview-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;flex-shrink:0}
+.preview-bar{display:flex;align-items:center;gap:12px;padding:12px 24px;flex-shrink:0;flex-wrap:wrap}
+.quick-export{display:flex;align-items:center;gap:6px;margin-left:auto;background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:4px 6px 4px 10px;box-shadow:var(--shadow-sm)}
+.quick-export.hidden{display:none}
+.quick-export .mini-btn{height:30px;font-weight:500}
+.zoom-ctrl{display:flex;align-items:center;gap:4px}
+.quick-export.hidden + .zoom-ctrl{margin-left:auto}
 .preview-scroll{flex:1;overflow:auto;padding:10px 32px 60px}
 .mockup-wrapper{width:500px;max-width:100%;margin:0 auto}
 .mockup-wrapper.grid{width:100%;max-width:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:28px;align-items:start}
 .grid-cell{display:none;flex-direction:column;gap:8px}
 .mockup-wrapper.grid .grid-cell{display:flex}
 .grid-label{font-size:.75rem;font-weight:600;color:var(--text-sec);display:flex;align-items:center;gap:6px}
-.mockup-wrapper.grid .social-card{display:block;cursor:pointer;transition:box-shadow .15s,outline-color .15s;outline:3px solid transparent;outline-offset:3px}
+.mockup-wrapper.grid .social-card{cursor:pointer;transition:outline-color .15s;outline:3px solid transparent;outline-offset:3px}
 .mockup-wrapper.grid .social-card.current{outline-color:var(--primary)}
 .mockup-wrapper:not(.grid) .grid-cell.active{display:flex}
 .mockup-wrapper:not(.grid) .grid-label{display:none}
-.zoom-ctrl{display:flex;align-items:center;gap:4px}
 
-/* SOCIAL CARD (fedeltà mockup invariata) */
+/* SOCIAL CARD */
 .social-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden;border:1px solid rgba(0,0,0,.05);font-family:"Segoe UI Historic","Segoe UI",Helvetica,Arial,sans-serif;width:100%}
 .sc-header{padding:12px 16px;display:flex;align-items:flex-start;gap:10px}
 .sc-avatar-container{position:relative;width:40px;height:40px;flex-shrink:0}
@@ -208,9 +209,8 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
 </head>
 <body>
 
-<!-- ================= TOP BAR ================= -->
 <header class="topbar">
-  <div class="brand"><span class="brand-dot"></span>Social Studio 7.0</div>
+  <div class="brand"><span class="brand-dot"></span>Social Studio 7.1</div>
   <input id="export-filename" class="project-input" value="Progetto" title="Nome progetto (usato nei file esportati)">
   <div class="tb-sep"></div>
   <div style="display:flex;align-items:center"><span class="tb-label">Notizia</span><div class="seg" id="news-tabs"></div></div>
@@ -256,18 +256,16 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
   </div>
 </header>
 
-<!-- ================= WORKSPACE ================= -->
 <div class="workspace">
   <aside class="editor-col">
-    <div class="ctx-badge" id="ctx-badge"><span id="ctx-label">Facebook · Notizia N1</span><small id="ctx-sub">Stai modificando questo canale</small></div>
+    <div class="ctx-badge" id="ctx-badge"><span id="ctx-label">Facebook · Notizia N1</span><small>Stai modificando questo canale</small></div>
 
-    <!-- TESTO -->
     <section class="block">
       <div class="block-head">
         <span class="block-title">Testo del post</span>
         <div class="block-tools">
           <button class="mini-btn" title="Inserisci testo segnaposto" onclick="app.insertLorem()">¶</button>
-          <button class="mini-btn" title="Copia testo negli appunti" onclick="app.copyCurrentText(this)">📋 Copia</button>
+          <button class="mini-btn" title="Copia testo negli appunti" onclick="app.copyCurrentText()">📋 Copia</button>
         </div>
       </div>
       <textarea class="form-textarea" id="post-text" placeholder="Scrivi o incolla qui il copy…"></textarea>
@@ -282,7 +280,6 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
       </div>
     </section>
 
-    <!-- MEDIA -->
     <section class="block">
       <div class="block-head"><span class="block-title">Media</span></div>
       <div class="media-tabs">
@@ -316,7 +313,6 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
       </div>
     </section>
 
-    <!-- ENGAGEMENT -->
     <section class="block">
       <div class="block-head"><span class="block-title">Engagement</span><button class="link-btn" style="color:var(--text-sec)" onclick="app.resetEngagement()">Azzera</button></div>
       <div class="eng-row">
@@ -333,6 +329,12 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
         <button class="seg-btn" id="view-single" onclick="app.setView('single')">Canale singolo</button>
         <button class="seg-btn" id="view-all" onclick="app.setView('all')">Tutti i canali</button>
       </div>
+      <div class="quick-export" id="quick-export">
+        <span class="tb-label" id="qe-label">Salva Facebook</span>
+        <button class="mini-btn" title="Scarica il mockup PNG di questo canale" onclick="app.quickExport('png')">🖼 PNG</button>
+        <button class="mini-btn" title="Scarica l'anteprima web HTML di questo canale" onclick="app.quickExport('html')">🌐 HTML</button>
+        <button class="mini-btn" title="Scarica gli asset ZIP (media + testo) di questo canale" onclick="app.quickExport('zip')">📦 ZIP</button>
+      </div>
       <div class="zoom-ctrl">
         <span class="tb-label">Zoom</span>
         <div class="seg" id="zoom-seg"></div>
@@ -342,7 +344,6 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
   </main>
 </div>
 
-<!-- ================= DRAWER ACCOUNT ================= -->
 <div class="overlay" id="overlay" onclick="app.closeDrawer()"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-head"><h3>Impostazioni account</h3><button class="close-x" onclick="app.closeDrawer()">&times;</button></div>
@@ -371,7 +372,6 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
   </div>
 </aside>
 
-<!-- ================= MODALI ================= -->
 <div class="modal" id="carousel-modal">
   <div class="modal-box">
     <div class="modal-head"><h3>Gestione carousel (Instagram)</h3><button class="close-x" onclick="app.closeCarouselModal()">&times;</button></div>
@@ -404,7 +404,7 @@ const PINFO = {
   instagram:{label:'Instagram',color:'#d62976',limit:2200,trunc:125,more:'… altro',key:'KeyI'},
   x:{label:'X',color:'#000000',limit:280,trunc:280,more:'',key:'KeyX'}
 };
-const STORE_KEY = 'socialStudio_v5_9'; // invariato: compatibile con i dati già salvati
+const STORE_KEY = 'socialStudio_v5_9';
 const svgUri = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
 const PH_AVATAR = svgUri('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#E4E6EB"/><circle cx="20" cy="15" r="7" fill="#BCC0C4"/><path d="M6 36c2-8 8-11 14-11s12 3 14 11z" fill="#BCC0C4"/></svg>');
 const PH_VIDEO = svgUri('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 625"><rect width="500" height="625" fill="#1d1d1f"/><text x="250" y="330" font-family="Arial" font-size="28" fill="#666" text-anchor="middle">VIDEO</text></svg>');
@@ -415,7 +415,7 @@ const esc = t => (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g
 
 const CARD_HTML = {
 facebook:`<div class="sc-header">${AV()}<div class="sc-info"><div class="sc-name"><span class="n1"></span>${V('#1877F2','main-v')}<span class="conj"></span><span class="n2"></span>${V('#1877F2','partner-v')}</div>
-<div class="sc-meta">1 h · <svg class="fb-world-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div></div></div>
+<div class="sc-meta">1 h · <svg class="fb-world-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.930 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div></div></div>
 <div class="sc-text news-text"></div><div class="sc-image-container"></div>
 <div class="sc-engagement" style="padding:10px 16px;display:none;justify-content:space-between;color:#65676b;font-size:15px;border-bottom:1px solid #ced0d4">
 <div class="e-likes" style="display:flex;align-items:center;gap:4px"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path d="M14.6 8.9l-2.4-.4.8-2.6c.1-.4 0-.8-.3-1-.2-.2-.6-.2-.9-.1l-4.1 4.5V17h6c.6 0 1.2-.4 1.4-1l1.3-5.2c.2-.7-.3-1.4-1-1.4z" fill="#fff"/><path d="M5 9h2v8H5z" fill="#fff"/></svg><span class="c-likes"></span></div>
@@ -450,21 +450,23 @@ x:`<div class="sc-header">${AV(false)}<div class="sc-info"><div class="sc-name">
 <div class="sc-footer" style="border-top:1px solid #eff3f4"><div class="sc-actions" style="justify-content:space-between;padding:12px 30px;color:#536471">
 <div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="x-c" style="font-size:13px"></span></div>
 <div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg><span class="x-s" style="font-size:13px"></span></div>
-<div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="x-l" style="font-size:13px"></span></div>
+<div style="display:flex;align-items:center;gap:8px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.670l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="x-l" style="font-size:13px"></span></div>
 <div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div></div></div>`
 };
 
 const DEFAULT_GLOBAL = { name:'Nome Pagina', handle:'@nomepagina', avatar:null, isVerified:true, collabActive:false, collabName:'Partner', collabHandle:'@partner', collabAvatar:null, collabVerified:true };
+const EMPTY = () => ({ text:'', img:null, imgs:null, igMedia:[], videoUrl:'', videoCover:null, likes:'', comments:'', shares:'' });
 
 const app = {
-  state:null, mediaTab:'image', expanded:{},
+  state:null, mediaTab:null, expanded:{}, busy:false,
 
   defaults(){ return { activeNews:1, activePlatform:'facebook', view:'single', zoom:1, showTruncation:false, global:{...DEFAULT_GLOBAL}, news:{} }; },
   normalize(s){
-    const d = this.defaults(); s = s || {};
-    const out = {...d, ...s, global:{...d.global, ...(s.global||{})}, news:s.news||{}};
+    const d=this.defaults(); s=s||{};
+    const out={...d,...s,global:{...d.global,...(s.global||{})},news:s.news||{}};
     if(!PLATFORMS.includes(out.activePlatform)) out.activePlatform='facebook';
-    if(!(out.activeNews>=1 && out.activeNews<=5)) out.activeNews=1;
+    if(!(out.activeNews>=1&&out.activeNews<=5)) out.activeNews=1;
+    if(![0.75,1,1.25].includes(out.zoom)) out.zoom=1;
     return out;
   },
 
@@ -476,56 +478,48 @@ const app = {
     this.renderAll();
   },
 
-  /* ---------- BUILD ---------- */
   buildCards(){
-    const w = document.getElementById('mockup-wrapper');
-    w.innerHTML = PLATFORMS.map(p=>`<div class="grid-cell" data-p="${p}"><div class="grid-label"><span class="ch-dot" style="background:${PINFO[p].color}"></span>${PINFO[p].label}</div>
+    const w=document.getElementById('mockup-wrapper');
+    w.innerHTML=PLATFORMS.map(p=>`<div class="grid-cell" data-p="${p}"><div class="grid-label"><span class="ch-dot" style="background:${PINFO[p].color}"></span>${PINFO[p].label}</div>
       <div id="card-${p}" class="social-card card-${p}">${CARD_HTML[p]}</div></div>`).join('');
     PLATFORMS.forEach(p=>{
       document.getElementById('card-'+p).addEventListener('click',e=>{
-        if(e.target.closest('.see-more')){ this.expanded[this.state.activeNews+'-'+p]=!this.expanded[this.state.activeNews+'-'+p]; this.renderPreview(); e.stopPropagation(); return; }
-        if(this.state.view==='all' && this.state.activePlatform!==p) this.setPlatform(p);
+        if(e.target.closest('.see-more')){ const k=this.state.activeNews+'-'+p; this.expanded[k]=!this.expanded[k]; this.renderPreview(); e.stopPropagation(); return; }
+        if(this.state.view==='all'&&this.state.activePlatform!==p) this.setPlatform(p);
       });
     });
   },
   buildZoom(){
-    document.getElementById('zoom-seg').innerHTML = [0.75,1,1.25].map(z=>`<button class="seg-btn" data-z="${z}" onclick="app.setZoom(${z})">${Math.round(z*100)}%</button>`).join('');
+    document.getElementById('zoom-seg').innerHTML=[0.75,1,1.25].map(z=>`<button class="seg-btn" data-z="${z}" onclick="app.setZoom(${z})">${Math.round(z*100)}%</button>`).join('');
   },
 
-  /* ---------- DATA ---------- */
-  hasContent(d){ return !!(d && ((d.text&&d.text.trim()) || d.img || d.videoUrl || (d.igMedia&&d.igMedia.length))); },
-  getData(nid,pid){ const n=this.state.news[nid]; return n ? n[pid] : null; },
-  getCurrentData(){
-    const nid=this.state.activeNews, pid=this.state.activePlatform;
-    if(!this.state.news[nid]) this.state.news[nid]={};
-    if(!this.state.news[nid][pid]) this.state.news[nid][pid]={ text:'', img:null, imgs:null, igMedia:[], videoUrl:'', videoCover:null, likes:'', comments:'', shares:'' };
-    return this.state.news[nid][pid];
-  },
-  ensure(nid,p){ if(!this.state.news[nid]) this.state.news[nid]={}; if(!this.state.news[nid][p]) this.state.news[nid][p]={text:'',img:null,imgs:null,igMedia:[],videoUrl:'',videoCover:null,likes:'',comments:'',shares:''}; return this.state.news[nid][p]; },
+  hasContent(d){ return !!(d&&((d.text&&d.text.trim())||d.img||d.videoUrl||(d.igMedia&&d.igMedia.length))); },
+  getData(nid,pid){ const n=this.state.news[nid]; return n?n[pid]:null; },
+  ensure(nid,p){ if(!this.state.news[nid]) this.state.news[nid]={}; if(!this.state.news[nid][p]) this.state.news[nid][p]=EMPTY(); return this.state.news[nid][p]; },
+  getCurrentData(){ return this.ensure(this.state.activeNews,this.state.activePlatform); },
 
-  /* ---------- EVENTS ---------- */
   bindEvents(){
-    const g = () => this.state.global;
-    const bindText = (id,key) => document.getElementById(id).addEventListener('input',e=>{ g()[key]=e.target.value; this.renderGlobal(); this.saveState(); });
-    const bindChk = (id,key) => document.getElementById(id).addEventListener('change',e=>{ g()[key]=e.target.checked; if(id==='collab-active') document.getElementById('collab-fields').style.display=e.target.checked?'block':'none'; this.renderGlobal(); this.saveState(); });
+    const g=()=>this.state.global;
+    const bindText=(id,key)=>document.getElementById(id).addEventListener('input',e=>{ g()[key]=e.target.value; this.renderGlobal(); this.saveState(); });
+    const bindChk=(id,key)=>document.getElementById(id).addEventListener('change',e=>{ g()[key]=e.target.checked; if(id==='collab-active') document.getElementById('collab-fields').style.display=e.target.checked?'block':'none'; this.renderGlobal(); this.saveState(); });
     bindText('global-name','name'); bindText('global-handle','handle'); bindText('collab-name','collabName'); bindText('collab-handle','collabHandle');
     bindChk('main-verified','isVerified'); bindChk('collab-active','collabActive'); bindChk('collab-verified','collabVerified');
 
-    const ta = document.getElementById('post-text');
-    ta.addEventListener('input',e=>{ this.getCurrentData().text=e.target.value; this.autoGrow(); this.renderCounter(); this.renderPreview(); this.renderTabs(); this.saveState(); });
+    document.getElementById('post-text').addEventListener('input',e=>{ this.getCurrentData().text=e.target.value; this.autoGrow(); this.renderCounter(); this.renderPreview(); this.renderTabs(); this.saveState(); });
     document.getElementById('post-video-url').addEventListener('input',e=>{ this.getCurrentData().videoUrl=e.target.value; this.renderPreview(); this.renderTabs(); this.saveState(); });
     [['eng-likes','likes'],['eng-comments','comments'],['eng-shares','shares']].forEach(([id,k])=>
       document.getElementById(id).addEventListener('input',e=>{ this.getCurrentData()[k]=e.target.value; this.renderPreview(); this.saveState(); }));
     document.getElementById('toggle-trunc').addEventListener('change',e=>{ this.state.showTruncation=e.target.checked; this.expanded={}; this.renderCounter(); this.renderPreview(); this.saveState(); });
+    document.getElementById('export-filename').addEventListener('input',()=>this.saveState());
 
-    this.dropzone('dz-image','post-image',files=>this.setPostImages(files));
-    this.dropzone('dz-cover','post-video-cover',files=>this.handleFile(files[0],'videoCover'));
-    this.dropzone('dz-avatar','global-avatar',files=>this.handleFile(files[0],'avatar'));
-    this.dropzone('dz-collab','collab-avatar',files=>this.handleFile(files[0],'collabAvatar'));
+    this.dropzone('dz-image','post-image',f=>this.setPostImages(f));
+    this.dropzone('dz-cover','post-video-cover',f=>this.handleFile(f[0],'videoCover'));
+    this.dropzone('dz-avatar','global-avatar',f=>this.handleFile(f[0],'avatar'));
+    this.dropzone('dz-collab','collab-avatar',f=>this.handleFile(f[0],'collabAvatar'));
 
     document.addEventListener('paste',e=>{
       const items=(e.clipboardData||window.clipboardData).items;
-      for(const it of items){ if(it.type.indexOf('image')!==-1){ this.setPostImages([it.getAsFile()]); this.setMediaTab('image'); e.preventDefault(); this.toast('Immagine incollata'); break; } }
+      for(const it of items){ if(it.type.indexOf('image')!==-1){ e.preventDefault(); this.setPostImages([it.getAsFile()]); this.setMediaTab('image'); this.toast('Immagine incollata'); break; } }
     });
     document.addEventListener('click',()=>this.closeDD());
     document.addEventListener('keydown',e=>this.onKey(e));
@@ -540,28 +534,27 @@ const app = {
     z.addEventListener('drop',e=>{ e.preventDefault(); z.classList.remove('drag'); const f=Array.from(e.dataTransfer.files).filter(x=>x.type.startsWith('image/')); if(f.length) cb(f); else this.toast('Formato non supportato: trascina un\'immagine','warn'); });
   },
   onKey(e){
-    if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); this.exportJSON(); return; }
+    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'){ e.preventDefault(); this.exportJSON(); return; }
     if(e.key==='Escape'){ this.closeDrawer(); this.closeDD(); if(document.getElementById('carousel-modal').classList.contains('open')) this.closeCarouselModal(); return; }
-    if(!e.altKey || e.metaKey || e.ctrlKey) return;
+    if(!e.altKey||e.metaKey||e.ctrlKey) return;
     const m=e.code.match(/^Digit([1-5])$/);
-    if(m && !e.shiftKey){ e.preventDefault(); this.switchNews(+m[1]); return; }
+    if(m){ e.preventDefault(); this.switchNews(+m[1]); return; }
     const p=PLATFORMS.find(x=>PINFO[x].key===e.code);
     if(p){ e.preventDefault(); this.setPlatform(p); return; }
     if(e.code==='KeyG'){ e.preventDefault(); this.setView(this.state.view==='all'?'single':'all'); }
   },
 
-  /* ---------- FILES ---------- */
   readFile(f){ return new Promise(res=>{ const r=new FileReader(); r.onload=ev=>res(ev.target.result); r.readAsDataURL(f); }); },
   async setPostImages(files){
-    const results = await Promise.all(files.map(f=>this.readFile(f)));
+    const res=await Promise.all(files.map(f=>this.readFile(f)));
     const d=this.getCurrentData();
-    d.img=results[0]; d.imgs=results; d.igMedia=results.map(src=>({type:'image',src}));
+    d.img=res[0]; d.imgs=res; d.igMedia=res.map(src=>({type:'image',src}));
     this.renderAll(); this.saveState();
-    if(results.length>1) this.toast(`${results.length} immagini caricate (carousel su Instagram)`);
+    if(res.length>1) this.toast(`${res.length} immagini caricate (carousel su Instagram)`);
   },
   async handleFile(file,type){
     if(!file) return;
-    const src = await this.readFile(file);
+    const src=await this.readFile(file);
     if(type==='avatar') this.state.global.avatar=src;
     else if(type==='collabAvatar') this.state.global.collabAvatar=src;
     else if(type==='videoCover') this.getCurrentData().videoCover=src;
@@ -570,24 +563,22 @@ const app = {
   removeImage(){ const d=this.getCurrentData(); d.img=null; d.imgs=null; d.igMedia=[]; this.renderAll(); this.saveState(); },
   removeVideo(){ const d=this.getCurrentData(); d.videoUrl=''; d.videoCover=null; this.renderAll(); this.saveState(); },
 
-  /* ---------- NAV ---------- */
   switchNews(id){ this.state.activeNews=id; this.mediaTab=null; this.renderAll(); this.saveState(); },
   setPlatform(p){ this.state.activePlatform=p; this.mediaTab=null; this.renderAll(); this.saveState(); },
   setView(v){ this.state.view=v; this.renderPreviewLayout(); this.saveState(); },
   setZoom(z){ this.state.zoom=z; this.renderPreviewLayout(); this.saveState(); },
   setMediaTab(t){ this.mediaTab=t; this.renderMediaTab(); },
-  toggleDD(id,e){ e.stopPropagation(); const el=document.getElementById(id); const open=el.classList.contains('open'); this.closeDD(); if(!open) el.classList.add('open'); },
+  toggleDD(id,e){ e.stopPropagation(); const el=document.getElementById(id), open=el.classList.contains('open'); this.closeDD(); if(!open) el.classList.add('open'); },
   closeDD(){ document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')); },
   openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); },
   closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); },
 
-  /* ---------- RENDER ---------- */
   renderAll(){ this.renderTabs(); this.renderContext(); this.renderEditor(); this.renderGlobal(); this.renderPreviewLayout(); },
   renderTabs(){
     const s=this.state;
     const nt=document.getElementById('news-tabs'); nt.innerHTML='';
     for(let i=1;i<=5;i++){
-      const filled = PLATFORMS.some(p=>this.hasContent(this.getData(i,p)));
+      const filled=PLATFORMS.some(p=>this.hasContent(this.getData(i,p)));
       const b=document.createElement('button'); b.className='seg-btn'+(i===s.activeNews?' active':'');
       b.innerHTML=`<span class="sdot ${filled?'filled':''}"></span>N${i}`; b.title=`Notizia ${i}${filled?' (con contenuti)':' (vuota)'} · Alt+${i}`;
       b.onclick=()=>this.switchNews(i); nt.appendChild(b);
@@ -603,7 +594,7 @@ const app = {
   },
   renderContext(){
     const p=this.state.activePlatform, b=document.getElementById('ctx-badge');
-    b.style.background = p==='instagram' ? 'linear-gradient(45deg,#f09433,#dc2743,#bc1888)' : PINFO[p].color;
+    b.style.background=p==='instagram'?'linear-gradient(45deg,#f09433,#dc2743,#bc1888)':PINFO[p].color;
     document.getElementById('ctx-label').textContent=`${PINFO[p].label} · Notizia N${this.state.activeNews}`;
   },
   renderEditor(){
@@ -615,11 +606,10 @@ const app = {
     document.getElementById('eng-shares').value=d.shares||'';
     document.getElementById('toggle-trunc').checked=!!this.state.showTruncation;
     document.getElementById('image-thumbs').innerHTML=(d.imgs||(d.img?[d.img]:[])).map(s=>`<img class="thumb" src="${s}">`).join('');
-    document.getElementById('cover-label').innerHTML = d.videoCover ? `<img src="${d.videoCover}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;vertical-align:middle"> <b>Cover caricata</b> · clicca per sostituire` : '<b>Scegli o trascina la cover</b>';
-    const ig=this.getData(this.state.activeNews,'instagram');
-    const media=(ig&&ig.igMedia)||[];
-    document.getElementById('carousel-thumbs').innerHTML = media.length ? media.map(m=>`<img class="thumb" src="${m.type==='video'?(m.cover||PH_VIDEO):m.src}">`).join('') : '<span class="hint" style="margin:0">Nessun frame nel carousel.</span>';
-    if(!this.mediaTab) this.mediaTab = d.videoUrl ? 'video' : 'image';
+    document.getElementById('cover-label').innerHTML=d.videoCover?`<img src="${d.videoCover}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;vertical-align:middle"> <b>Cover caricata</b> · clicca per sostituire`:'<b>Scegli o trascina la cover</b>';
+    const ig=this.getData(this.state.activeNews,'instagram'), media=(ig&&ig.igMedia)||[];
+    document.getElementById('carousel-thumbs').innerHTML=media.length?media.map(m=>`<img class="thumb" src="${m.type==='video'?(m.cover||PH_VIDEO):m.src}">`).join(''):'<span class="hint" style="margin:0">Nessun frame nel carousel.</span>';
+    if(!this.mediaTab) this.mediaTab=d.videoUrl?'video':'image';
     this.renderMediaTab(); this.renderCounter(); requestAnimationFrame(()=>this.autoGrow());
   },
   renderMediaTab(){
@@ -629,10 +619,10 @@ const app = {
   renderCounter(){
     const p=this.state.activePlatform, t=document.getElementById('post-text').value, n=[...t].length, lim=PINFO[p].limit;
     const c=document.getElementById('char-counter');
-    c.textContent = `${n.toLocaleString('it-IT')} / ${lim.toLocaleString('it-IT')} caratteri`;
+    c.textContent=`${n.toLocaleString('it-IT')} / ${lim.toLocaleString('it-IT')} caratteri`;
     c.className='counter'+(n>lim?' over':(n>lim*0.9?' warn':''));
     const ti=document.getElementById('trunc-info');
-    if(this.state.showTruncation && p!=='x' && n>PINFO[p].trunc){ ti.style.display='block'; ti.textContent=`"Vedi altro" dopo circa ${PINFO[p].trunc} caratteri (stima, varia per dispositivo)`; }
+    if(this.state.showTruncation&&p!=='x'&&n>PINFO[p].trunc){ ti.style.display='block'; ti.textContent=`"Vedi altro" dopo circa ${PINFO[p].trunc} caratteri (stima, varia per dispositivo)`; }
     else ti.style.display='none';
   },
   autoGrow(){ const ta=document.getElementById('post-text'); ta.style.height='auto'; ta.style.height=Math.max(220,ta.scrollHeight+2)+'px'; },
@@ -644,12 +634,12 @@ const app = {
     document.getElementById('collab-prev').src=g.collabAvatar||PH_AVATAR;
     PLATFORMS.forEach(p=>{
       const card=document.getElementById('card-'+p);
-      const isCollab=g.collabActive && (p==='facebook'||p==='instagram');
+      const isCollab=g.collabActive&&(p==='facebook'||p==='instagram');
       card.querySelector('.sc-avatar-container').classList.toggle('is-collab',isCollab);
       const n1=card.querySelector('.n1'), n2=card.querySelector('.n2'), conj=card.querySelector('.conj');
-      n1.innerText = p==='instagram' ? (g.handle||'').replace('@','') : (p==='x' ? g.handle : g.name);
+      n1.innerText=p==='instagram'?(g.handle||'').replace('@',''):(p==='x'?g.handle:g.name);
       if(n2){
-        if(isCollab){ conj.innerHTML=`<span class="conjunction">${p==='facebook'?' con ':', '}</span>`; n2.innerText = p==='facebook'?g.collabName:(g.collabHandle||'').replace('@',''); }
+        if(isCollab){ conj.innerHTML=`<span class="conjunction">${p==='facebook'?' con ':', '}</span>`; n2.innerText=p==='facebook'?g.collabName:(g.collabHandle||'').replace('@',''); }
         else { conj.innerHTML=''; n2.innerText=''; }
         card.querySelector('.partner-v').classList.toggle('verified-active',isCollab&&g.collabVerified);
       }
@@ -665,6 +655,8 @@ const app = {
     w.style.zoom=s.zoom;
     document.getElementById('view-single').classList.toggle('active',s.view!=='all');
     document.getElementById('view-all').classList.toggle('active',s.view==='all');
+    document.getElementById('quick-export').classList.toggle('hidden',s.view==='all');
+    document.getElementById('qe-label').textContent='Salva '+PINFO[s.activePlatform].label;
     document.querySelectorAll('#zoom-seg .seg-btn').forEach(b=>b.classList.toggle('active',+b.dataset.z===s.zoom));
     document.querySelectorAll('.grid-cell').forEach(c=>c.classList.toggle('active',c.dataset.p===s.activePlatform));
     PLATFORMS.forEach(p=>document.getElementById('card-'+p).classList.toggle('current',p===s.activePlatform));
@@ -676,31 +668,30 @@ const app = {
   },
   textHTML(p,text){
     const info=PINFO[p], key=this.state.activeNews+'-'+p;
-    if(this.state.showTruncation && p!=='x' && [...(text||'')].length>info.trunc && !this.expanded[key]){
-      const cut=[...text].slice(0,info.trunc).join('').trimEnd();
-      return this.fmt(cut)+`<span class="see-more">${info.more}</span>`;
+    if(this.state.showTruncation&&p!=='x'&&[...(text||'')].length>info.trunc&&!this.expanded[key]){
+      return this.fmt([...text].slice(0,info.trunc).join('').trimEnd())+`<span class="see-more">${info.more}</span>`;
     }
     return this.fmt(text);
   },
   mediaHTML(p,d){
     if(p==='instagram'){
       let ig=d.igMedia||[];
-      if(!ig.length && d.imgs && d.imgs.length) ig=d.imgs.map(src=>({type:'image',src}));
+      if(!ig.length&&d.imgs&&d.imgs.length) ig=d.imgs.map(src=>({type:'image',src}));
       if(ig.length){
-        const slides=ig.map((it,i)=> it.type==='video'
-          ? `<div class="carousel-slide" style="background:#000"><div class="video-container" style="aspect-ratio:4/5" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${esc(it.cover)||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(it.src)}" class="native-video" playsinline loop controls></video></div></div>`
-          : `<img src="${it.src}" class="carousel-slide">`).join('');
-        if(ig.length===1) return `<div class="ig-wrap">${slides.replace('carousel-slide','carousel-slide" style="flex:none;width:100%')}</div>`;
+        const slide=(it,single)=>it.type==='video'
+          ? `<div class="carousel-slide" style="background:#000${single?';flex:none':''}"><div class="video-container" style="aspect-ratio:4/5" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${esc(it.cover)||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(it.src)}" class="native-video" playsinline loop controls></video></div></div>`
+          : `<img src="${it.src}" class="carousel-slide"${single?' style="flex:none"':''}>`;
+        if(ig.length===1) return `<div class="ig-wrap">${slide(ig[0],true)}</div>`;
         const dots=ig.map((_,i)=>`<div class="ig-dot ${i?'':'active'}"></div>`).join('');
         return `<div class="ig-wrap"><div class="ig-outer">
           <button class="carousel-arrow prev hidden" onclick="event.stopPropagation();const c=this.nextElementSibling;c.scrollBy({left:-c.offsetWidth})">‹</button>
-          <div class="carousel-container" onscroll="app.onCarouselScroll(this)">${slides}</div>
+          <div class="carousel-container" onscroll="app.onCarouselScroll(this)">${ig.map(it=>slide(it,false)).join('')}</div>
           <button class="carousel-arrow next" onclick="event.stopPropagation();const c=this.previousElementSibling;c.scrollBy({left:c.offsetWidth})">›</button>
           </div><div class="ig-dots">${dots}</div></div>`;
       }
     }
-    if(d.videoUrl && d.videoUrl.trim()){
-      const ar = p==='instagram' ? 'aspect-ratio:4/5;' : '';
+    if(d.videoUrl&&d.videoUrl.trim()){
+      const ar=p==='instagram'?'aspect-ratio:4/5;':'';
       return `<div class="video-container" style="${ar}" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${d.videoCover||d.img||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(d.videoUrl)}" class="native-video" playsinline loop controls></video></div>`;
     }
     if(d.img) return `<img src="${d.img}" class="sc-image" ${p==='instagram'?'style="aspect-ratio:4/5;object-fit:cover"':''}>`;
@@ -715,23 +706,17 @@ const app = {
     c.nextElementSibling.classList.toggle('hidden',idx===dots.length-1);
   },
   renderPreview(){
-    const nid=this.state.activeNews;
+    const nid=this.state.activeNews, n=x=>x.toLocaleString('it-IT');
     PLATFORMS.forEach(p=>{
-      const card=document.getElementById('card-'+p);
-      const d=this.getData(nid,p)||{};
-      const textEl=card.querySelector('.news-text');
-      const body=this.textHTML(p,d.text||'');
-      textEl.innerHTML = p==='instagram' ? `<span style="font-weight:700;margin-right:6px">${esc((this.state.global.handle||'').replace('@',''))}</span>${body}` : body;
-      textEl.style.display = (d.text||p==='instagram') ? '' : 'none';
+      const card=document.getElementById('card-'+p), d=this.getData(nid,p)||{};
+      const textEl=card.querySelector('.news-text'), body=this.textHTML(p,d.text||'');
+      textEl.innerHTML=p==='instagram'?`<span style="font-weight:700;margin-right:6px">${esc((this.state.global.handle||'').replace('@',''))}</span>${body}`:body;
+      textEl.style.display=(d.text||p==='instagram')?'':'none';
       const mc=card.querySelector('.sc-image-container');
-      const sig=[d.img&&d.img.length,(d.imgs||[]).length,JSON.stringify((d.igMedia||[]).map(m=>[m.type,(m.src||'').length,m.cover])),d.videoUrl,d.videoCover&&d.videoCover.length].join('|');
+      const sig=[nid,d.img&&d.img.length,(d.imgs||[]).length,JSON.stringify((d.igMedia||[]).map(m=>[m.type,(m.src||'').length,m.cover])),d.videoUrl,d.videoCover&&d.videoCover.length].join('|');
       if(mc.dataset.sig!==sig){ mc.dataset.sig=sig; mc.innerHTML=this.mediaHTML(p,d); }
       const lk=parseInt(d.likes)||0, cm=parseInt(d.comments)||0, sh=parseInt(d.shares)||0;
-      const n=x=>x.toLocaleString('it-IT');
-      if(p==='x'){
-        [['x-c',cm],['x-s',sh],['x-l',lk]].forEach(([c,v])=>card.querySelector('.'+c).textContent=v?n(v):'');
-        return;
-      }
+      if(p==='x'){ [['x-c',cm],['x-s',sh],['x-l',lk]].forEach(([c,v])=>card.querySelector('.'+c).textContent=v?n(v):''); return; }
       const eng=card.querySelector('.sc-engagement');
       if(p==='instagram'){
         eng.style.display=(lk||cm)?'flex':'none';
@@ -758,19 +743,18 @@ const app = {
     if(this.state.projectName) document.getElementById('export-filename').value=this.state.projectName;
   },
 
-  /* ---------- TEXT ACTIONS ---------- */
   insertLorem(){
-    const l='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud #exercitation ullamco #laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
-    this.getCurrentData().text=l; this.renderEditor(); this.renderPreview(); this.renderTabs(); this.saveState();
+    this.getCurrentData().text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud #exercitation ullamco #laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
+    this.renderEditor(); this.renderPreview(); this.renderTabs(); this.saveState();
   },
-  copyCurrentText(btn){
+  copyCurrentText(){
     const t=document.getElementById('post-text').value; if(!t){ this.toast('Nessun testo da copiare','warn'); return; }
     navigator.clipboard.writeText(t).then(()=>this.toast('Testo copiato negli appunti')).catch(()=>this.toast('Copia non riuscita','err'));
   },
   async copyTextToAll(){
     const txt=this.getCurrentData().text||'', nid=this.state.activeNews;
-    const diff=PLATFORMS.filter(p=>p!==this.state.activePlatform && (this.getData(nid,p)||{}).text && this.getData(nid,p).text!==txt);
-    if(diff.length && !(await this.confirm('Sovrascrivere i testi?',`I canali <b>${diff.map(p=>PINFO[p].label).join(', ')}</b> hanno già un testo diverso, che verrà sostituito.`,'Sovrascrivi'))) return;
+    const diff=PLATFORMS.filter(p=>p!==this.state.activePlatform&&(this.getData(nid,p)||{}).text&&this.getData(nid,p).text!==txt);
+    if(diff.length&&!(await this.confirm('Sovrascrivere i testi?',`I canali <b>${diff.map(p=>PINFO[p].label).join(', ')}</b> hanno già un testo diverso, che verrà sostituito.`,'Sovrascrivi'))) return;
     PLATFORMS.forEach(p=>this.ensure(nid,p).text=txt);
     this.renderAll(); this.saveState(); this.toast('Testo copiato su tutti i canali');
   },
@@ -779,7 +763,7 @@ const app = {
     if(!c.img){ this.toast('Nessuna immagine da applicare','warn'); return; }
     PLATFORMS.forEach(p=>{ const d=this.ensure(nid,p); d.img=c.img;
       if(p==='instagram'){ d.imgs=c.imgs||[c.img]; d.igMedia=d.imgs.map(src=>({type:'image',src})); } else d.imgs=[c.img]; });
-    this.renderAll(); this.saveState(); this.toast('Immagine applicata a tutti i canali (solo la prima sui canali diversi da IG)');
+    this.renderAll(); this.saveState(); this.toast('Immagine applicata a tutti i canali');
   },
   copyVideoToAll(){
     const c=this.getCurrentData(), nid=this.state.activeNews;
@@ -789,8 +773,7 @@ const app = {
   },
   resetEngagement(){ const d=this.getCurrentData(); d.likes=d.comments=d.shares=''; this.renderEditor(); this.renderPreview(); this.saveState(); },
 
-  /* ---------- CAROUSEL ---------- */
-  igData(){ const d=this.ensure(this.state.activeNews,'instagram'); if((!d.igMedia||!d.igMedia.length) && d.imgs && d.imgs.length) d.igMedia=d.imgs.map(src=>({type:'image',src})); if(!d.igMedia) d.igMedia=[]; return d; },
+  igData(){ const d=this.ensure(this.state.activeNews,'instagram'); if((!d.igMedia||!d.igMedia.length)&&d.imgs&&d.imgs.length) d.igMedia=d.imgs.map(src=>({type:'image',src})); if(!d.igMedia) d.igMedia=[]; return d; },
   openCarouselModal(){ this.igData(); this.renderCarouselList(); document.getElementById('carousel-modal').classList.add('open'); },
   closeCarouselModal(){ document.getElementById('carousel-modal').classList.remove('open'); this.renderAll(); this.saveState(); },
   renderCarouselList(){
@@ -812,10 +795,10 @@ const app = {
     this.igData().igMedia.push(...res.map(src=>({type:'image',src}))); this.renderCarouselList(); input.value='';
   },
 
-  /* ---------- FEEDBACK ---------- */
   toast(msg,type=''){
-    const t=document.createElement('div'); t.className='toast '+type; t.innerHTML=(type==='err'?'⚠️ ':type==='warn'?'⚠️ ':'✓ ')+msg;
-    document.getElementById('toasts').appendChild(t); setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); },2800);
+    const t=document.createElement('div'); t.className='toast '+type; t.textContent=(type?'⚠️ ':'✓ ')+msg;
+    document.getElementById('toasts').appendChild(t);
+    setTimeout(()=>{ t.style.transition='opacity .3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); },2800);
   },
   confirm(title,msg,okLabel='Conferma',danger=false){
     return new Promise(res=>{
@@ -828,7 +811,6 @@ const app = {
     });
   },
 
-  /* ---------- PERSISTENZA ---------- */
   saveState(){
     this.state.projectName=document.getElementById('export-filename').value;
     const el=document.getElementById('autosave'), tx=document.getElementById('autosave-txt');
@@ -880,15 +862,27 @@ const app = {
   },
 
   /* ---------- EXPORT ---------- */
-  selectedChannels(){ const s=PLATFORMS.filter(p=>document.getElementById('chk-'+p).checked); if(!s.length) this.toast('Seleziona almeno un canale nel menu Esporta','warn'); return s; },
-  async downloadZip(){
-    const sel=this.selectedChannels(); if(!sel.length) return;
-    const project=this.projectName(), w=document.getElementById('mockup-wrapper');
-    const prevView=this.state.view, prevZoom=this.state.zoom;
+  quickExport(type){
+    const ch=[this.state.activePlatform];
+    if(type==='png') this.downloadZip(ch);
+    else if(type==='html') this.exportHTML(ch);
+    else this.downloadAssets(ch);
+  },
+  channels(ch){
+    if(Array.isArray(ch)) return ch;
+    const s=PLATFORMS.filter(p=>document.getElementById('chk-'+p).checked);
+    if(!s.length) this.toast('Seleziona almeno un canale nel menu Esporta','warn');
+    return s;
+  },
+  suffix(sel){ return sel.length===1?'_'+sel[0]:''; },
+  async downloadZip(ch){
+    const sel=this.channels(ch); if(!sel.length||this.busy) return;
+    this.busy=true;
+    const project=this.projectName(), prevView=this.state.view, prevZoom=this.state.zoom;
     const st=document.createElement('style'); st.innerHTML='*{transition:none!important;animation:none!important}.social-card{outline:none!important}';
     document.head.appendChild(st);
     this.state.view='all'; this.state.zoom=1; this.renderPreviewLayout();
-    this.toast('Generazione mockup in corso…');
+    this.toast(sel.length===1?`Generazione PNG ${PINFO[sel[0]].label}…`:'Generazione mockup in corso…');
     try{
       for(const p of sel){
         await new Promise(r=>setTimeout(r,120));
@@ -896,50 +890,54 @@ const app = {
         await new Promise(r=>canvas.toBlob(b=>{ saveAs(b,`${p}_${project}.png`); r(); }));
         await new Promise(r=>setTimeout(r,350));
       }
-      this.toast('Mockup esportati');
+      this.toast(sel.length===1?'PNG salvato':'Mockup esportati');
     }catch(e){ this.toast('Errore durante l\'esportazione','err'); }
-    finally{ st.remove(); this.state.view=prevView; this.state.zoom=prevZoom; this.renderPreviewLayout(); }
+    finally{ st.remove(); this.state.view=prevView; this.state.zoom=prevZoom; this.renderPreviewLayout(); this.busy=false; }
   },
-  async downloadAssets(){
-    const sel=this.selectedChannels(); if(!sel.length) return;
+  async downloadAssets(ch){
+    const sel=this.channels(ch); if(!sel.length) return;
     const zip=new JSZip(), project=this.projectName('Social_Assets');
     let txt=`PROJECT: ${project}\nNOTIZIA: N${this.state.activeNews}\nEXPORT DATE: ${new Date().toLocaleString('it-IT')}\n\n`;
-    const ext=s=>{ const m=s.match(/^data:image\/(\w+);/); return m?m[1].replace('jpeg','jpg'):'png'; };
+    const ext=s=>{ const m=s.match(/^data:image\/(\w+)/); return m?m[1].replace('jpeg','jpg').replace('svg','svg'):'png'; };
+    const add=(name,src)=>{ if(src&&src.startsWith('data:')&&src.includes(';base64,')) zip.file(`${name}.${ext(src)}`,src.split(',')[1],{base64:true}); };
     sel.forEach(p=>{
       const d=this.getData(this.state.activeNews,p)||{};
       txt+=`==================================================\nPLATFORM: ${p.toUpperCase()}\n==================================================\n${d.text||'(Nessun testo)'}\n\n`;
-      if(d.videoUrl&&d.videoUrl.trim()){ txt+=`[VIDEO LINK]: ${d.videoUrl}\n`; if(d.videoCover&&d.videoCover.startsWith('data:')) zip.file(`${p}_cover.${ext(d.videoCover)}`,d.videoCover.split(',')[1],{base64:true}); }
-      else if(p==='instagram' && d.igMedia && d.igMedia.length>1){
-        d.igMedia.forEach((m,i)=>{ if(m.type==='image'&&m.src.startsWith('data:')) zip.file(`${p}_frame${i+1}.${ext(m.src)}`,m.src.split(',')[1],{base64:true}); else if(m.type==='video') txt+=`[FRAME ${i+1} VIDEO]: ${m.src}\n`; });
+      if(d.videoUrl&&d.videoUrl.trim()){ txt+=`[VIDEO LINK]: ${d.videoUrl}\n`; add(`${p}_cover`,d.videoCover); }
+      else if(p==='instagram'&&d.igMedia&&d.igMedia.length>1){
+        d.igMedia.forEach((m,i)=>{ if(m.type==='image') add(`${p}_frame${i+1}`,m.src); else txt+=`[FRAME ${i+1} VIDEO]: ${m.src}\n`; });
       }
-      else if(d.img&&d.img.startsWith('data:')) zip.file(`${p}_image.${ext(d.img)}`,d.img.split(',')[1],{base64:true});
+      else add(`${p}_image`,d.img);
       txt+='\n\n';
     });
     zip.file(`${project}_Copy.txt`,txt);
-    const blob=await zip.generateAsync({type:'blob'}); saveAs(blob,`${project}_Assets.zip`); this.toast('Asset esportati');
+    const blob=await zip.generateAsync({type:'blob'});
+    saveAs(blob,`${project}${this.suffix(sel)}_Assets.zip`);
+    this.toast(sel.length===1?'ZIP salvato':'Asset esportati');
   },
-  exportHTML(){
-    const sel=this.selectedChannels(); if(!sel.length) return;
+  exportHTML(ch){
+    const sel=this.channels(ch); if(!sel.length) return;
     let grid='';
     sel.forEach(p=>{
       const card=document.getElementById('card-'+p).cloneNode(true);
       card.classList.remove('current'); card.removeAttribute('id'); card.style.cssText='display:block;width:100%;max-width:500px;box-shadow:0 4px 20px rgba(0,0,0,.1)';
       const color=p==='instagram'?'linear-gradient(45deg,#f09433,#dc2743)':PINFO[p].color;
-      grid+=`<div class="card-wrapper"><div class="platform-badge" style="background:${color}">${p==='x'?'X':PINFO[p].label}</div>${card.outerHTML}</div>`;
+      grid+=`<div class="card-wrapper"><div class="platform-badge" style="background:${color}">${PINFO[p].label}</div>${card.outerHTML}</div>`;
     });
     const styles=document.getElementById('main-styles').innerHTML;
     const extra=`body{background:#f0f2f5!important;padding:20px!important;height:auto!important;overflow-y:auto!important;display:block!important}
       .grid{display:grid;grid-template-columns:1fr;gap:40px;max-width:1200px;margin:0 auto;padding-bottom:50px}
       @media(min-width:768px){.grid{grid-template-columns:repeat(auto-fit,minmax(400px,1fr))}}
+      .grid.single{max-width:540px;grid-template-columns:1fr!important}
       .card-wrapper{display:flex;flex-direction:column;align-items:center;width:100%}
       .platform-badge{color:#fff;padding:6px 16px;border-radius:20px;font-weight:600;margin-bottom:12px;font-size:.9rem}
       .see-more{cursor:default}`;
-    const script=`const app={onCarouselScroll(c){const i=Math.round(c.scrollLeft/c.offsetWidth);c.querySelectorAll('video').forEach(v=>{if(c.dataset.last!==String(i))v.pause()});c.dataset.last=i;const d=c.parentElement.nextElementSibling.querySelectorAll('.ig-dot');d.forEach((x,j)=>x.classList.toggle('active',j===i));c.previousElementSibling.classList.toggle('hidden',i===0);c.nextElementSibling.classList.toggle('hidden',i===d.length-1)}};`;
-    const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(this.projectName())}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles}${extra}</style></head><body><div class="grid">${grid}</div><script>${script}<\/script></body></html>`;
-    saveAs(new Blob([html],{type:'text/html'}),`${this.projectName()}_${this.getTimestamp()}.html`); this.toast('Anteprima web esportata');
+    const script=`const app={onCarouselScroll(c){const i=Math.round(c.scrollLeft/c.offsetWidth);if(c.dataset.last!==String(i)){c.dataset.last=i;c.querySelectorAll('video').forEach(v=>v.pause())}const d=c.parentElement.nextElementSibling.querySelectorAll('.ig-dot');d.forEach((x,j)=>x.classList.toggle('active',j===i));c.previousElementSibling.classList.toggle('hidden',i===0);c.nextElementSibling.classList.toggle('hidden',i===d.length-1)}};`;
+    const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(this.projectName())}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles}${extra}</style></head><body><div class="grid${sel.length===1?' single':''}">${grid}</div><script>${script}<\/script></body></html>`;
+    saveAs(new Blob([html],{type:'text/html'}),`${this.projectName()}${this.suffix(sel)}_${this.getTimestamp()}.html`);
+    this.toast(sel.length===1?'HTML salvato':'Anteprima web esportata');
   }
 };
-document.getElementById('export-filename').addEventListener('input',()=>app.saveState());
 window.onload=()=>app.init();
 </script>
 </body>
