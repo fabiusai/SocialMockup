@@ -170,10 +170,11 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
 .native-video{width:100%;height:100%;object-fit:cover;display:block}
 .playing .video-cover,.playing .play-btn{display:none}
 .ig-wrap{display:flex;flex-direction:column;width:100%;background:#fff}
-.ig-outer{position:relative;width:100%;background:#000;display:flex}
+.ig-outer{position:relative;width:100%;background:#fff;display:flex}
 .carousel-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:100%;scrollbar-width:none;scroll-behavior:smooth}
 .carousel-container::-webkit-scrollbar{display:none}
-.carousel-slide{flex:0 0 100%;width:100%;scroll-snap-align:start;object-fit:cover;aspect-ratio:4/5}
+.carousel-container{align-items:center}
+.carousel-slide{flex:0 0 100%;width:100%;height:auto;scroll-snap-align:start;display:block}
 .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;border:none;box-shadow:0 4px 12px rgba(0,0,0,.15);color:#737373;padding:0}
 .carousel-arrow.prev{left:10px}.carousel-arrow.next{right:10px}.carousel-arrow.hidden{opacity:0;pointer-events:none}
 .ig-dots{display:flex;gap:5px;justify-content:center;padding:12px 0 0;background:#fff}
@@ -680,7 +681,7 @@ const app = {
       if(ig.length){
         const slide=(it,single)=>it.type==='video'
           ? `<div class="carousel-slide" style="background:#000${single?';flex:none':''}"><div class="video-container" style="aspect-ratio:4/5" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${esc(it.cover)||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(it.src)}" class="native-video" playsinline loop controls></video></div></div>`
-          : `<img src="${it.src}" class="carousel-slide"${single?' style="flex:none"':''}>`;
+          : `<img src="${it.src}" class="carousel-slide"${single?' style="flex:none;width:100%"':''}>`;
         if(ig.length===1) return `<div class="ig-wrap">${slide(ig[0],true)}</div>`;
         const dots=ig.map((_,i)=>`<div class="ig-dot ${i?'':'active'}"></div>`).join('');
         return `<div class="ig-wrap"><div class="ig-outer">
@@ -694,7 +695,7 @@ const app = {
       const ar=p==='instagram'?'aspect-ratio:4/5;':'';
       return `<div class="video-container" style="${ar}" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${d.videoCover||d.img||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(d.videoUrl)}" class="native-video" playsinline loop controls></video></div>`;
     }
-    if(d.img) return `<img src="${d.img}" class="sc-image" ${p==='instagram'?'style="aspect-ratio:4/5;object-fit:cover"':''}>`;
+    if(d.img) return `<img src="${d.img}" class="sc-image">`;
     return '';
   },
   onCarouselScroll(c){
