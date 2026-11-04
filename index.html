@@ -206,6 +206,19 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
 .toast.err{background:var(--danger)}.toast.warn{background:#c77700}
 @keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .kbd-help{font-size:.72rem;color:var(--text-sec);line-height:1.8}
+
+.multi-grid{display:grid;width:100%;aspect-ratio:1;gap:2px;background:#fff;overflow:hidden;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+.multi-grid .multi-cell{background-size:cover;background-position:center;background-repeat:no-repeat;position:relative;overflow:hidden;min-height:0}
+.multi-grid img{display:none}
+.multi-grid.count-2{grid-template-rows:minmax(0,1fr);aspect-ratio:1.5}
+.multi-grid.count-3 .multi-cell:first-child{grid-row:span 2}
+.multi-grid.facebook.count-3 .multi-cell:first-child,.multi-grid.linkedin.count-3 .multi-cell:first-child{grid-row:auto;grid-column:span 2}
+.multi-grid.count-5{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:3fr 2fr}
+.multi-grid.count-5 .multi-cell{grid-column:span 2}
+.multi-grid.count-5 .multi-cell:nth-child(-n+2){grid-column:span 3}
+.multi-grid.x{aspect-ratio:16/9;border-radius:15px;border:1px solid #cfd9de}
+.multi-more{position:absolute;inset:0;background:#0008;color:white;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:600}
+.photo-edit{display:inline-flex;flex-direction:column;gap:3px;margin:3px}.photo-edit button{cursor:pointer;padding:2px 6px}
 </style>
 </head>
 <body>
@@ -289,11 +302,11 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
         <button class="media-tab" data-tab="carousel" onclick="app.setMediaTab('carousel')">Carousel IG</button>
       </div>
       <div class="media-pane active" data-pane="image">
-        <div class="dropzone" id="dz-image"><span class="dz-ico">🖼</span><b>Trascina qui le immagini</b> o clicca per sceglierle<br><small>oppure incolla con <kbd>⌘V</kbd> / <kbd>Ctrl+V</kbd> · selezione multipla = carousel su IG</small></div>
+        <div class="dropzone" id="dz-image"><span class="dz-ico">🖼</span><b>Trascina qui le immagini</b> o clicca per sceglierle<br><small>oppure incolla con <kbd>⌘V</kbd> / <kbd>Ctrl+V</kbd> · selezione multipla = post multifoto · X: massimo 4 · LinkedIn: massimo 20</small></div>
         <input type="file" id="post-image" accept="image/*" multiple hidden>
         <div class="thumbs" id="image-thumbs"></div>
         <div class="pane-actions">
-          <button class="link-btn" onclick="app.copyImageToAll()">Applica immagine a tutti i canali</button>
+          <button class="link-btn" onclick="app.copyImageToAll()">Applica foto a tutti i canali</button>
           <button class="link-btn" style="color:var(--text-sec)" onclick="app.removeImage()">Rimuovi</button>
         </div>
       </div>
@@ -547,11 +560,24 @@ const app = {
 
   readFile(f){ return new Promise(res=>{ const r=new FileReader(); r.onload=ev=>res(ev.target.result); r.readAsDataURL(f); }); },
   async setPostImages(files){
+    const d=this.getCurrentData(), platform=this.state.activePlatform;
+    const limit=platform==='x'?4:platform==='linkedin'?20:100;
+    files=Array.from(files).filter(f=>f&&f.type.startsWith('image/'));
+    if(!files.length) return;
+    if(files.length>limit){ this.toast(`Massimo ${limit} foto per questo canale`,'warn'); return; }
     const res=await Promise.all(files.map(f=>this.readFile(f)));
-    const d=this.getCurrentData();
+    d.videoUrl='';
     d.img=res[0]; d.imgs=res; d.igMedia=res.map(src=>({type:'image',src}));
     this.renderAll(); this.saveState();
-    if(res.length>1) this.toast(`${res.length} immagini caricate (carousel su Instagram)`);
+    if(res.length>1) this.toast(`${res.length} immagini caricate`);
+  },
+  editPhoto(index,direction){
+    const d=this.getCurrentData(), photos=[...(d.imgs|| (d.img?[d.img]:[]))];
+    if(direction===0) photos.splice(index,1);
+    else { const next=index+direction; if(next<0||next>=photos.length) return; [photos[index],photos[next]]=[photos[next],photos[index]]; }
+    d.imgs=photos; d.img=photos[0]||'';
+    d.igMedia=photos.map(src=>({type:'image',src}));
+    this.renderAll(); this.saveState();
   },
   async handleFile(file,type){
     if(!file) return;
@@ -606,7 +632,7 @@ const app = {
     document.getElementById('eng-comments').value=d.comments||'';
     document.getElementById('eng-shares').value=d.shares||'';
     document.getElementById('toggle-trunc').checked=!!this.state.showTruncation;
-    document.getElementById('image-thumbs').innerHTML=(d.imgs||(d.img?[d.img]:[])).map(s=>`<img class="thumb" src="${s}">`).join('');
+    document.getElementById('image-thumbs').innerHTML=(d.imgs||(d.img?[d.img]:[])).map((s,i)=>`<span class="photo-edit"><img class="thumb" src="${s}"><span><button onclick="app.editPhoto(${i},-1)" aria-label="Sposta foto a sinistra">←</button><button onclick="app.editPhoto(${i},1)" aria-label="Sposta foto a destra">→</button><button onclick="app.editPhoto(${i},0)" aria-label="Rimuovi foto">×</button></span></span>`).join('');
     document.getElementById('cover-label').innerHTML=d.videoCover?`<img src="${d.videoCover}" style="width:40px;height:40px;border-radius:6px;object-fit:cover;vertical-align:middle"> <b>Cover caricata</b> · clicca per sostituire`:'<b>Scegli o trascina la cover</b>';
     const ig=this.getData(this.state.activeNews,'instagram'), media=(ig&&ig.igMedia)||[];
     document.getElementById('carousel-thumbs').innerHTML=media.length?media.map(m=>`<img class="thumb" src="${m.type==='video'?(m.cover||PH_VIDEO):m.src}">`).join(''):'<span class="hint" style="margin:0">Nessun frame nel carousel.</span>';
@@ -695,6 +721,11 @@ const app = {
       const ar=p==='instagram'?'aspect-ratio:4/5;':'';
       return `<div class="video-container" style="${ar}" onclick="this.classList.add('playing');this.querySelector('video').play()"><img src="${d.videoCover||d.img||PH_VIDEO}" class="video-cover"><div class="play-btn"></div><video src="${esc(d.videoUrl)}" class="native-video" playsinline loop controls></video></div>`;
     }
+    const photos=(d.imgs&&d.imgs.length?d.imgs:(d.img?[d.img]:[])).slice(0,p==='x'?4:p==='linkedin'?20:100);
+    if(photos.length>1){
+      const visible=photos.slice(0,p==='x'?4:5), count=visible.length;
+      return `<div class="multi-grid ${p} count-${count}">${visible.map((src,i)=>`<div class="multi-cell" role="img" aria-label="Foto ${i+1} di ${photos.length}" style="background-image:url(&quot;${esc(src)}&quot;)">${i===count-1&&photos.length>count?`<span class="multi-more">+${photos.length-count}</span>`:''}</div>`).join('')}</div>`;
+    }
     if(d.img) return `<img src="${d.img}" class="sc-image">`;
     return '';
   },
@@ -714,7 +745,7 @@ const app = {
       textEl.innerHTML=p==='instagram'?`<span style="font-weight:700;margin-right:6px">${esc((this.state.global.handle||'').replace('@',''))}</span>${body}`:body;
       textEl.style.display=(d.text||p==='instagram')?'':'none';
       const mc=card.querySelector('.sc-image-container');
-      const sig=[nid,d.img&&d.img.length,(d.imgs||[]).length,JSON.stringify((d.igMedia||[]).map(m=>[m.type,(m.src||'').length,m.cover])),d.videoUrl,d.videoCover&&d.videoCover.length].join('|');
+      const sig=[nid,d.img&&d.img.length,JSON.stringify(d.imgs||[]),JSON.stringify((d.igMedia||[]).map(m=>[m.type,(m.src||'').length,m.cover])),d.videoUrl,d.videoCover&&d.videoCover.length].join('|');
       if(mc.dataset.sig!==sig){ mc.dataset.sig=sig; mc.innerHTML=this.mediaHTML(p,d); }
       const lk=parseInt(d.likes)||0, cm=parseInt(d.comments)||0, sh=parseInt(d.shares)||0;
       if(p==='x'){ [['x-c',cm],['x-s',sh],['x-l',lk]].forEach(([c,v])=>card.querySelector('.'+c).textContent=v?n(v):''); return; }
@@ -763,7 +794,7 @@ const app = {
     const c=this.getCurrentData(), nid=this.state.activeNews;
     if(!c.img){ this.toast('Nessuna immagine da applicare','warn'); return; }
     PLATFORMS.forEach(p=>{ const d=this.ensure(nid,p); d.img=c.img;
-      if(p==='instagram'){ d.imgs=c.imgs||[c.img]; d.igMedia=d.imgs.map(src=>({type:'image',src})); } else d.imgs=[c.img]; });
+      d.imgs=(c.imgs||[c.img]).slice(0,p==='x'?4:p==='linkedin'?20:100); d.img=d.imgs[0]; d.videoUrl=''; if(p==='instagram') d.igMedia=d.imgs.map(src=>({type:'image',src})); });
     this.renderAll(); this.saveState(); this.toast('Immagine applicata a tutti i canali');
   },
   copyVideoToAll(){
@@ -882,12 +913,22 @@ const app = {
     const project=this.projectName(), prevView=this.state.view, prevZoom=this.state.zoom;
     const st=document.createElement('style'); st.innerHTML='*{transition:none!important;animation:none!important}.social-card{outline:none!important}';
     document.head.appendChild(st);
+    const cardWidths=Object.fromEntries(PLATFORMS.map(p=>[p,document.getElementById('card-'+p).offsetWidth]));
     this.state.view='all'; this.state.zoom=1; this.renderPreviewLayout();
     this.toast(sel.length===1?`Generazione PNG ${PINFO[sel[0]].label}…`:'Generazione mockup in corso…');
     try{
       for(const p of sel){
         await new Promise(r=>setTimeout(r,120));
-        const canvas=await html2canvas(document.getElementById('card-'+p),{scale:2,useCORS:true,allowTaint:true,backgroundColor:null});
+        const card=document.getElementById('card-'+p);
+        await Promise.all(Array.from(card.querySelectorAll('img')).map(img=>img.decode?img.decode().catch(()=>{}):Promise.resolve()));
+        if(document.fonts) await document.fonts.ready;
+        const canvas=await html2canvas(card,{scale:2,useCORS:true,backgroundColor:null,onclone:doc=>{
+          const clone=doc.getElementById('card-'+p);
+          clone.style.width=(cardWidths[p]||card.offsetWidth)+'px';
+          clone.style.minWidth=clone.style.width;
+          clone.style.maxWidth=clone.style.width;
+          clone.style.flex='none';
+        }});
         await new Promise(r=>canvas.toBlob(b=>{ saveAs(b,`${p}_${project}.png`); r(); }));
         await new Promise(r=>setTimeout(r,350));
       }
@@ -908,7 +949,7 @@ const app = {
       else if(p==='instagram'&&d.igMedia&&d.igMedia.length>1){
         d.igMedia.forEach((m,i)=>{ if(m.type==='image') add(`${p}_frame${i+1}`,m.src); else txt+=`[FRAME ${i+1} VIDEO]: ${m.src}\n`; });
       }
-      else add(`${p}_image`,d.img);
+      else (d.imgs&&d.imgs.length?d.imgs:[d.img]).forEach((src,i)=>add(`${p}_image${i+1}`,src));
       txt+='\n\n';
     });
     zip.file(`${project}_Copy.txt`,txt);
@@ -934,7 +975,20 @@ const app = {
       .platform-badge{color:#fff;padding:6px 16px;border-radius:20px;font-weight:600;margin-bottom:12px;font-size:.9rem}
       .see-more{cursor:default}`;
     const script=`const app={onCarouselScroll(c){const i=Math.round(c.scrollLeft/c.offsetWidth);if(c.dataset.last!==String(i)){c.dataset.last=i;c.querySelectorAll('video').forEach(v=>v.pause())}const d=c.parentElement.nextElementSibling.querySelectorAll('.ig-dot');d.forEach((x,j)=>x.classList.toggle('active',j===i));c.previousElementSibling.classList.toggle('hidden',i===0);c.nextElementSibling.classList.toggle('hidden',i===d.length-1)}};`;
-    const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(this.projectName())}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles}${extra}</style></head><body><div class="grid${sel.length===1?' single':''}">${grid}</div><script>${script}<\/script></body></html>`;
+    const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(this.projectName())}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>${styles}${extra}
+.multi-grid{display:grid;width:100%;aspect-ratio:1;gap:2px;background:#fff;overflow:hidden;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+.multi-grid .multi-cell{background-size:cover;background-position:center;background-repeat:no-repeat;position:relative;overflow:hidden;min-height:0}
+.multi-grid img{display:none}
+.multi-grid.count-2{grid-template-rows:minmax(0,1fr);aspect-ratio:1.5}
+.multi-grid.count-3 .multi-cell:first-child{grid-row:span 2}
+.multi-grid.facebook.count-3 .multi-cell:first-child,.multi-grid.linkedin.count-3 .multi-cell:first-child{grid-row:auto;grid-column:span 2}
+.multi-grid.count-5{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:3fr 2fr}
+.multi-grid.count-5 .multi-cell{grid-column:span 2}
+.multi-grid.count-5 .multi-cell:nth-child(-n+2){grid-column:span 3}
+.multi-grid.x{aspect-ratio:16/9;border-radius:15px;border:1px solid #cfd9de}
+.multi-more{position:absolute;inset:0;background:#0008;color:white;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:600}
+.photo-edit{display:inline-flex;flex-direction:column;gap:3px;margin:3px}.photo-edit button{cursor:pointer;padding:2px 6px}
+</style></head><body><div class="grid${sel.length===1?' single':''}">${grid}</div><script>${script}<\/script></body></html>`;
     saveAs(new Blob([html],{type:'text/html'}),`${this.projectName()}${this.suffix(sel)}_${this.getTimestamp()}.html`);
     this.toast(sel.length===1?'HTML salvato':'Anteprima web esportata');
   }
