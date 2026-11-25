@@ -82,6 +82,7 @@ label.lbl{display:block;font-size:.72rem;font-weight:600;margin-bottom:6px;color
 .form-input:focus,.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,113,227,.15)}
 .form-textarea{resize:none;min-height:220px;line-height:1.45;overflow:hidden}
 .input-group{margin-bottom:12px}
+.news-text .copy-link,.news-text .copy-link:visited,.news-text .copy-mention{color:#0a66c2;text-decoration:none}
 .text-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:.75rem;color:var(--text-sec);gap:8px;flex-wrap:wrap}
 .counter{font-weight:600;font-variant-numeric:tabular-nums}
 .counter.warn{color:var(--warn)}.counter.over{color:var(--danger)}
@@ -278,6 +279,7 @@ kbd{font-family:inherit;font-size:.7rem;background:#f2f2f7;border:1px solid var(
       <div class="block-head">
         <span class="block-title">Testo del post</span>
         <div class="block-tools">
+          <button class="mini-btn" title="Seleziona il nome nel copy per applicare o rimuovere la menzione" onmousedown="event.preventDefault()" onclick="app.toggleMention()">@ Menzione</button>
           <button class="mini-btn" title="Inserisci testo segnaposto" onclick="app.insertLorem()">¶</button>
           <button class="mini-btn" title="Copia testo negli appunti" onclick="app.copyCurrentText()">📋 Copia</button>
         </div>
@@ -519,7 +521,7 @@ const app = {
     bindText('global-name','name'); bindText('global-handle','handle'); bindText('collab-name','collabName'); bindText('collab-handle','collabHandle');
     bindChk('main-verified','isVerified'); bindChk('collab-active','collabActive'); bindChk('collab-verified','collabVerified');
 
-    document.getElementById('post-text').addEventListener('input',e=>{ this.getCurrentData().text=e.target.value; this.autoGrow(); this.renderCounter(); this.renderPreview(); this.renderTabs(); this.saveState(); });
+    document.getElementById('post-text').addEventListener('input',e=>{ this.updateCopy(e.target.value); this.autoGrow(); this.renderCounter(); this.renderPreview(); this.renderTabs(); this.saveState(); });
     document.getElementById('post-video-url').addEventListener('input',e=>{ this.getCurrentData().videoUrl=e.target.value; this.renderPreview(); this.renderTabs(); this.saveState(); });
     [['eng-likes','likes'],['eng-comments','comments'],['eng-shares','shares']].forEach(([id,k])=>
       document.getElementById(id).addEventListener('input',e=>{ this.getCurrentData()[k]=e.target.value; this.renderPreview(); this.saveState(); }));
@@ -689,16 +691,66 @@ const app = {
     PLATFORMS.forEach(p=>document.getElementById('card-'+p).classList.toggle('current',p===s.activePlatform));
     this.renderPreview();
   },
-  fmt(t){
-    return esc(t).replace(/(#[\wÀ-ÿ]+)/g,'<span style="color:#0071e3">$1</span>')
-      .replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" style="color:#0071e3;text-decoration:none">$1</a>');
+  updateCopy(value){
+    const data=this.getCurrentData(), old=data.text||'';
+    let left=0, tail=0;
+    while(left<old.length && left<value.length && old[left]===value[left]) left++;
+    while(tail<Math.min(old.length,value.length)-left && old[old.length-1-tail]===value[value.length-1-tail]) tail++;
+    const delta=value.length-old.length;
+    data.mentions=(data.mentions||[]).flatMap(([a,b])=>{
+      if(b<=left) return [[a,b]];
+      if(a>=old.length-tail) return [[a+delta,b+delta]];
+      return [];
+    });
+    data.text=value;
   },
-  textHTML(p,text){
-    const info=PINFO[p], key=this.state.activeNews+'-'+p;
-    if(this.state.showTruncation&&p!=='x'&&[...(text||'')].length>info.trunc&&!this.expanded[key]){
-      return this.fmt([...text].slice(0,info.trunc).join('').trimEnd())+`<span class="see-more">${info.more}</span>`;
+  toggleMention(){
+    const field=document.getElementById('post-text'), data=this.getCurrentData();
+    let start=field.selectionStart, end=field.selectionEnd;
+    const selected=field.value.slice(start,end);
+    if(!selected.trim()){ this.toast('Seleziona nel copy il nome da menzionare','warn'); field.focus(); return; }
+    start+=selected.length-selected.trimStart().length;
+    end-=selected.length-selected.trimEnd().length;
+    const ranges=data.mentions||[], remove=ranges.some(([a,b])=>a===start && b===end);
+    data.mentions=ranges.filter(([a,b])=>b<=start || a>=end);
+    if(!remove) data.mentions.push([start,end]);
+    this.renderPreview(); this.saveState(); field.focus(); field.setSelectionRange(start,end);
+    this.toast(remove?'Menzione rimossa':'Menzione applicata');
+  },
+  fmt(text,mentions=[],limit=text.length){
+    const tokens=[];
+    const urls=/(?<![\p{L}\p{N}_@.-])(?:https?:\/\/|www\.)[^\s<>"“”«»]+|(?<![\p{L}\p{N}_@.-])(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?\.)+(?:it|com|org|net|eu|gov|io|co|info|biz|ai|edu)(?![\p{L}\p{N}_-])(?:[/?#][^\s<>"“”«»]*)?/giu;
+    for(const match of text.matchAll(urls)){
+      let label=match[0].replace(/[.,;:!?…]+$/u,'');
+      while(label.endsWith(')') && label.split(')').length>label.split('(').length) label=label.slice(0,-1);
+      const href=/^https?:\/\//i.test(label)?label:'https://'+label;
+      try{new URL(href);}catch{continue;}
+      tokens.push({start:match.index,end:match.index+label.length,href});
     }
-    return this.fmt(text);
+    const add=(start,end,kind)=>{
+      if(start>=0 && end>start && end<=text.length && !tokens.some(t=>start<t.end && t.start<end)) tokens.push({start,end,kind});
+    };
+    for(const [start,end] of mentions) add(start,end,'mention');
+    for(const m of text.matchAll(/(?<![\p{L}\p{N}_])[@#][\p{L}\p{M}\p{N}_]+/gu)) add(m.index,m.index+m[0].length,m[0][0]==='#'?'hashtag':'mention');
+    let html='', cursor=0;
+    for(const token of tokens.sort((a,b)=>a.start-b.start)){
+      if(token.start>=limit) break;
+      const end=Math.min(token.end,limit), label=esc(text.slice(token.start,end));
+      html+=esc(text.slice(cursor,token.start));
+      if(token.href) html+='<a class="copy-link" href="'+esc(token.href)+'" target="_blank" rel="noopener noreferrer">'+label+'</a>';
+      else if(token.kind==='hashtag') html+='<span style="color:#0071e3">'+label+'</span>';
+      else html+='<span class="copy-mention">'+label+'</span>';
+      cursor=end;
+    }
+    return html+esc(text.slice(cursor,limit));
+  },
+  textHTML(p,text,mentions){
+    const info=PINFO[p], key=this.state.activeNews+'-'+p;
+    if(this.state.showTruncation&&p!=='x'&&[...text].length>info.trunc&&!this.expanded[key]){
+      const limit=[...text].slice(0,info.trunc).join('').trimEnd().length;
+      return this.fmt(text,mentions,limit)+'<span class="see-more">'+info.more+'</span>';
+    }
+    return this.fmt(text,mentions);
   },
   mediaHTML(p,d){
     if(p==='instagram'){
@@ -741,7 +793,7 @@ const app = {
     const nid=this.state.activeNews, n=x=>x.toLocaleString('it-IT');
     PLATFORMS.forEach(p=>{
       const card=document.getElementById('card-'+p), d=this.getData(nid,p)||{};
-      const textEl=card.querySelector('.news-text'), body=this.textHTML(p,d.text||'');
+      const textEl=card.querySelector('.news-text'), body=this.textHTML(p,d.text||'',d.mentions);
       textEl.innerHTML=p==='instagram'?`<span style="font-weight:700;margin-right:6px">${esc((this.state.global.handle||'').replace('@',''))}</span>${body}`:body;
       textEl.style.display=(d.text||p==='instagram')?'':'none';
       const mc=card.querySelector('.sc-image-container');
@@ -776,6 +828,7 @@ const app = {
   },
 
   insertLorem(){
+    this.getCurrentData().mentions=[];
     this.getCurrentData().text='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud #exercitation ullamco #laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
     this.renderEditor(); this.renderPreview(); this.renderTabs(); this.saveState();
   },
@@ -787,7 +840,8 @@ const app = {
     const txt=this.getCurrentData().text||'', nid=this.state.activeNews;
     const diff=PLATFORMS.filter(p=>p!==this.state.activePlatform&&(this.getData(nid,p)||{}).text&&this.getData(nid,p).text!==txt);
     if(diff.length&&!(await this.confirm('Sovrascrivere i testi?',`I canali <b>${diff.map(p=>PINFO[p].label).join(', ')}</b> hanno già un testo diverso, che verrà sostituito.`,'Sovrascrivi'))) return;
-    PLATFORMS.forEach(p=>this.ensure(nid,p).text=txt);
+    const mentions=this.getCurrentData().mentions||[];
+    PLATFORMS.forEach(p=>Object.assign(this.ensure(nid,p),{text:txt,mentions:mentions.map(range=>[...range])}));
     this.renderAll(); this.saveState(); this.toast('Testo copiato su tutti i canali');
   },
   copyImageToAll(){
